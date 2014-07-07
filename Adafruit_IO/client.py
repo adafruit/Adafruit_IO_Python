@@ -45,6 +45,7 @@ class Client(object):
   def _post(self, path, params):
     return self._request('POST', path, params=params)
 
+  #stream functionality
   def send(self, feed_name, data):
     feed_name = quote(feed_name)
     path = "api/feeds/{}/streams/send".format(feed_name)
@@ -74,5 +75,34 @@ class Client(object):
 
   def create_stream(self, feed_id_or_key, data):
     path = "api/feeds/{}/streams".format(feed_id_or_key)
+    return self._post(path, data)
+
+  #group functionality
+  def send_group(self, group_name, data):
+    group_name = quote(group_name)
+    path = "api/groups/{}/send".format(group_name)
+    return self._post(path, {'value': data})
+
+  def receive_group(self, group_name):
+    group_name = quote(group_name)
+    path = "api/groups/{}/last".format(group_name)
+    return self._get(path)
+
+  def receive_next_group(self, group_name):
+    group_name = quote(group_name)
+    path = "api/groups/{}/next".format(group_name)
+    return self._get(path)
+
+  def receive_previous_group(self, group_name):
+    group_name = quote(group_name)
+    path = "api/groups/{}/last".format(group_name)
+    return self._get(path)
+
+  def groups(self, group_id_or_key):
+    path = "api/groups/{}".format(group_id_or_key)
+    return self._get(path)
+
+  def create_group(self, group_id_or_key, data):
+    path = "api/groups/{}".format(group_id_or_key)
     return self._post(path, data)
 
