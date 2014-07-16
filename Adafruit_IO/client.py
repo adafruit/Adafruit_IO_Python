@@ -5,7 +5,8 @@ from urllib import urlencode, quote
 
 #fork of ApiClient Class: https://github.com/shazow/apiclient
 class Client(object):
-  BASE_URL = 'http://localhost:3002/'
+  #BASE_URL = 'http://localhost:3002/'
+  BASE_URL = 'http://io.ladyada.org/'
 
   def __init__(self, key, rate_limit_lock=None):
     self.key = key
@@ -31,7 +32,7 @@ class Client(object):
       url = self._compose_url(path)
 
     self.rate_limit_lock and self.rate_limit_lock.acquire()
-    headers = {"X-Api-Key": self.key, 'Content-Type':'application/json'}
+    headers = {"X-AIO-Key": self.key, 'Content-Type':'application/json'}
     if (method.upper() == "GET"):
       r = self.connection_pool.urlopen(method.upper(), url, headers=headers)
     else:
