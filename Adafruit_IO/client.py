@@ -5,7 +5,6 @@ from urllib import urlencode, quote
 
 #fork of ApiClient Class: https://github.com/shazow/apiclient
 class Client(object):
-  #BASE_URL = 'http://localhost:3002/'
   BASE_URL = 'https://io.adafruit.com/'
 
   def __init__(self, key, rate_limit_lock=None):
