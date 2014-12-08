@@ -3,10 +3,29 @@ import json
 from urllib3 import connection_from_url
 from urllib import urlencode, quote
 
+
+class AdafruitIOError(Exception):
+  """Base class for all Adafruit IO request failures."""
+  pass
+
+class RequestError(Exception):
+  """General error for a failed Adafruit IO request."""
+  def __init__(self, response):
+    super(RequestError, self).__init__("Adafruit IO request failed: {0} {1}".format(
+      response.status, response.reason))
+
+class ThrottlingError(AdafruitIOError):
+  """Too many requests have been made to Adafruit IO in a short period of time.
+  Reduce the rate of requests and try again later.
+  """
+  def __init__(self):
+    super(ThrottlingError, self).__init__("Exceeded the limit of Adafruit IO "  \
+      "requests in a short period of time. Please reduce the rate of requests " \
+      "and try again later.")
+
 #fork of ApiClient Class: https://github.com/shazow/apiclient
 class Client(object):
-  #BASE_URL = 'http://localhost:3002/'
-  BASE_URL = 'http://io.ladyada.org/'
+  BASE_URL = 'https://io.adafruit.com/'
 
   def __init__(self, key, rate_limit_lock=None):
     self.key = key
@@ -22,7 +41,17 @@ class Client(object):
   def _compose_get_url(self, path, params=None):
     return self.BASE_URL + path + '?' + urlencode(params)
 
+  def _handle_error(sefl, response):
+    # Handle explicit errors.
+    if response.status == 429:
+      raise ThrottlingError()
+    # Handle all other errors (400 & 500 level HTTP responses)
+    elif response.status >= 400:
+      raise RequestError(response)
+    # Else do nothing if there was no error.
+
   def _handle_response(self, response):
+    self._handle_error(response)
     return json.loads(response.data)
 
   def _request(self, method, path, params=None):
@@ -37,7 +66,7 @@ class Client(object):
       r = self.connection_pool.urlopen(method.upper(), url, headers=headers)
     else:
       r = self.connection_pool.urlopen(method.upper(), url, headers=headers, body=json.dumps(params))
-      
+
     return self._handle_response(r)
 
   def _get(self, path, **params):
@@ -106,4 +135,3 @@ class Client(object):
   def create_group(self, group_id_or_key, data):
     path = "api/groups/{}".format(group_id_or_key)
     return self._post(path, data)
-
