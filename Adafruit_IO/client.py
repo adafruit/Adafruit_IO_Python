@@ -6,7 +6,7 @@ from urllib import urlencode, quote
 #fork of ApiClient Class: https://github.com/shazow/apiclient
 class Client(object):
   #BASE_URL = 'http://localhost:3002/'
-  BASE_URL = 'http://io.ladyada.org/'
+  BASE_URL = 'https://io.adafruit.com/'
 
   def __init__(self, key, rate_limit_lock=None):
     self.key = key
@@ -37,7 +37,7 @@ class Client(object):
       r = self.connection_pool.urlopen(method.upper(), url, headers=headers)
     else:
       r = self.connection_pool.urlopen(method.upper(), url, headers=headers, body=json.dumps(params))
-      
+
     return self._handle_response(r)
 
   def _get(self, path, **params):
@@ -106,4 +106,3 @@ class Client(object):
   def create_group(self, group_id_or_key, data):
     path = "api/groups/{}".format(group_id_or_key)
     return self._post(path, data)
-
