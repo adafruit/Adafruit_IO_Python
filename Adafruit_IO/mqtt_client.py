@@ -69,10 +69,10 @@ class MQTTClient(object):
     def _mqtt_message(self, client, userdata, msg):
         logger.debug('Client on_message called.')
         # Parse out the feed id and call on_message callback.
-        # Assumes topic looks like "api/feeds/{feed_id}/streams/receive.json"
+        # Assumes topic looks like "api/feeds/{feed_id}/data/receive.json"
         if self.on_message is not None and msg.topic.startswith('api/feeds/') \
-            and len(msg.topic) >= 31:
-            feed_id = msg.topic[10:-21]
+            and len(msg.topic) >= 28:
+            feed_id = msg.topic[10:-18]
             self.on_message(self, feed_id, msg.payload)
 
     def connect(self, **kwargs):
@@ -132,7 +132,7 @@ class MQTTClient(object):
         """Subscribe to changes on the specified feed.  When the feed is updated
         the on_message function will be called with the feed_id and new value.
         """
-        self._client.subscribe('api/feeds/{0}/streams/receive.json'.format(feed_id))
+        self._client.subscribe('api/feeds/{0}/data/receive.json'.format(feed_id))
 
     def publish(self, feed_id, value):
         """Publish a value to a specified feed.
@@ -141,5 +141,5 @@ class MQTTClient(object):
         - feed_id: The id of the feed to update.
         - value: The new value to publish to the feed.
         """
-        self._client.publish('api/feeds/{0}/streams/send.json'.format(feed_id),
+        self._client.publish('api/feeds/{0}/data/send.json'.format(feed_id),
             payload=value)
