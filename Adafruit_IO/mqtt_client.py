@@ -1,7 +1,7 @@
 # MQTT-based client for Adafruit.IO
 # Author: Tony DiCola (tdicola@adafruit.com)
 #
-# Supports publishing and subscribing to feed changes from Adafruit.IO using
+# Supports publishing and subscribing to feed changes from Adafruit IO using
 # the MQTT protcol.
 #
 # Depends on the following Python libraries:
@@ -19,12 +19,12 @@ logger = logging.getLogger(__name__)
 
 
 class MQTTClient(object):
-    """Interface for publishing and subscribing to feed changes on Adafruit.IO
+    """Interface for publishing and subscribing to feed changes on Adafruit IO
     using the MQTT protocol.
     """
 
     def __init__(self, key):
-        """Create instance of MQTT client for provided feed.
+        """Create instance of MQTT client.
 
         Required parameters:
         - key: The Adafruit.IO access key for your account.
