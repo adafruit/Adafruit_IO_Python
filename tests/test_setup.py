@@ -1,12 +1,11 @@
-import pytest
-
+# Test setup of REST client.
+# Author: jwcooper
 from Adafruit_IO import Client
+import base
 
-def teardown_module(module):
-  pass
 
-class TestSetup:    
-  def test_set_key(self):
-    key = "unique_key_id"
-    io = Client(key)
-    assert key == io.key
+class TestSetup(base.IOTestCase):
+    def test_set_key(self):
+        key = "unique_key_id"
+        io = Client(key)
+        self.assertEqual(key, io.key)

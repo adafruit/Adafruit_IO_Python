@@ -78,33 +78,33 @@ class Client(object):
   #stream functionality
   def send(self, feed_name, data):
     feed_name = quote(feed_name)
-    path = "api/feeds/{}/streams/send".format(feed_name)
+    path = "api/feeds/{}/data/send".format(feed_name)
     return self._post(path, {'value': data})
 
   def receive(self, feed_name):
     feed_name = quote(feed_name)
-    path = "api/feeds/{}/streams/last".format(feed_name)
+    path = "api/feeds/{}/data/last".format(feed_name)
     return self._get(path)
 
   def receive_next(self, feed_name):
     feed_name = quote(feed_name)
-    path = "api/feeds/{}/streams/next".format(feed_name)
+    path = "api/feeds/{}/data/next".format(feed_name)
     return self._get(path)
 
   def receive_previous(self, feed_name):
     feed_name = quote(feed_name)
-    path = "api/feeds/{}/streams/last".format(feed_name)
+    path = "api/feeds/{}/data/last".format(feed_name)
     return self._get(path)
 
   def streams(self, feed_id_or_key, stream_id=None):
     if stream_id is None:
-      path = "api/feeds/{}/streams".format(feed_id_or_key)
+      path = "api/feeds/{}/data".format(feed_id_or_key)
     else:
-      path = "api/feeds/{}/streams/{}".format(feed_id_or_key, stream_id)
+      path = "api/feeds/{}/data/{}".format(feed_id_or_key, stream_id)
     return self._get(path)
 
   def create_stream(self, feed_id_or_key, data):
-    path = "api/feeds/{}/streams".format(feed_id_or_key)
+    path = "api/feeds/{}/data".format(feed_id_or_key)
     return self._post(path, data)
 
   #group functionality
