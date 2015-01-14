@@ -28,7 +28,6 @@ class MQTTClient(object):
 
         Required parameters:
         - key: The Adafruit.IO access key for your account.
-        - feed_id: The id of the feed to access.
         """
         # Initialize event callbacks to be None so they don't fire.
         self.on_connect    = None
