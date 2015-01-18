@@ -53,7 +53,7 @@ client.connect()
 
 # The first option is to run a thread in the background so you can continue
 # doing things in your program.
-# client.loop_background()
+client.loop_background()
 # Now send new values every 10 seconds.
 print 'Publishing a new message every 10 seconds (press Ctrl-C to quit)...'
 while True:
