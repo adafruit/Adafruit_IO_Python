@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='Adafruit_IO',
+    name='adafruit-io',
     version='0.0.1',
     author='Justin Cooper',
     author_email='justin@adafruit.com',
