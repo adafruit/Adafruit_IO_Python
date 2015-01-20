@@ -1,10 +1,10 @@
-# Adafruit_IO
+# adafruit-io
 
-TODO: Write a description
+A [Python][1] client for use with with [io.adafruit.com][2].
 
 ## Installation
 
-    pip install Adafruit_IO
+    pip install adafruit-io
 
 ## Usage
 
@@ -43,3 +43,6 @@ TODO: Write a description
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+[1]: https://www.python.org/
+[2]: https://io.adafruit.com
