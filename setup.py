@@ -6,7 +6,7 @@ setup(
     author='Justin Cooper',
     author_email='justin@adafruit.com',
     packages=['Adafruit_IO'],
-    url='http://pypi.python.org/pypi/adafruit_io/',
+    url='http://pypi.python.org/pypi/adafruit-io/',
     license='LICENSE.txt',
     description='IO Client library for io.adafruit.com',
     long_description=open('README.md').read(),
