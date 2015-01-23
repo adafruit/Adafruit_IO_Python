@@ -36,6 +36,12 @@ A [Python][1] client for use with with [io.adafruit.com][2].
     #create a feed
     aio.create_feed({:name => "New Feed Name", ...})
 
+  MQTT/Publish-Subscribe
+  
+  Avoid the overhead of polling so you can immediately be notified of changes in a feed by using the 
+  MQTT-based client.  Make sure the paho-mqtt package is installed (````sudo pip install paho-mqtt````), 
+  then check out the [examples\mqtt_client.py](https://github.com/adafruit/io-client-python/blob/master/examples/mqtt_client.py) example for more details.
+
 ## Contributing
 
 1. Fork it ( http://github.com/adafruit/io-client-python/fork )
