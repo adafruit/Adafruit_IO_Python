@@ -18,3 +18,13 @@ class IOTestCase(unittest.TestCase):
             raise RuntimeError("ADAFRUIT_IO_KEY environment variable must be " \
               "set with valid Adafruit IO key to run this test!")
         return key
+
+    def ensure_feed_deleted(self, client, feed):
+    	"""Delete the provided feed if it exists.  Does nothing if the feed
+    	doesn't exist.
+    	"""
+    	try:
+    		client.delete_feed(feed)
+    	except Adafruit_IO.RequestError:
+    		# Swallow the error if the feed doesn't exist.
+    		pass
