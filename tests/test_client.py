@@ -12,9 +12,9 @@ import base
 class TestClient(base.IOTestCase):
 
     # If your IP isn't put on the list of non-throttled IPs, uncomment the
-    # function below to waist time between tests to prevent throttling.
-    def tearDown(self):
-        time.sleep(30.0)
+    # function below to waste time between tests to prevent throttling.
+    #def tearDown(self):
+    #    time.sleep(30.0)
 
     def test_set_key(self):
         key = "unique_key_id"
