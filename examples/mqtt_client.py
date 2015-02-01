@@ -1,13 +1,13 @@
 # Example of using the MQTT client class to subscribe to and publish feed values.
-# Author: Tony DiCola (tdicola@adafruit.com)
+# Author: Tony DiCola
 
 # Import standard python modules.
 import random
 import sys
 import time
 
-# Import Adafruit IO client.
-import Adafruit_IO
+# Import Adafruit IO MQTT client.
+from Adafruit_IO import MQTTClient
 
 
 # Set to your Adafruit IO key.
@@ -37,7 +37,7 @@ def message(client, feed_id, payload):
 
 
 # Create an MQTT client instance.
-client = Adafruit_IO.MQTTClient(ADAFRUIT_IO_KEY)
+client = MQTTClient(ADAFRUIT_IO_KEY)
 
 # Setup the callback functions defined above.
 client.on_connect    = connected

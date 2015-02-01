@@ -18,7 +18,23 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from .client import Client
-from .mqtt_client import MQTTClient
-from .errors import AdafruitIOError, RequestError, ThrottlingError
-from .model import Data, Stream, Feed, Group
+class AdafruitIOError(Exception):
+    """Base class for all Adafruit IO request failures."""
+    pass
+
+
+class RequestError(Exception):
+    """General error for a failed Adafruit IO request."""
+    def __init__(self, response):
+        super(RequestError, self).__init__("Adafruit IO request failed: {0} {1}".format(
+            response.status_code, response.reason))
+
+
+class ThrottlingError(AdafruitIOError):
+    """Too many requests have been made to Adafruit IO in a short period of time.
+    Reduce the rate of requests and try again later.
+    """
+    def __init__(self):
+        super(ThrottlingError, self).__init__("Exceeded the limit of Adafruit IO "  \
+            "requests in a short period of time. Please reduce the rate of requests " \
+            "and try again later.")

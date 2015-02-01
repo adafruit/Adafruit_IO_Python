@@ -1,18 +1,29 @@
-# MQTT-based client for Adafruit.IO
-# Author: Tony DiCola (tdicola@adafruit.com)
-#
-# Supports publishing and subscribing to feed changes from Adafruit IO using
-# the MQTT protcol.
-#
-# Depends on the following Python libraries:
-# - paho-mqtt: Paho MQTT client for python.
+# Copyright (c) 2014 Adafruit Industries
+# Author: Tony DiCola
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 import logging
 
 import paho.mqtt.client as mqtt
 
 
-SERVICE_HOST   = 'io.adafruit.com'
-SERVICE_PORT   = 1883
+# How long to wait before sending a keep alive (paho-mqtt configuration).
 KEEP_ALIVE_SEC = 3600  # One minute
 
 logger = logging.getLogger(__name__)
@@ -23,12 +34,14 @@ class MQTTClient(object):
     using the MQTT protocol.
     """
 
-    def __init__(self, key):
+    def __init__(self, key, service_host='io.adafruit.com', service_port=1883):
         """Create instance of MQTT client.
 
         Required parameters:
         - key: The Adafruit.IO access key for your account.
         """
+        self._service_host = service_host
+        self._service_port = service_port
         # Initialize event callbacks to be None so they don't fire.
         self.on_connect    = None
         self.on_disconnect = None
@@ -69,11 +82,12 @@ class MQTTClient(object):
     def _mqtt_message(self, client, userdata, msg):
         logger.debug('Client on_message called.')
         # Parse out the feed id and call on_message callback.
-        # Assumes topic looks like "api/feeds/{feed_id}/data/receive.json"
+        # Assumes topic looks like "api/feeds/{feed}/data/receive.json"
         if self.on_message is not None and msg.topic.startswith('api/feeds/') \
             and len(msg.topic) >= 28:
-            feed_id = msg.topic[10:-18]
-            self.on_message(self, feed_id, msg.payload)
+            feed = msg.topic[10:-18]
+            payload = '' if msg.payload is None else msg.payload.decode('utf-8')
+            self.on_message(self, feed, payload)
 
     def connect(self, **kwargs):
         """Connect to the Adafruit.IO service.  Must be called before any loop
@@ -85,7 +99,7 @@ class MQTTClient(object):
         if self._connected:
             return
         # Connect to the Adafruit IO MQTT service.
-        self._client.connect(SERVICE_HOST, port=SERVICE_PORT, 
+        self._client.connect(self._service_host, port=self._service_port, 
             keepalive=KEEP_ALIVE_SEC, **kwargs)
 
     def is_connected(self):
@@ -94,7 +108,7 @@ class MQTTClient(object):
         return self._connected
 
     def disconnect(self):
-        # Disconnect MQTT client if connected.
+        """Disconnect MQTT client if connected."""
         if self._connected:
             self._client.disconnect()
 
