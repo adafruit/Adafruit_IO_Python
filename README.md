@@ -1,7 +1,6 @@
 # adafruit-io
 
-A [Python][1] client for use with with [io.adafruit.com][2].  Compatible with
-both Python 2 and Python 3.
+A [Python](https://www.python.org/) client for use with with [io.adafruit.com](https://io.adafruit.com).  Compatible with both Python 2 and Python 3.
 
 ## Installation
 
@@ -26,7 +25,7 @@ in a terminal and run the following command:
 
 ## Usage
 
-You must have an [Adafruit IO key][4] to use this library and the Adafruit IO service.
+You must have an [Adafruit IO key](https://learn.adafruit.com/adafruit-io/api-key) to use this library and the Adafruit IO service.
 Your API key will be provided to the python library so it can authenticate your 
 requests against the Adafruit IO service.
 
@@ -110,6 +109,7 @@ pydoc Adafruit_IO.client
 pydoc Adafruit_IO.mqtt_client
 pydoc Adafruit_IO.model
 pydoc Adafruit_IO.errors
+```
 
 ## Table of Contents
 
@@ -137,7 +137,7 @@ pydoc Adafruit_IO.errors
 
 ### Feeds
 
-[Feeds][3] are the core of the Adafruit IO system. The feed holds metadata about data
+[Feeds](https://learn.adafruit.com/adafruit-io/feeds) are the core of the Adafruit IO system. The feed holds metadata about data
 that gets pushed, and you will have one feed for each type of data you send to 
 the system. You can have separate feeds for each sensor in a project, or you can
 use one feed to contain JSON encoded data for all of your sensors.
@@ -379,7 +379,7 @@ TBD: Document using the MQTT client.  For now see the [examples\mqtt_client.py](
 
 ### Groups
 
-Groups allow you to update and retrieve multiple feeds with one request. You can 
+[Groups](https://learn.adafruit.com/adafruit-io/groups) allow you to update and retrieve multiple feeds with one request. You can 
 add feeds to multiple groups.
 
 #### Group Creation
@@ -450,9 +450,3 @@ aio.delete_group('GroupTest')
 
 ## License
 Copyright (c) 2014 Adafruit Industries. Licensed under the MIT license.
-
-[1]: https://www.python.org/
-[2]: https://io.adafruit.com
-[3]: https://learn.adafruit.com/adafruit-io/feeds
-[4]: https://learn.adafruit.com/adafruit-io/api-key
-[5]: https://learn.adafruit.com/adafruit-io/groups
