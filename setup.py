@@ -1,8 +1,10 @@
+from ez_setup import use_setuptools
+use_setuptools()
 from setuptools import setup
 
 setup(
     name='adafruit-io',
-    version='0.0.1',
+    version='0.9.0',
     author='Justin Cooper',
     author_email='justin@adafruit.com',
     packages=['Adafruit_IO'],
@@ -11,6 +13,7 @@ setup(
     description='IO Client library for io.adafruit.com',
     long_description=open('README.md').read(),
     install_requires=[
-        "apiclient >= 1.0.2"
+        "requests",
+        "paho-mqtt"
     ],
 )
