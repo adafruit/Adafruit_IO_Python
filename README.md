@@ -1,6 +1,6 @@
 # adafruit-io
 
-A [Python](https://www.python.org/) client for use with with [io.adafruit.com](https://io.adafruit.com).  Compatible with both Python 2 and Python 3.
+A [Python](https://www.python.org/) client for use with with [io.adafruit.com](https://io.adafruit.com).  Compatible with both Python 2.7+ and Python 3.3+.
 
 ## Installation
 
