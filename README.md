@@ -21,7 +21,7 @@ in a terminal and run the following command:
 
     sudo python setup.py install
 
-(on Windows omit the sudo)
+(on Windows, and some linux-based boards such as the Yun, omit the sudo)
 
 ## Usage
 
