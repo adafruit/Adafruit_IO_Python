@@ -47,7 +47,7 @@ class Client(object):
     def _compose_url(self, path):
         return '{0}/{1}'.format(self.base_url, path)
 
-    def _handle_error(sefl, response):
+    def _handle_error(self, response):
         # Handle explicit errors.
         if response.status_code == 429:
             raise ThrottlingError()
