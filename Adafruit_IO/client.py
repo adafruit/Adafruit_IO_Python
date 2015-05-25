@@ -89,6 +89,14 @@ class Client(object):
         path = "api/feeds/{0}/data/send".format(feed_name)
         return Data.from_dict(self._post(path, {'value': value}))
 
+    def append(self, feed, value):
+        """Helper function to simplify adding a value to a feed.  Will append the
+        specified value to the feed identified by either name, key, or ID.
+        Returns a Data instance with details about the newly appended row of data.
+        Note that unlike send the feed should exist before calling append.
+        """
+        return self.create_data(feed, Data(value=value))
+
     def receive(self, feed):
         """Retrieve the most recent value for the specified feed.  Feed can be a
         feed ID, feed key, or feed name.  Returns a Data instance whose value

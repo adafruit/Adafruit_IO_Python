@@ -111,6 +111,27 @@ class TestClient(base.IOTestCase):
         result = io.create_data('TestFeed', data)
         self.assertEqual(int(result.value), 42)
 
+    def test_append_by_feed_name(self):
+        io = self.get_client()
+        self.ensure_feed_deleted(io, 'TestFeed')
+        feed = io.create_feed(Feed(name='TestFeed'))
+        result = io.append('TestFeed', 42)
+        self.assertEqual(int(result.value), 42)
+
+    def test_append_by_feed_key(self):
+        io = self.get_client()
+        self.ensure_feed_deleted(io, 'Test Feed Fancy Name')
+        feed = io.create_feed(Feed(name='Test Feed Fancy Name'))
+        result = io.append(feed.key, 42)
+        self.assertEqual(int(result.value), 42)
+
+    def test_append_by_feed_id(self):
+        io = self.get_client()
+        self.ensure_feed_deleted(io, 'TestFeed')
+        feed = io.create_feed(Feed(name='TestFeed'))
+        result = io.append(feed.id, 42)
+        self.assertEqual(int(result.value), 42)
+
     def test_create_feed(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
