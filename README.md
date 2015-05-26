@@ -23,6 +23,22 @@ in a terminal and run the following command:
 
 (on Windows, and some linux-based boards such as the Yun, omit the sudo)
 
+### Raspberry Pi SSL Note
+
+Note on a Raspberry Pi with Python 2.7.3 you might see warnings like:
+
+    InsecurePlatformWarning: A true SSLContext object is not available. This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail. For more information, see https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning.
+
+To remove this warning you can install better SSL support for Python by running these
+commands in a terminal
+
+    sudo apt-get update
+    sudo apt-get install -y python-pip python-dev build-essential libffi-dev libssl-dev
+    sudo pip install requests[security]
+
+Restart the Pi and you should see the warnings disappear.
+
+
 ## Usage
 
 You must have an [Adafruit IO key](https://learn.adafruit.com/adafruit-io/api-key) to use this library and the Adafruit IO service.
