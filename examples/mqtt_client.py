@@ -12,6 +12,8 @@ from Adafruit_IO import MQTTClient
 
 # Set to your Adafruit IO key.
 ADAFRUIT_IO_KEY = 'YOUR ADAFRUIT IO KEY'
+ADAFRUIT_IO_USERNAME = 'YOUR ADAFRUIT IO USERNAME'  # See https://accounts.adafruit.com
+                                                    # to find your username.
 
 
 # Define callback functions which will be called when certain events happen.
@@ -37,7 +39,7 @@ def message(client, feed_id, payload):
 
 
 # Create an MQTT client instance.
-client = MQTTClient(ADAFRUIT_IO_KEY)
+client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
 # Setup the callback functions defined above.
 client.on_connect    = connected
