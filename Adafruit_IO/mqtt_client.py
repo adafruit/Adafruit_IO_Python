@@ -85,10 +85,10 @@ class MQTTClient(object):
     def _mqtt_message(self, client, userdata, msg):
         logger.debug('Client on_message called.')
         # Parse out the feed id and call on_message callback.
-        # Assumes topic looks like "api/feeds/{feed}/data/receive.json"
-        if self.on_message is not None and msg.topic.startswith('api/feeds/') \
-            and len(msg.topic) >= 28:
-            feed = msg.topic[10:-18]
+        # Assumes topic looks like "username/feeds/id"
+        parsed_topic = msg.topic.split('/')
+        if self.on_message is not None and self._username == parsed_topic[0]:
+            feed = parsed_topic[2]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
             self.on_message(self, feed, payload)
 
