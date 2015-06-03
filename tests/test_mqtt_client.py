@@ -45,13 +45,13 @@ class TestMQTTClient(base.IOTestCase):
 
     def test_create_client(self):
         # Create MQTT test client.
-        client = MQTTClient(self.get_test_key())
+        client = MQTTClient(self.get_test_username(), self.get_test_key())
         # Verify not connected by default.
         self.assertFalse(client.is_connected())
 
     def test_connect(self):
         # Create MQTT test client.
-        client = MQTTClient(self.get_test_key())
+        client = MQTTClient(self.get_test_username(), self.get_test_key())
         # Verify on_connect handler is called and expected client is provided.
         def on_connect(mqtt_client):
             self.assertEqual(mqtt_client, client)
@@ -64,7 +64,7 @@ class TestMQTTClient(base.IOTestCase):
 
     def test_disconnect(self):
         # Create MQTT test client.
-        client = MQTTClient(self.get_test_key())
+        client = MQTTClient(self.get_test_username(), self.get_test_key())
         # Verify on_connect handler is called and expected client is provided.
         def on_disconnect(mqtt_client):
             self.assertEqual(mqtt_client, client)
@@ -80,7 +80,7 @@ class TestMQTTClient(base.IOTestCase):
 
     def test_subscribe_and_publish(self):
         # Create MQTT test client.
-        client = MQTTClient(self.get_test_key())
+        client = MQTTClient(self.get_test_username(), self.get_test_key())
         # Save all on_message handler responses.
         messages = []
         def on_message(mqtt_client, feed, payload):

@@ -34,12 +34,15 @@ class MQTTClient(object):
     using the MQTT protocol.
     """
 
-    def __init__(self, key, service_host='io.adafruit.com', service_port=1883):
+    def __init__(self, username, key, service_host='io.adafruit.com', service_port=1883):
         """Create instance of MQTT client.
 
         Required parameters:
+        - username: The Adafruit.IO username for your account (found on the
+                    accounts site https://accounts.adafruit.com/).
         - key: The Adafruit.IO access key for your account.
         """
+        self._username = username
         self._service_host = service_host
         self._service_port = service_port
         # Initialize event callbacks to be None so they don't fire.
@@ -48,7 +51,7 @@ class MQTTClient(object):
         self.on_message    = None
         # Initialize MQTT client.
         self._client = mqtt.Client()
-        self._client.username_pw_set(key)
+        self._client.username_pw_set(username, key)
         self._client.on_connect    = self._mqtt_connect
         self._client.on_disconnect = self._mqtt_disconnect
         self._client.on_message    = self._mqtt_message
@@ -146,7 +149,7 @@ class MQTTClient(object):
         """Subscribe to changes on the specified feed.  When the feed is updated
         the on_message function will be called with the feed_id and new value.
         """
-        self._client.subscribe('api/feeds/{0}/data/receive.json'.format(feed_id))
+        self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_id))
 
     def publish(self, feed_id, value):
         """Publish a value to a specified feed.
@@ -155,5 +158,5 @@ class MQTTClient(object):
         - feed_id: The id of the feed to update.
         - value: The new value to publish to the feed.
         """
-        self._client.publish('api/feeds/{0}/data/send.json'.format(feed_id),
+        self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
             payload=value)
