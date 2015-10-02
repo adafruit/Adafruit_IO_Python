@@ -25,7 +25,7 @@ in a terminal and run the following command:
 
 ### Raspberry Pi SSL Note
 
-Note on a Raspberry Pi with Python 2.7.3 you might see warnings like:
+On a Raspberry Pi with Python 2.7.3 you might see warnings like:
 
     InsecurePlatformWarning: A true SSLContext object is not available. This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail. For more information, see https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning.
 
