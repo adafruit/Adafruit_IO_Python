@@ -1,6 +1,6 @@
 # adafruit-io
 
-A [Python](https://www.python.org/) client for use with with [io.adafruit.com](https://io.adafruit.com).  Compatible with both Python 2.7+ and Python 3.3+.
+A [Python](https://www.python.org/) client for use with [io.adafruit.com](https://io.adafruit.com).  Compatible with both Python 2.7+ and Python 3.3+.
 
 ## Installation
 
@@ -8,8 +8,8 @@ A [Python](https://www.python.org/) client for use with with [io.adafruit.com](h
 
 **NOTE: MODULE IS NOT YET ON PYPA SO THIS DOES NOT WORK YET.  SKIP TO MANUAL INSTALL BELOW.**
 
-If you have [pip installed](https://pip.pypa.io/en/latest/installing.html) 
-(typically with ````apt-get install python-pip```` on a Debian/Ubuntu-based 
+If you have [pip installed](https://pip.pypa.io/en/latest/installing.html)
+(typically with ````apt-get install python-pip```` on a Debian/Ubuntu-based
 system) then run:
 
     sudo pip install adafruit-io
@@ -42,7 +42,7 @@ Restart the Pi and you should see the warnings disappear.
 ## Usage
 
 You must have an [Adafruit IO key](https://learn.adafruit.com/adafruit-io/api-key) to use this library and the Adafruit IO service.
-Your API key will be provided to the python library so it can authenticate your 
+Your API key will be provided to the python library so it can authenticate your
 requests against the Adafruit IO service.
 
 At a high level the Adafruit IO python client provides two interfaces to the
@@ -51,7 +51,7 @@ service:
 * A thin wrapper around the REST-based API.  This is good for simple request and
   response applications like logging data.
 
-* A MQTT client (based on [paho-mqtt](https://pypi.python.org/pypi/paho-mqtt)) 
+* A MQTT client (based on [paho-mqtt](https://pypi.python.org/pypi/paho-mqtt))
   which can publish and subscribe to feeds so it is immediately alerted of changes.
   This is good for applications which need to know when something has changed as
   quickly as possible.
@@ -79,7 +79,7 @@ mqtt = MQTTClient('xxxxxxxxxxxx')
 
 Again where 'xxxxxxxxxxxx' is your Adafruit IO API key.
 
-Your program can use either or both the REST API client and MQTT client, 
+Your program can use either or both the REST API client and MQTT client,
 depending on your needs.
 
 ### Error Handling
@@ -91,7 +91,7 @@ generally are children of the base exception type `AdafruitIOError`.
 
 ### Quickstart
 
-Here's a short example of how to send a new value to a feed (creating the feed 
+Here's a short example of how to send a new value to a feed (creating the feed
 if it doesn't exist), and how to read the most recent value from the feed.  This
 example uses the REST API.
 
@@ -154,7 +154,7 @@ pydoc Adafruit_IO.errors
 ### Feeds
 
 [Feeds](https://learn.adafruit.com/adafruit-io/feeds) are the core of the Adafruit IO system. The feed holds metadata about data
-that gets pushed, and you will have one feed for each type of data you send to 
+that gets pushed, and you will have one feed for each type of data you send to
 the system. You can have separate feeds for each sensor in a project, or you can
 use one feed to contain JSON encoded data for all of your sensors.
 
@@ -176,8 +176,8 @@ feed = Feed(name='Foo')
 result = aio.create_feed(feed)
 ```
 
-Note that you can use the [send](#send) function to create a feed and send it a 
-new value in a single call.  It's recommended that you use send instead of 
+Note that you can use the [send](#send) function to create a feed and send it a
+new value in a single call.  It's recommended that you use send instead of
 manually constructing feed instances.
 
 #### Feed Retrieval
@@ -198,7 +198,7 @@ for f in feeds:
     print('Feed: {0}'.format(f.name))
 ```
 
-Alternatively you can retrieve the metadata for a single feed by calling 
+Alternatively you can retrieve the metadata for a single feed by calling
 `feeds(feed)` and passing the name, ID, or key of a feed to retrieve:
 
 ```python
@@ -234,7 +234,7 @@ aio.delete_feed('Test')
 
 ### Data
 
-Data represents the data contained in feeds. You can read, add, modify, and 
+Data represents the data contained in feeds. You can read, add, modify, and
 delete data. There are also a few convienient methods for sending data to feeds
 and selecting certain pieces of data.
 
@@ -371,7 +371,7 @@ print('Data value: {0}'.format(data.value))
 
 ##### Previous
 
-You can get the the last record that has been processed (read) by using the 
+You can get the the last record that has been processed (read) by using the
 `receive_previous(feed)` method.
 
 ```python
@@ -395,7 +395,7 @@ TBD: Document using the MQTT client.  For now see the [examples\mqtt_client.py](
 
 ### Groups
 
-[Groups](https://learn.adafruit.com/adafruit-io/groups) allow you to update and retrieve multiple feeds with one request. You can 
+[Groups](https://learn.adafruit.com/adafruit-io/groups) allow you to update and retrieve multiple feeds with one request. You can
 add feeds to multiple groups.
 
 #### Group Creation
@@ -422,7 +422,7 @@ for g in groups:
     print('Group {0} has {1} feed(s).'.format(g.name, len(g.feeds)))
 ```
 
-You can also get a specific group by ID, key, or name by using the 
+You can also get a specific group by ID, key, or name by using the
 `groups(group)` method:
 
 ```python
