@@ -235,7 +235,7 @@ aio.delete_feed('Test')
 ### Data
 
 Data represents the data contained in feeds. You can read, add, modify, and
-delete data. There are also a few convienient methods for sending data to feeds
+delete data. There are also a few convenient methods for sending data to feeds
 and selecting certain pieces of data.
 
 #### Data Creation
@@ -371,7 +371,7 @@ print('Data value: {0}'.format(data.value))
 
 ##### Previous
 
-You can get the the last record that has been processed (read) by using the
+You can get the last record that has been processed (read) by using the
 `receive_previous(feed)` method.
 
 ```python
