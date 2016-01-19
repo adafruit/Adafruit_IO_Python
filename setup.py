@@ -20,6 +20,7 @@ setup(
     author           = 'Justin Cooper',
     author_email     = 'justin@adafruit.com',
     packages         = ['Adafruit_IO'],
+    py_modules       = ['ez_setup'],
     url              = 'https://github.com/adafruit/io-client-python',
     license          = 'MIT',
     keywords         = 'Adafruit IO',
