@@ -22,20 +22,20 @@ def connected(client):
     # This is a good place to subscribe to feed changes.  The client parameter
     # passed to this function is the Adafruit IO MQTT client so you can make
     # calls against it easily.
-    print 'Connected to Adafruit IO!  Listening for DemoFeed changes...'
+    print('Connected to Adafruit IO!  Listening for DemoFeed changes...')
     # Subscribe to changes on a feed named DemoFeed.
     client.subscribe('DemoFeed')
 
 def disconnected(client):
     # Disconnected function will be called when the client disconnects.
-    print 'Disconnected from Adafruit IO!'
+    print('Disconnected from Adafruit IO!')
     sys.exit(1)
 
 def message(client, feed_id, payload):
     # Message function will be called when a subscribed feed has a new value.
     # The feed_id parameter identifies the feed, and the payload parameter has
     # the new value.
-    print 'Feed {0} received new value: {1}'.format(feed_id, payload)
+    print('Feed {0} received new value: {1}'.format(feed_id, payload))
 
 
 # Create an MQTT client instance.
@@ -51,16 +51,16 @@ client.connect()
 
 # Now the program needs to use a client loop function to ensure messages are
 # sent and received.  There are a few options for driving the message loop,
-# depending on what your program needs to do.  
+# depending on what your program needs to do.
 
 # The first option is to run a thread in the background so you can continue
 # doing things in your program.
 client.loop_background()
 # Now send new values every 10 seconds.
-print 'Publishing a new message every 10 seconds (press Ctrl-C to quit)...'
+print('Publishing a new message every 10 seconds (press Ctrl-C to quit)...')
 while True:
     value = random.randint(0, 100)
-    print 'Publishing {0} to DemoFeed.'.format(value)
+    print('Publishing {0} to DemoFeed.'.format(value))
     client.publish('DemoFeed', value)
     time.sleep(10)
 
@@ -70,14 +70,14 @@ while True:
 # good option if you don't want to or can't have a thread pumping the message
 # loop in the background.
 #last = 0
-#print 'Publishing a new message every 10 seconds (press Ctrl-C to quit)...'
+#print('Publishing a new message every 10 seconds (press Ctrl-C to quit)...')
 #while True:
 #   # Explicitly pump the message loop.
 #   client.loop()
 #   # Send a new message every 10 seconds.
 #   if (time.time() - last) >= 10.0:
 #       value = random.randint(0, 100)
-#       print 'Publishing {0} to DemoFeed.'.format(value)
+#       print('Publishing {0} to DemoFeed.'.format(value))
 #       client.publish('DemoFeed', value)
 #       last = time.time()
 

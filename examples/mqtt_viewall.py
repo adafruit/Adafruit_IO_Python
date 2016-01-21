@@ -2,7 +2,7 @@
 # message published for an account on AIO.  Useful for debugging when other
 # devices are writing to AIO for an account.
 #
-# Copyright (c) 2014 Adafruit Industries
+# Copyright (c) 2014, 2016 Adafruit Industries
 # Author: Tony DiCola
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -43,15 +43,15 @@ PATH      = USERNAME + '/#'
 
 # Setup message handlers for connect, disconnect and message received.
 def on_connect(client, userdata, flags, rc):
-    print 'Connected!'
+    print('Connected!')
     client.subscribe(PATH)
-    print 'Subscribed to path {0}!'.format(PATH)
+    print('Subscribed to path {0}!'.format(PATH))
 
 def on_disconnect(client, userdata, rc):
-    print 'Disconnected!'
+    print('Disconnected!')
 
 def on_message(client, userdata, msg):
-    print 'Received on {0}: {1}'.format(msg.topic, msg.payload.decode('utf-8'))
+    print('Received on {0}: {1}'.format(msg.topic, msg.payload.decode('utf-8')))
 
 
 # Create MQTT client and connect to Adafruit IO.
@@ -62,5 +62,5 @@ client.on_disconnect = on_disconnect
 client.on_message = on_message
 client.connect(SERVER, port=PORT, keepalive=KEEPALIVE)
 
-print 'Press Ctrl-C to quit.'
+print('Press Ctrl-C to quit.')
 client.loop_forever()
