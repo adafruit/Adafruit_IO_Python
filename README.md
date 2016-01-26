@@ -6,13 +6,15 @@ A [Python](https://www.python.org/) client for use with [io.adafruit.com](https:
 
 ### Easy Installation
 
-**NOTE: MODULE IS NOT YET ON PYPA SO THIS DOES NOT WORK YET.  SKIP TO MANUAL INSTALL BELOW.**
-
 If you have [pip installed](https://pip.pypa.io/en/latest/installing.html)
 (typically with ````apt-get install python-pip```` on a Debian/Ubuntu-based
 system) then run:
 
     sudo pip install adafruit-io
+
+This will automatically install the Adafruit IO Python client code for your
+Python scripts to use.  You might want to examine the examples folder in this
+GitHub repository to see examples of usage.
 
 ### Manual Installation
 
