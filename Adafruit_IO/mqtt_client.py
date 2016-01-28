@@ -56,6 +56,7 @@ class MQTTClient(object):
         self._client.on_disconnect = self._mqtt_disconnect
         self._client.on_message    = self._mqtt_message
         self._connected = False
+        self._disconnect_reason = None
 
     def _mqtt_connect(self, client, userdata, flags, rc):
         logger.debug('Client on_connect called.')
@@ -74,9 +75,8 @@ class MQTTClient(object):
     def _mqtt_disconnect(self, client, userdata, rc):
         logger.debug('Client on_disconnect called.')
         self._connected = False
-        # If this was an unexpected disconnect (non-zero result code) then raise
-        # an exception.
-        if rc != 0:
+        self._disconnect_reason = rc
+        if rc != 0 and self.on_disconnect is None:
             raise RuntimeError('Unexpected disconnect with rc: {0}'.format(rc))
         # Call the on_disconnect callback if available.
         if self.on_disconnect is not None:
@@ -115,6 +115,12 @@ class MQTTClient(object):
         if self._connected:
             self._client.disconnect()
 
+    @property
+    def disconnect_reason(self):
+        """Returns the MQTT return code for the most recent disconnect
+        or None if there have been no disconnects."""
+        return self._disconnect_reason
+    
     def loop_background(self):
         """Starts a background thread to listen for messages from Adafruit.IO
         and call the appropriate callbacks when feed events occur.  Will return
