@@ -90,7 +90,8 @@ class MQTTClient(object):
         if self.on_message is not None and self._username == parsed_topic[0]:
             feed = parsed_topic[2]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
-            self.on_message(self, feed, payload)
+            retain = msg.retain
+            self.on_message(self, feed, payload, retain)
 
     def connect(self, **kwargs):
         """Connect to the Adafruit.IO service.  Must be called before any loop
