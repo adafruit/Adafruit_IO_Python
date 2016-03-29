@@ -16,7 +16,7 @@ classifiers = ['Development Status :: 4 - Beta',
 
 setup(
     name             = 'adafruit-io',
-    version          = '1.0.1',
+    version          = '1.1.0',
     author           = 'Justin Cooper',
     author_email     = 'justin@adafruit.com',
     packages         = ['Adafruit_IO'],
