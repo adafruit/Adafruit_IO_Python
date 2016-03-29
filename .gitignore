@@ -1,3 +1,4 @@
+setuptools-*
 #Useful gitignore for python: https://github.com/github/gitignore/blob/master/Python.gitignore
 *.py[cod]
 

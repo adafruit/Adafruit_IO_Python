@@ -74,10 +74,11 @@ class MQTTClient(object):
     def _mqtt_disconnect(self, client, userdata, rc):
         logger.debug('Client on_disconnect called.')
         self._connected = False
-        # If this was an unexpected disconnect (non-zero result code) then raise
-        # an exception.
+        # If this was an unexpected disconnect (non-zero result code) then just
+        # log the RC as an error.  Continue on to call any disconnect handler
+        # so clients can potentially recover gracefully.
         if rc != 0:
-            raise RuntimeError('Unexpected disconnect with rc: {0}'.format(rc))
+            logger.debug('Unexpected disconnect with rc: {0}'.format(rc))
         # Call the on_disconnect callback if available.
         if self.on_disconnect is not None:
             self.on_disconnect(self)
@@ -94,7 +95,7 @@ class MQTTClient(object):
 
     def connect(self, **kwargs):
         """Connect to the Adafruit.IO service.  Must be called before any loop
-        or publish operations are called.  Will raise an exception if a 
+        or publish operations are called.  Will raise an exception if a
         connection cannot be made.  Optional keyword arguments will be passed
         to paho-mqtt client connect function.
         """
@@ -102,7 +103,7 @@ class MQTTClient(object):
         if self._connected:
             return
         # Connect to the Adafruit IO MQTT service.
-        self._client.connect(self._service_host, port=self._service_port, 
+        self._client.connect(self._service_host, port=self._service_port,
             keepalive=KEEP_ALIVE_SEC, **kwargs)
 
     def is_connected(self):
@@ -128,7 +129,7 @@ class MQTTClient(object):
         your program and will not return until disconnect is explicitly called.
 
         This is useful if your program doesn't need to do anything else except
-        listen and respond to Adafruit.IO feed events.  If you need to do other 
+        listen and respond to Adafruit.IO feed events.  If you need to do other
         processing, consider using the loop_background function to run a loop
         in the background.
         """
@@ -139,7 +140,7 @@ class MQTTClient(object):
         inside your own main loop, where you periodically call this function to
         make sure messages are being processed to and from Adafruit_IO.
 
-        The optional timeout_sec parameter specifies at most how long to block 
+        The optional timeout_sec parameter specifies at most how long to block
         execution waiting for messages when this function is called.  The default
         is one second.
         """
