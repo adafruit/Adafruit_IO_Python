@@ -25,6 +25,12 @@ import requests
 from .errors import RequestError, ThrottlingError
 from .model import Data, Feed, Group
 
+# set outgoing version, pulled from setup.py
+import pkg_resources
+version = pkg_resources.require("Adafruit_IO")[0].version
+default_headers = {
+    'User-Agent': 'AdafruitIO-Python/{0}'.format(version)
+}
 
 class Client(object):
     """Client instance for interacting with the Adafruit IO service using its
@@ -56,17 +62,22 @@ class Client(object):
             raise RequestError(response)
         # Else do nothing if there was no error.
 
+    def _headers(self, given):
+        headers = default_headers.copy()
+        headers.update(given)
+        return headers
+
     def _get(self, path):
         response = requests.get(self._compose_url(path),
-                                headers={'X-AIO-Key': self.key},
+                                headers=self._headers({'X-AIO-Key': self.key}),
                                 proxies=self.proxies)
         self._handle_error(response)
         return response.json()
 
     def _post(self, path, data):
         response = requests.post(self._compose_url(path),
-                                 headers={'X-AIO-Key': self.key,
-                                          'Content-Type': 'application/json'},
+                                 headers=self._headers({'X-AIO-Key': self.key,
+                                                        'Content-Type': 'application/json'}),
                                  proxies=self.proxies,
                                  data=json.dumps(data))
         self._handle_error(response)
@@ -74,16 +85,16 @@ class Client(object):
 
     def _delete(self, path):
         response = requests.delete(self._compose_url(path),
-                                   headers={'X-AIO-Key': self.key,
-                                            'Content-Type': 'application/json'},
+                                   headers=self._headers({'X-AIO-Key': self.key,
+                                            'Content-Type': 'application/json'}),
                                    proxies=self.proxies)
         self._handle_error(response)
 
     # Data functionality.
     def send(self, feed_name, value):
-        """Helper function to simplify adding a value to a feed.  Will find the 
-        specified feed by name or create a new feed if it doesn't exist, then 
-        will append the provided value to the feed.  Returns a Data instance 
+        """Helper function to simplify adding a value to a feed.  Will find the
+        specified feed by name or create a new feed if it doesn't exist, then
+        will append the provided value to the feed.  Returns a Data instance
         with details about the newly appended row of data.
         """
         path = "api/feeds/{0}/data/send".format(feed_name)
@@ -106,7 +117,7 @@ class Client(object):
         return Data.from_dict(self._get(path))
 
     def receive_next(self, feed):
-        """Retrieve the next unread value from the specified feed.  Feed can be 
+        """Retrieve the next unread value from the specified feed.  Feed can be
         a feed ID, feed key, or feed name.  Returns a Data instance whose value
         property holds the retrieved value.
         """
@@ -115,7 +126,7 @@ class Client(object):
 
     def receive_previous(self, feed):
         """Retrieve the previous unread value from the specified feed.  Feed can
-        be a feed ID, feed key, or feed name.  Returns a Data instance whose 
+        be a feed ID, feed key, or feed name.  Returns a Data instance whose
         value property holds the retrieved value.
         """
         path = "api/feeds/{0}/data/previous".format(feed)
@@ -123,8 +134,8 @@ class Client(object):
 
     def data(self, feed, data_id=None):
         """Retrieve data from a feed.  Feed can be a feed ID, feed key, or feed
-        name.  Data_id is an optional id for a single data value to retrieve.  
-        If data_id is not specified then all the data for the feed will be 
+        name.  Data_id is an optional id for a single data value to retrieve.
+        If data_id is not specified then all the data for the feed will be
         returned in an array.
         """
         if data_id is None:
@@ -184,9 +195,9 @@ class Client(object):
         feed in the group, where the key is the feed name and value is the new
         data row value.  For example a group 'TestGroup' with feeds 'FeedOne'
         and 'FeedTwo' could be updated by calling:
-        
+
         send_group('TestGroup', {'FeedOne': 'value1', 'FeedTwo': 10})
-        
+
         This would add the value 'value1' to the feed 'FeedOne' and add the
         value 10 to the feed 'FeedTwo'.
 
@@ -207,7 +218,7 @@ class Client(object):
     def receive_next_group(self, group):
         """Retrieve the next unread value from the specified group.  Group can
         be a group ID, group key, or group name.  Returns a Group instance whose
-        feeds property holds an array of Feed instances associated with the 
+        feeds property holds an array of Feed instances associated with the
         group.
         """
         path = "api/groups/{0}/next".format(group)
@@ -223,9 +234,9 @@ class Client(object):
         return Group.from_dict(self._get(path))
 
     def groups(self, group=None):
-        """Retrieve a list of all groups, or the specified group.  If group is 
-        not specified a list of all groups will be returned.  If group is 
-        specified it can be a group name, key, or ID and the requested group 
+        """Retrieve a list of all groups, or the specified group.  If group is
+        not specified a list of all groups will be returned.  If group is
+        specified it can be a group name, key, or ID and the requested group
         will be returned.
         """
         if group is None:
