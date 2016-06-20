@@ -19,6 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import json
+import pkg_resources
+import platform
 
 import requests
 
@@ -26,10 +28,12 @@ from .errors import RequestError, ThrottlingError
 from .model import Data, Feed, Group
 
 # set outgoing version, pulled from setup.py
-import pkg_resources
 version = pkg_resources.require("Adafruit_IO")[0].version
 default_headers = {
-    'User-Agent': 'AdafruitIO-Python/{0}'.format(version)
+    'User-Agent': 'AdafruitIO-Python/{0} ({1}, {2} {3})'.format(version,
+                                                                platform.platform(),
+                                                                platform.python_implementation(),
+                                                                platform.python_version())
 }
 
 class Client(object):
