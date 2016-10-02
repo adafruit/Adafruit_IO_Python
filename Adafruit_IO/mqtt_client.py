@@ -24,7 +24,7 @@ import paho.mqtt.client as mqtt
 
 
 # How long to wait before sending a keep alive (paho-mqtt configuration).
-KEEP_ALIVE_SEC = 3600  # One minute
+KEEP_ALIVE_SEC = 60  # One minute
 
 logger = logging.getLogger(__name__)
 
