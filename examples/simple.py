@@ -28,5 +28,5 @@ print('Latest value from Test: {0}'.format(data.value))
 
 # Finally read the most revent value from feed 'Foo'.
 data = aio.receive('Foo')
-print('Retrieved value from Test has attributes: {0}'.format(data))
-print('Latest value from Test: {0}'.format(data.value))
+print('Retrieved value from Foo has attributes: {0}'.format(data))
+print('Latest value from Foo: {0}'.format(data.value))
