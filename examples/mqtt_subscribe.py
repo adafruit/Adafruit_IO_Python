@@ -24,20 +24,20 @@ def connected(client):
     # This is a good place to subscribe to feed changes.  The client parameter
     # passed to this function is the Adafruit IO MQTT client so you can make
     # calls against it easily.
-    print 'Connected to Adafruit IO!  Listening for {0} changes...'.format(FEED_ID)
+    print('Connected to Adafruit IO!  Listening for {0} changes...'.format(FEED_ID))
     # Subscribe to changes on a feed named DemoFeed.
     client.subscribe(FEED_ID)
 
 def disconnected(client):
     # Disconnected function will be called when the client disconnects.
-    print 'Disconnected from Adafruit IO!'
+    print('Disconnected from Adafruit IO!')
     sys.exit(1)
 
 def message(client, feed_id, payload):
     # Message function will be called when a subscribed feed has a new value.
     # The feed_id parameter identifies the feed, and the payload parameter has
     # the new value.
-    print 'Feed {0} received new value: {1}'.format(feed_id, payload)
+    print('Feed {0} received new value: {1}'.format(feed_id, payload))
 
 
 # Create an MQTT client instance.
