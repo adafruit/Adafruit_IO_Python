@@ -91,9 +91,10 @@ class TestClient(base.IOTestCase):
         io.send('TestFeed', 1)
         io.send('TestFeed', 2)
         result = io.data('TestFeed')
+        print result[0].value
         self.assertEqual(len(result), 2)
-        self.assertEqual(int(result[0].value), 1)
-        self.assertEqual(int(result[1].value), 2)
+        self.assertEqual(int(result[0].value), 2)
+        self.assertEqual(int(result[1].value), 1)
 
     def test_data_on_feed_and_data_id_returns_data(self):
         io = self.get_client()
@@ -164,57 +165,6 @@ class TestClient(base.IOTestCase):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
         self.assertRaises(RequestError, io.delete_feed, 'TestFeed')
-
-    # NOTE: The group tests require some manual setup once before they can run.
-    # Log in to io.adafruit.com and create two feeds (called "GroupFeed1" and
-    # "GroupFeed2" by default).  Then add those feeds to a new Group called 
-    # "GroupTest".  This only has to be done once for your account.  Once group
-    # creation is supported by the API this can be refactored to dynamically
-    # create the group under test.
-    def test_send_and_receive_group(self):
-        io = self.get_client()
-        self.empty_feed(io, 'GroupTest1')
-        self.empty_feed(io, 'GroupTest2')
-        response = io.send_group('GroupTest', {'GroupTest1': 1, 'GroupTest2': 2})
-        self.assertEqual(len(response.feeds), 2)
-        self.assertSetEqual(set(map(lambda x: int(x.stream.value), response.feeds)),
-                            set([1, 2]))  # Compare sets because order might differ.
-        #data = io.receive_group('GroupTest') # Group get by name currently broken.
-        data = io.receive_group(response.id)
-        self.assertEqual(len(data.feeds), 2)
-        self.assertSetEqual(set(map(lambda x: int(x.stream.value), data.feeds)),
-                            set([1, 2]))
-
-    # BUG: Next doesn't return expected metadata: https://github.com/adafruit/io/issues/57
-    @unittest.expectedFailure
-    def test_receive_next_group(self):
-        io = self.get_client()
-        self.empty_feed(io, 'GroupTest1')
-        self.empty_feed(io, 'GroupTest2')
-        response = io.send_group('GroupTest', {'GroupTest1': 42, 'GroupTest2': 99})
-        data = io.receive_next_group(response.id)
-        self.assertEqual(len(data.feeds), 2)
-        self.assertSetEqual(set(map(lambda x: int(x.stream.value), data.feeds)),
-                            set([42, 99]))
-    
-    # BUG: Previous jumps too far back: https://github.com/adafruit/io/issues/55
-    @unittest.expectedFailure
-    def test_receive_previous_group(self):
-        io = self.get_client()
-        self.empty_feed(io, 'GroupTest1')
-        self.empty_feed(io, 'GroupTest2')
-        response = io.send_group('GroupTest', {'GroupTest1': 10, 'GroupTest2': 20})
-        response = io.send_group('GroupTest', {'GroupTest1': 30, 'GroupTest2': 40})
-        io.receive_next_group(response.id)  # Receive 10, 20
-        io.receive_next_group(response.id)  # Receive 30, 40
-        data = io.receive_previous_group(response.id)
-        self.assertEqual(len(data.feeds), 2)
-        self.assertSetEqual(set(map(lambda x: int(x.stream.value), data.feeds)),
-                            set([30, 40]))
-        data = io.receive_previous_group(response.id)
-        self.assertEqual(len(data.feeds), 2)
-        self.assertSetEqual(set(map(lambda x: int(x.stream.value), data.feeds)),
-                            set([10, 20]))
 
     def test_groups_returns_all_groups(self):
         io = self.get_client()

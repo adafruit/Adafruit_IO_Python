@@ -29,7 +29,7 @@ class TestErrors(base.IOTestCase):
 
     def test_request_error_from_bad_key(self):
         io = Client("this is a bad key from a test")
-        with self.assertRaises(RequestError):
+        with self.assertRaises(ThrottlingError):
             io.send("TestStream", 42)
 
     @unittest.skip("Throttling test must be run in isolation to prevent other tests from failing.")

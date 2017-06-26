@@ -41,7 +41,7 @@ class Client(object):
     REST API.  Use this client class to send, receive, and enumerate feed data.
     """
 
-    def __init__(self, key, proxies=None, base_url='https://io.adafruit.com', api_version='v1'):
+    def __init__(self, username, key, proxies=None, base_url='https://io.adafruit.com', api_version = 'v2'):
         """Create an instance of the Adafruit IO REST API client.  Key must be
         provided and set to your Adafruit IO access key value.  Optionaly
         provide a proxies dict in the format used by the requests library, a
@@ -49,15 +49,18 @@ class Client(object):
         the production Adafruit IO service over SSL), and a api_version to
         add support for future API versions.
         """
+        self.username = username
         self.key = key
         self.proxies = proxies
         self.api_version = api_version
+
         # Save URL without trailing slash as it will be added later when
         # constructing the path.
         self.base_url = base_url.rstrip('/')
 
     def _compose_url(self, path):
-        return '{0}/api/{1}/{2}'.format(self.base_url, self.api_version, path)
+        return '{0}/api/{1}/{2}/{3}'.format(self.base_url, self.api_version, self.username, path)
+
 
     def _handle_error(self, response):
         # Handle explicit errors.
@@ -103,7 +106,7 @@ class Client(object):
         will append the provided value to the feed.  Returns a Data instance
         with details about the newly appended row of data.
         """
-        path = "feeds/{0}/data/send".format(feed_name)
+        path = "feeds/{0}/data".format(feed_name)
         return Data.from_dict(self._post(path, {'value': value}))
 
     def append(self, feed, value):
@@ -193,25 +196,6 @@ class Client(object):
         """
         path = "feeds/{0}".format(feed)
         self._delete(path)
-
-    # Group functionality.
-    def send_group(self, group_name, data):
-        """Update all feeds in a group with one call.  Group_name should be the
-        name of a group to update.  Data should be a dict with an item for each
-        feed in the group, where the key is the feed name and value is the new
-        data row value.  For example a group 'TestGroup' with feeds 'FeedOne'
-        and 'FeedTwo' could be updated by calling:
-
-        send_group('TestGroup', {'FeedOne': 'value1', 'FeedTwo': 10})
-
-        This would add the value 'value1' to the feed 'FeedOne' and add the
-        value 10 to the feed 'FeedTwo'.
-
-        After a successful update an instance of Group will be returned with
-        metadata about the updated group.
-        """
-        path = "groups/{0}/send".format(group_name)
-        return Group.from_dict(self._post(path, {'value': data}))
 
     def receive_group(self, group):
         """Retrieve the most recent value for the specified group.  Group can be
