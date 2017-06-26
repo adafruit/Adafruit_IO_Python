@@ -91,7 +91,6 @@ class TestClient(base.IOTestCase):
         io.send('TestFeed', 1)
         io.send('TestFeed', 2)
         result = io.data('TestFeed')
-        print result[0].value
         self.assertEqual(len(result), 2)
         self.assertEqual(int(result[0].value), 2)
         self.assertEqual(int(result[1].value), 1)
