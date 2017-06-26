@@ -6,16 +6,17 @@
 from Adafruit_IO import Client
 
 # Set to your Adafruit IO key.
+ADAFRUIT_IO_USERNAME = 'YOUR ADAFRUIT IO USERNAME'
 ADAFRUIT_IO_KEY = 'YOUR ADAFRUIT IO KEY'
 
 # Create an instance of the REST client.
-aio = Client(ADAFRUIT_IO_KEY)
+aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
 # Send a value to the feed 'Test'.  This will create the feed if it doesn't
 # exist already.
 aio.send('Test', 42)
 
-# Send a string value 'bar' to the feed 'Foo', again creating it if it doesn't 
+# Send a string value 'bar' to the feed 'Foo', again creating it if it doesn't
 # exist already.
 aio.send('Foo', 'bar')
 
