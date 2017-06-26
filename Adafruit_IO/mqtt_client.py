@@ -102,9 +102,11 @@ class MQTTClient(object):
         # Skip calling connect if already connected.
         if self._connected:
             return
+        # If given, use user-provided keepalive, otherwise default to KEEP_ALIVE_SEC
+        keepalive = kwargs.pop('keepalive', KEEP_ALIVE_SEC)
         # Connect to the Adafruit IO MQTT service.
         self._client.connect(self._service_host, port=self._service_port,
-            keepalive=KEEP_ALIVE_SEC, **kwargs)
+            keepalive=keepalive, **kwargs)
 
     def is_connected(self):
         """Returns True if connected to Adafruit.IO and False if not connected.
