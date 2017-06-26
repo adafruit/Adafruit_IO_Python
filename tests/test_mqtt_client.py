@@ -31,11 +31,11 @@ TIMEOUT_SEC = 5  # Max amount of time (in seconds) to wait for asyncronous event
 
 class TestMQTTClient(base.IOTestCase):
 
-    def wait_until_connected(self, client, connect_value=True, 
+    def wait_until_connected(self, client, connect_value=True,
         timeout_sec=TIMEOUT_SEC):
-        # Pump the specified client message loop and wait until it's connected, 
-        # or the specified timeout has ellapsed.  Can specify an explicit 
-        # connection state to wait for by setting connect_value (defaults to 
+        # Pump the specified client message loop and wait until it's connected,
+        # or the specified timeout has ellapsed.  Can specify an explicit
+        # connection state to wait for by setting connect_value (defaults to
         # waiting until connected, i.e. True).
         start = time.time()
         while client.is_connected() != connect_value and \
@@ -83,7 +83,7 @@ class TestMQTTClient(base.IOTestCase):
         client = MQTTClient(self.get_test_username(), self.get_test_key())
         # Save all on_message handler responses.
         messages = []
-        def on_message(mqtt_client, feed, payload):
+        def on_message(mqtt_client, feed, payload, retain):
             self.assertEqual(mqtt_client, client)
             messages.append((feed, payload))
         client.on_message = on_message
