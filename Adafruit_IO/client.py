@@ -41,21 +41,23 @@ class Client(object):
     REST API.  Use this client class to send, receive, and enumerate feed data.
     """
 
-    def __init__(self, key, proxies=None, base_url='https://io.adafruit.com'):
+    def __init__(self, key, proxies=None, base_url='https://io.adafruit.com', api_version='v1'):
         """Create an instance of the Adafruit IO REST API client.  Key must be
         provided and set to your Adafruit IO access key value.  Optionaly
-        provide a proxies dict in the format used by the requests library, and
+        provide a proxies dict in the format used by the requests library, a
         base_url to point at a different Adafruit IO service (the default is
-        the production Adafruit IO service over SSL).
+        the production Adafruit IO service over SSL), and a api_version to
+        add support for future API versions.
         """
         self.key = key
         self.proxies = proxies
+        self.api_version = api_version
         # Save URL without trailing slash as it will be added later when
         # constructing the path.
         self.base_url = base_url.rstrip('/')
 
     def _compose_url(self, path):
-        return '{0}/{1}'.format(self.base_url, path)
+        return '{0}/api/{1}/{2}'.format(self.base_url, self.api_version, path)
 
     def _handle_error(self, response):
         # Handle explicit errors.
@@ -101,7 +103,7 @@ class Client(object):
         will append the provided value to the feed.  Returns a Data instance
         with details about the newly appended row of data.
         """
-        path = "api/feeds/{0}/data/send".format(feed_name)
+        path = "feeds/{0}/data/send".format(feed_name)
         return Data.from_dict(self._post(path, {'value': value}))
 
     def append(self, feed, value):
@@ -117,7 +119,7 @@ class Client(object):
         feed ID, feed key, or feed name.  Returns a Data instance whose value
         property holds the retrieved value.
         """
-        path = "api/feeds/{0}/data/last".format(feed)
+        path = "feeds/{0}/data/last".format(feed)
         return Data.from_dict(self._get(path))
 
     def receive_next(self, feed):
@@ -125,7 +127,7 @@ class Client(object):
         a feed ID, feed key, or feed name.  Returns a Data instance whose value
         property holds the retrieved value.
         """
-        path = "api/feeds/{0}/data/next".format(feed)
+        path = "feeds/{0}/data/next".format(feed)
         return Data.from_dict(self._get(path))
 
     def receive_previous(self, feed):
@@ -133,7 +135,7 @@ class Client(object):
         be a feed ID, feed key, or feed name.  Returns a Data instance whose
         value property holds the retrieved value.
         """
-        path = "api/feeds/{0}/data/previous".format(feed)
+        path = "feeds/{0}/data/previous".format(feed)
         return Data.from_dict(self._get(path))
 
     def data(self, feed, data_id=None):
@@ -143,10 +145,10 @@ class Client(object):
         returned in an array.
         """
         if data_id is None:
-            path = "api/feeds/{0}/data".format(feed)
+            path = "feeds/{0}/data".format(feed)
             return list(map(Data.from_dict, self._get(path)))
         else:
-            path = "api/feeds/{0}/data/{1}".format(feed, data_id)
+            path = "feeds/{0}/data/{1}".format(feed, data_id)
             return Data.from_dict(self._get(path))
 
     def create_data(self, feed, data):
@@ -155,14 +157,14 @@ class Client(object):
         with at least a value property set on it.  Returns a Data instance with
         details about the newly appended row of data.
         """
-        path = "api/feeds/{0}/data".format(feed)
+        path = "feeds/{0}/data".format(feed)
         return Data.from_dict(self._post(path, data._asdict()))
 
     def delete(self, feed, data_id):
         """Delete data from a feed.  Feed can be a feed ID, feed key, or feed
         name.  Data_id must be the ID of the piece of data to delete.
         """
-        path = "api/feeds/{0}/data/{1}".format(feed, data_id)
+        path = "feeds/{0}/data/{1}".format(feed, data_id)
         self._delete(path)
 
     # Feed functionality.
@@ -172,24 +174,24 @@ class Client(object):
         can be a feed name, key, or ID and the requested feed will be returned.
         """
         if feed is None:
-            path = "api/feeds"
+            path = "feeds"
             return list(map(Feed.from_dict, self._get(path)))
         else:
-            path = "api/feeds/{0}".format(feed)
+            path = "feeds/{0}".format(feed)
             return Feed.from_dict(self._get(path))
 
     def create_feed(self, feed):
         """Create the specified feed.  Feed should be an instance of the Feed
         type with at least the name property set.
         """
-        path = "api/feeds/"
+        path = "feeds/"
         return Feed.from_dict(self._post(path, feed._asdict()))
 
     def delete_feed(self, feed):
         """Delete the specified feed.  Feed can be a feed ID, feed key, or feed
         name.
         """
-        path = "api/feeds/{0}".format(feed)
+        path = "feeds/{0}".format(feed)
         self._delete(path)
 
     # Group functionality.
@@ -208,7 +210,7 @@ class Client(object):
         After a successful update an instance of Group will be returned with
         metadata about the updated group.
         """
-        path = "api/groups/{0}/send".format(group_name)
+        path = "groups/{0}/send".format(group_name)
         return Group.from_dict(self._post(path, {'value': data}))
 
     def receive_group(self, group):
@@ -216,7 +218,7 @@ class Client(object):
         a group ID, group key, or group name.  Returns a Group instance whose
         feeds property holds an array of Feed instances associated with the group.
         """
-        path = "api/groups/{0}/last".format(group)
+        path = "groups/{0}/last".format(group)
         return Group.from_dict(self._get(path))
 
     def receive_next_group(self, group):
@@ -225,7 +227,7 @@ class Client(object):
         feeds property holds an array of Feed instances associated with the
         group.
         """
-        path = "api/groups/{0}/next".format(group)
+        path = "groups/{0}/next".format(group)
         return Group.from_dict(self._get(path))
 
     def receive_previous_group(self, group):
@@ -234,7 +236,7 @@ class Client(object):
         whose feeds property holds an array of Feed instances associated with
         the group.
         """
-        path = "api/groups/{0}/previous".format(group)
+        path = "groups/{0}/previous".format(group)
         return Group.from_dict(self._get(path))
 
     def groups(self, group=None):
@@ -244,22 +246,22 @@ class Client(object):
         will be returned.
         """
         if group is None:
-            path = "api/groups/"
+            path = "groups/"
             return list(map(Group.from_dict, self._get(path)))
         else:
-            path = "api/groups/{0}".format(group)
+            path = "groups/{0}".format(group)
             return Group.from_dict(self._get(path))
 
     def create_group(self, group):
         """Create the specified group.  Group should be an instance of the Group
         type with at least the name and feeds property set.
         """
-        path = "api/groups/"
+        path = "groups/"
         return Group.from_dict(self._post(path, group._asdict()))
 
     def delete_group(self, group):
         """Delete the specified group.  Group can be a group ID, group key, or
         group name.
         """
-        path = "api/groups/{0}".format(group)
+        path = "groups/{0}".format(group)
         self._delete(path)
