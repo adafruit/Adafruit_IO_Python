@@ -27,7 +27,7 @@ class TestClient(base.IOTestCase):
 
     def get_client(self):
         # Construct an Adafruit IO REST client and return it.
-        return Client(self.get_test_key(), proxies=PROXIES, base_url=BASE_URL)
+        return Client(self.get_test_username(), self.get_test_key(), proxies=PROXIES, base_url=BASE_URL)
 
     def ensure_feed_deleted(self, client, feed):
         # Delete the specified feed if it exists.
@@ -51,9 +51,11 @@ class TestClient(base.IOTestCase):
         for d in data:
             client.delete(feed, d.id)
 
-    def test_set_key(self):
+    def test_set_key_and_username(self):
+        username = "unique_username"
         key = "unique_key_id"
-        io = Client(key)
+        io = Client(username, key)
+        self.assertEqual(username, io.username)
         self.assertEqual(key, io.key)
 
     def test_send_and_receive(self):
