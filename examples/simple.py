@@ -12,12 +12,10 @@ ADAFRUIT_IO_KEY = 'YOUR ADAFRUIT IO KEY'
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
-# Send a value to the feed 'Test'.  This will create the feed if it doesn't
-# exist already.
+# Send a value to the feed 'Test'.
 aio.send('Test', 42)
 
-# Send a string value 'bar' to the feed 'Foo', again creating it if it doesn't
-# exist already.
+# Send a string value 'bar' to the feed 'Foo'.
 aio.send('Foo', 'bar')
 
 # Now read the most recent value from the feed 'Test'.  Notice that it comes
