@@ -28,7 +28,7 @@ except ImportError:
 
 
 # List of fields/properties that are present on a data object from IO.
-DATA_FIELDS   = [ 'created_epoch', 
+DATA_FIELDS   = [ 'created_epoch',
                   'created_at',
                   'updated_at',
                   'value',
@@ -43,18 +43,16 @@ STREAM_FIELDS = [ 'completed_at',
                   'id',
                   'value' ]
 
-FEED_FIELDS   = [ 'last_value_at',
-                  'name',
-                  'stream',
-                  'created_at',
-                  'updated_at',
-                  'unit_type',
-                  'mode',
+FEED_FIELDS   = [ 'name',
                   'key',
+                  'description',
+                  'unit_type',
                   'unit_symbol',
-                  'fixed',
-                  'last_value',
-                  'id' ]
+                  'history',
+                  'visibility',
+                  'license',
+                  'status_notify',
+                  'status_timeout']
 
 GROUP_FIELDS  = [ 'description',
                   'source_keys',
@@ -98,8 +96,6 @@ def _from_dict(cls, data):
 
 def _feed_from_dict(cls, data):
     params = {x: data.get(x, None) for x in cls._fields}
-    # Parse the stream if provided and generate a stream instance.
-    params['stream'] = Stream.from_dict(data.get('stream', {}))
     return cls(**params)
 
 
