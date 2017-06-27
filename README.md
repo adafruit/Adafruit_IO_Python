@@ -93,9 +93,8 @@ generally are children of the base exception type `AdafruitIOError`.
 
 ### Quickstart
 
-Here's a short example of how to send a new value to a feed (creating the feed
-if it doesn't exist), and how to read the most recent value from the feed.  This
-example uses the REST API.
+Here's a short example of how to send a new value to a feed, and how to read
+the most recent value from the feed.  This example uses the REST API.
 
 ```python
 # Import library and create instance of REST client.
