@@ -1,3 +1,8 @@
+2.0.0
+- Drop support for API V1. Defaults to API V2.
+- Add retain flag option to mqtt on_message
+- Add support for Python3
+
 0.9.0
 ----
 Author: Tony DiCola
