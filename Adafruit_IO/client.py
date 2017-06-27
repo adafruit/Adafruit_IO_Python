@@ -102,14 +102,13 @@ class Client(object):
         self._handle_error(response)
 
     # Data functionality.
-    def send(self, feed_name, value):
-        """Helper function to simplify adding a value to a feed.  Will find the
-        specified feed by name or create a new feed if it doesn't exist, then
-        will append the provided value to the feed.  Returns a Data instance
-        with details about the newly appended row of data.
+    def send(self, feed, value):
+        """Helper function to simplify adding a value to a feed.  Will append the
+        specified value to the feed identified by either name, key, or ID.
+        Returns a Data instance with details about the newly appended row of data.
+        Note that send now operates the same as append.
         """
-        path = "feeds/{0}/data".format(feed_name)
-        return Data.from_dict(self._post(path, {'value': value}))
+        return self.create_data(feed, Data(value=value))
 
     def append(self, feed, value):
         """Helper function to simplify adding a value to a feed.  Will append the
