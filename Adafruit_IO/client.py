@@ -21,6 +21,7 @@
 import json
 import pkg_resources
 import platform
+# import logging
 
 import requests
 
@@ -53,6 +54,7 @@ class Client(object):
         self.key = key
         self.proxies = proxies
         self.api_version = api_version
+        # self.logger = logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
         # Save URL without trailing slash as it will be added later when
         # constructing the path.
@@ -188,7 +190,7 @@ class Client(object):
         type with at least the name property set.
         """
         path = "feeds/"
-        return Feed.from_dict(self._post(path, feed._asdict()))
+        return Feed.from_dict(self._post(path, {"feed": feed._asdict()}))
 
     def delete_feed(self, feed):
         """Delete the specified feed.  Feed can be a feed ID, feed key, or feed
