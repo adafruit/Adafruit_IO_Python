@@ -3,8 +3,8 @@
 # Author: Tony Dicola, Justin Cooper
 
 # Import Adafruit IO REST client.
-from Adafruit_IO import Client, Feed, RequestError
-import json
+from Adafruit_IO import Client, Feed, Data, RequestError
+import datetime
 
 # Set to your Adafruit IO key.
 ADAFRUIT_IO_USERNAME = 'YOUR ADAFRUIT IO USERNAME'
@@ -25,6 +25,13 @@ except RequestError:
 aio.send(temperature.key, 42)
 # works the same as send now
 aio.append(temperature.key, 42)
+
+# setup batch data with custom created_at values
+yesterday = (datetime.datetime.today() - datetime.timedelta(1)).isoformat()
+today = datetime.datetime.now().isoformat()
+data_list = [Data(value=50, created_at=today), Data(value=33, created_at=yesterday)]
+# send batch data
+aio.send_batch_data(temperature.key, data_list)
 
 #
 # Retrieving data

@@ -110,6 +110,16 @@ class Client(object):
         """
         return self.create_data(feed, Data(value=value))
 
+    def send_batch_data(self, feed, data_list):
+        """Create a new row of data in the specified feed.  Feed can be a feed
+        ID, feed key, or feed name.  Data must be an instance of the Data class
+        with at least a value property set on it.  Returns a Data instance with
+        details about the newly appended row of data.
+        """
+        path = "feeds/{0}/data/batch".format(feed)
+        data_dict = type(data_list)((data._asdict() for data in data_list))
+        self._post(path, {"data": data_dict})
+
     def append(self, feed, value):
         """Helper function to simplify adding a value to a feed.  Will append the
         specified value to the feed identified by either name, key, or ID.

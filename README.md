@@ -99,7 +99,7 @@ the most recent value from the feed.  This example uses the REST API.
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Send the value 100 to a feed called 'Foo'.
 aio.send('Foo', 100)
@@ -167,7 +167,7 @@ then pass it to the `create_feed(feed)` function:
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client, Feed
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Create Feed object with name 'Foo'.
 feed = Feed(name='Foo')
@@ -189,7 +189,7 @@ a list of Feed instances:
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get list of feeds.
 feeds = aio.feeds()
@@ -205,7 +205,7 @@ Alternatively you can retrieve the metadata for a single feed by calling
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get feed 'Foo'
 feed = aio.feeds('Foo')
@@ -227,7 +227,7 @@ ALL data in the feed will be deleted after calling this API!
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Delete the feed with name 'Test'.
 aio.delete_feed('Test')
@@ -243,16 +243,29 @@ and selecting certain pieces of data.
 
 Data can be created [after you create a feed](#data-creation), by using the
 `create_data(feed, data)` method and passing it a new Data instance a value.
-See also the [send function](#send) for a simpler way to add a value to feed and
-create the feed in one call.
 
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client, Data
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Create a data item with value 10 in the 'Test' feed.
 data = Data(value=10)
+aio.create_data('Test', data)
+```
+
+#### Data Creation - Batch Uploading
+
+Data can be created [after you create a feed](#data-creation), by using the
+`send_batch_data(feed, data_list)` method and passing it a new Data list.
+
+```python
+# Import library and create instance of REST client.
+from Adafruit_IO import Client, Data
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
+
+# Create a data items in the 'Test' feed.
+data_list = [Data(value=10), Data(value=11)]
 aio.create_data('Test', data)
 ```
 
@@ -267,7 +280,7 @@ to an int or number if you expect a numeric value).
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get an array of all data from feed 'Test'
 data = aio.data('Test')
@@ -285,7 +298,7 @@ class.
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get a specific value by id.
 # This example assumes 1 is a valid data ID in the 'Test' feed
@@ -307,7 +320,7 @@ Values can be deleted by using the `delete(feed, data_id)` method:
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Delete a data value from feed 'Test' with ID 1.
 data = aio.delete('Test', 1)
@@ -320,17 +333,17 @@ There are a few helper methods that can make interacting with data a bit easier.
 ##### Send
 
 You can use the `send(feed_name, value)` method to append a new value to a
-feed in one call.  If the specified feed does not exist it will automatically be
-created.  This is the recommended way to send data to Adafruit IO from the Python
+feed.  This is the recommended way to send data to Adafruit IO from the Python
 REST client.
 
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Add the value 98.6 to the feed 'Temperature'.
-aio.send('Temperature', 98.6)
+test = aio.feeds('test')
+aio.send(test.key, 98.6)
 ```
 
 ##### Receive
@@ -340,7 +353,7 @@ You can get the last inserted value by using the `receive(feed)` method.
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get the last value of the temperature feed.
 data = aio.receive('Test')
@@ -361,7 +374,7 @@ the `receive_next(feed)` method.
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get next unread value from feed 'Test'.
 data = aio.receive_next('Test')
@@ -378,7 +391,7 @@ You can get the last record that has been processed (read) by using the
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get previous read value from feed 'Test'.
 data = aio.receive_previous('Test')
@@ -413,7 +426,7 @@ group, including a `feeds` property which is a tuple of all feeds in the group.
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get list of groups.
 groups = aio.groups()
@@ -429,7 +442,7 @@ You can also get a specific group by ID, key, or name by using the
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Get group called 'GroupTest'.
 group = aio.groups('GroupTest')
@@ -451,7 +464,7 @@ method:
 ```python
 # Import library and create instance of REST client.
 from Adafruit_IO import Client
-aio = Client('YOUR ADAFRUIT IO KEY')
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Delete group called 'GroupTest'.
 aio.delete_group('GroupTest')
