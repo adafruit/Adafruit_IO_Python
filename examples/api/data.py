@@ -22,7 +22,7 @@ except RequestError:
 # Adding data
 #
 
-aio.send(temperature.key, 42)
+aio.send_data(temperature.key, 42)
 # works the same as send now
 aio.append(temperature.key, 42)
 

@@ -102,13 +102,15 @@ class Client(object):
         self._handle_error(response)
 
     # Data functionality.
-    def send(self, feed, value):
+    def send_data(self, feed, value):
         """Helper function to simplify adding a value to a feed.  Will append the
         specified value to the feed identified by either name, key, or ID.
         Returns a Data instance with details about the newly appended row of data.
-        Note that send now operates the same as append.
+        Note that send_data now operates the same as append.
         """
         return self.create_data(feed, Data(value=value))
+
+    send = send_data
 
     def send_batch_data(self, feed, data_list):
         """Create a new row of data in the specified feed.  Feed can be a feed

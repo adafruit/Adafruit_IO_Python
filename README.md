@@ -102,7 +102,7 @@ from Adafruit_IO import Client
 aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Send the value 100 to a feed called 'Foo'.
-aio.send('Foo', 100)
+aio.send_data('Foo', 100)
 
 # Retrieve the most recent value from the feed 'Foo'.
 # Access the value by reading the `value` property on the returned Data object.
@@ -141,7 +141,8 @@ pydoc Adafruit_IO.errors
   * [Update](#data-updating)
   * [Delete](#data-deletion)
   * [Helper Methods](#helper-methods)
-    * [Send](#send)
+    * [Send Data](#send-data)
+    * [Send Batch Data](#send-batch-data)
     * [Receive](#receive)
     * [Next](#next)
     * [Previous](#previous)
@@ -254,21 +255,6 @@ data = Data(value=10)
 aio.create_data('Test', data)
 ```
 
-#### Data Creation - Batch Uploading
-
-Data can be created [after you create a feed](#data-creation), by using the
-`send_batch_data(feed, data_list)` method and passing it a new Data list.
-
-```python
-# Import library and create instance of REST client.
-from Adafruit_IO import Client, Data
-aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
-
-# Create a data items in the 'Test' feed.
-data_list = [Data(value=10), Data(value=11)]
-aio.create_data('Test', data)
-```
-
 #### Data Retrieval
 
 You can get all of the data for a feed by using the `data(feed)` method. The
@@ -330,9 +316,9 @@ data = aio.delete('Test', 1)
 
 There are a few helper methods that can make interacting with data a bit easier.
 
-##### Send
+##### Send Data
 
-You can use the `send(feed_name, value)` method to append a new value to a
+You can use the `send_data(feed_name, value)` method to append a new value to a
 feed.  This is the recommended way to send data to Adafruit IO from the Python
 REST client.
 
@@ -343,7 +329,22 @@ aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
 # Add the value 98.6 to the feed 'Temperature'.
 test = aio.feeds('test')
-aio.send(test.key, 98.6)
+aio.send_data(test.key, 98.6)
+```
+
+#### Send Batch Data
+
+Data can be created [after you create a feed](#data-creation), by using the
+`send_batch_data(feed, data_list)` method and passing it a new Data list.
+
+```python
+# Import library and create instance of REST client.
+from Adafruit_IO import Client, Data
+aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
+
+# Create a data items in the 'Test' feed.
+data_list = [Data(value=10), Data(value=11)]
+aio.create_data('Test', data)
 ```
 
 ##### Receive

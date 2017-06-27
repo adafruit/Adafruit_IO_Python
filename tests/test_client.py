@@ -9,12 +9,12 @@ import base
 
 
 # Default config for tests to run against real Adafruit IO service with no proxy.
-BASE_URL  = 'https://io.adafruit.com/'
+#BASE_URL  = 'https://io.adafruit.com/'
 PROXIES   = None
 
 # Config to run tests against real Adafruit IO service over non-SSL and with a
 # a proxy running on localhost 8888 (good for getting traces with fiddler).
-#BASE_URL  = 'http://io.adafruit.com/'
+BASE_URL  = 'http://io.adafruit.vm/'
 #PROXIES   = {'http': 'http://localhost:8888/'}
 
 
@@ -61,7 +61,7 @@ class TestClient(base.IOTestCase):
     def test_send_and_receive(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
-        response = io.send('TestFeed', 'foo')
+        response = io.send_data('TestFeed', 'foo')
         self.assertEqual(response.value, 'foo')
         data = io.receive('TestFeed')
         self.assertEqual(data.value, 'foo')
@@ -69,7 +69,7 @@ class TestClient(base.IOTestCase):
     def test_receive_next(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
-        io.send('TestFeed', 1)
+        io.send_data('TestFeed', 1)
         data = io.receive_next('TestFeed')
         self.assertEqual(int(data.value), 1)
 
@@ -78,8 +78,8 @@ class TestClient(base.IOTestCase):
     def test_receive_previous(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
-        io.send('TestFeed', 1)
-        io.send('TestFeed', 2)
+        io.send_data('TestFeed', 1)
+        io.send_data('TestFeed', 2)
         io.receive_next('TestFeed')  # Receive 1
         io.receive_next('TestFeed')  # Receive 2
         data = io.receive_previous('TestFeed')
@@ -90,8 +90,8 @@ class TestClient(base.IOTestCase):
     def test_data_on_feed_returns_all_data(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
-        io.send('TestFeed', 1)
-        io.send('TestFeed', 2)
+        io.send_data('TestFeed', 1)
+        io.send_data('TestFeed', 2)
         result = io.data('TestFeed')
         self.assertEqual(len(result), 2)
         self.assertEqual(int(result[0].value), 2)
@@ -100,7 +100,7 @@ class TestClient(base.IOTestCase):
     def test_data_on_feed_and_data_id_returns_data(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
-        data = io.send('TestFeed', 1)
+        data = io.send_data('TestFeed', 1)
         result = io.data('TestFeed', data.id)
         self.assertEqual(data.id, result.id)
         self.assertEqual(int(data.value), int(result.value))
@@ -108,7 +108,7 @@ class TestClient(base.IOTestCase):
     def test_create_data(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
-        io.send('TestFeed', 1)  # Make sure TestFeed exists.
+        io.send_data('TestFeed', 1)  # Make sure TestFeed exists.
         data = Data(value=42)
         result = io.create_data('TestFeed', data)
         self.assertEqual(int(result.value), 42)
@@ -143,7 +143,7 @@ class TestClient(base.IOTestCase):
 
     def test_feeds_returns_all_feeds(self):
         io = self.get_client()
-        io.send('TestFeed', 1)  # Make sure TestFeed exists.
+        io.send_data('TestFeed', 1)  # Make sure TestFeed exists.
         feeds = io.feeds()
         self.assertGreaterEqual(len(feeds), 1)
         names = set(map(lambda x: x.name, feeds))
@@ -151,14 +151,14 @@ class TestClient(base.IOTestCase):
 
     def test_feeds_returns_requested_feed(self):
         io = self.get_client()
-        io.send('TestFeed', 1)  # Make sure TestFeed exists.
+        io.send_data('TestFeed', 1)  # Make sure TestFeed exists.
         result = io.feeds('TestFeed')
         self.assertEqual(result.name, 'TestFeed')
         self.assertEqual(int(result.last_value), 1)
 
     def test_delete_feed(self):
         io = self.get_client()
-        io.send('TestFeed', 'foo')  # Make sure a feed called TestFeed exists.
+        io.send_data('TestFeed', 'foo')  # Make sure a feed called TestFeed exists.
         io.delete_feed('TestFeed')
         self.assertRaises(RequestError, io.receive, 'TestFeed')
 
@@ -189,8 +189,8 @@ class TestClient(base.IOTestCase):
         self.ensure_feed_deleted(io, 'GroupTest4')
         feed1 = io.create_feed(Feed(name='GroupTest3'))
         feed2 = io.create_feed(Feed(name='GroupTest4'))
-        io.send('GroupTest3', 10)
-        io.send('GroupTest4', 20)
+        io.send_data('GroupTest3', 10)
+        io.send_data('GroupTest4', 20)
         group = Group(name='GroupTest2', feeds=[feed1, feed2])
         response = io.create_group(group)
         self.assertEqual(response.name, 'GroupTest2')

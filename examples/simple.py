@@ -13,10 +13,10 @@ ADAFRUIT_IO_KEY = 'YOUR ADAFRUIT IO KEY'
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
 # Send a value to the feed 'Test'.
-aio.send('Test', 42)
+aio.send_data('Test', 42)
 
 # Send a string value 'bar' to the feed 'Foo'.
-aio.send('Foo', 'bar')
+aio.send_data('Foo', 'bar')
 
 # Now read the most recent value from the feed 'Test'.  Notice that it comes
 # back as a string and should be converted to an int if performing calculations
