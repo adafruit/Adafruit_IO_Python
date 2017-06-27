@@ -66,6 +66,16 @@ class TestClient(base.IOTestCase):
         data = io.receive('TestFeed')
         self.assertEqual(data.value, 'foo')
 
+    def test_send_batch_data(self):
+        io = self.get_client()
+        self.ensure_feed_deleted(io, 'TestFeed')
+        feed = Feed(name="TestFeed")
+        test_feed = aio.create_feed(feed)
+        data_list = [Data(value='batch'), Data(value='batch')]
+        io.send_batch_data(test_feed.key, 'foo')
+        data = io.receive('TestFeed')
+        self.assertEqual(data.value, 'batch')
+
     def test_receive_next(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
@@ -108,6 +118,8 @@ class TestClient(base.IOTestCase):
     def test_create_data(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'TestFeed')
+        feed = Feed(name="TestFeed")
+        test_feed = aio.create_feed(feed)
         io.send_data('TestFeed', 1)  # Make sure TestFeed exists.
         data = Data(value=42)
         result = io.create_data('TestFeed', data)
