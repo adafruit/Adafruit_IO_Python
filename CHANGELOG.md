@@ -1,6 +1,5 @@
 2.0.0
-- Drop support for API V1. Defaults to API V2.
-- Add retain flag option to mqtt on_message
+- Drop support for API V1. Defaults to API V2
 - Add support for Python3
 - New send_batch_data method
 

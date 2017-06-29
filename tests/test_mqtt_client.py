@@ -83,7 +83,7 @@ class TestMQTTClient(base.IOTestCase):
         client = MQTTClient(self.get_test_username(), self.get_test_key())
         # Save all on_message handler responses.
         messages = []
-        def on_message(mqtt_client, feed, payload, retain):
+        def on_message(mqtt_client, feed, payload):
             self.assertEqual(mqtt_client, client)
             messages.append((feed, payload))
         client.on_message = on_message
