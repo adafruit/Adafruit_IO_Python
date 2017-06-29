@@ -18,6 +18,9 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
+import json
+
 class AdafruitIOError(Exception):
     """Base class for all Adafruit IO request failures."""
     pass
@@ -26,8 +29,16 @@ class AdafruitIOError(Exception):
 class RequestError(Exception):
     """General error for a failed Adafruit IO request."""
     def __init__(self, response):
-        super(RequestError, self).__init__("Adafruit IO request failed: {0} {1}".format(
-            response.status_code, response.reason))
+        error_message = self._parse_error(response)
+        super(RequestError, self).__init__("Adafruit IO request failed: {0} {1} - {2}".format(
+            response.status_code, response.reason, error_message))
+
+    def _parse_error(self, response):
+        try:
+            content = json.loads(response.content)
+            return ' - '.join(content['error'])
+        except ValueError:
+            return ""
 
 
 class ThrottlingError(AdafruitIOError):
