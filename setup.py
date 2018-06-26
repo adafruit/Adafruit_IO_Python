@@ -1,6 +1,17 @@
 from ez_setup import use_setuptools
 use_setuptools()
-from setuptools import setup
+from setuptools import setup, find_packages
+import re
+
+VERSIONFILE="_version.py"
+verstrline = open(VERSIONFILE, "rt").read()
+VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
+mo = re.search(VSRE, verstrline, re.M)
+if mo:
+    verstr = mo.group(1)
+else:
+    raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
+print('version: ', verstr)
 
 classifiers = ['Development Status :: 4 - Beta',
                'Operating System :: POSIX :: Linux',
@@ -16,7 +27,7 @@ classifiers = ['Development Status :: 4 - Beta',
 
 setup(
     name             = 'adafruit-io',
-    version          = '2.0.0',
+    version          =  verstr,
     author           = 'Justin Cooper',
     author_email     = 'justin@adafruit.com',
     packages         = ['Adafruit_IO'],
