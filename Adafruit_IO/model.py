@@ -38,11 +38,6 @@ DATA_FIELDS   = [ 'created_epoch',
                   'position',
                   'id' ]
 
-STREAM_FIELDS = [ 'completed_at',
-                  'created_at',
-                  'id',
-                  'value' ]
-
 FEED_FIELDS   = [ 'name',
                   'key',
                   'description',
@@ -71,7 +66,6 @@ GROUP_FIELDS  = [ 'description',
 # client it might be prudent to revisit this decision and consider making these
 # full fledged classes that are mutable.
 Data   = namedtuple('Data', DATA_FIELDS)
-Stream = namedtuple('Stream', STREAM_FIELDS)
 Feed   = namedtuple('Feed', FEED_FIELDS)
 Group  = namedtuple('Group', GROUP_FIELDS)
 
@@ -79,10 +73,8 @@ Group  = namedtuple('Group', GROUP_FIELDS)
 # Magic incantation to make all parameters to the initializers optional with a
 # default value of None.
 Data.__new__.__defaults__   = tuple(None for x in DATA_FIELDS)
-Stream.__new__.__defaults__ = tuple(None for x in STREAM_FIELDS)
-Feed.__new__.__defaults__   = tuple(None for x in FEED_FIELDS)
+Feed.__new__.__defaults__ = tuple(None for x in FEED_FIELDS)
 Group.__new__.__defaults__  = tuple(None for x in GROUP_FIELDS)
-
 
 # Define methods to convert from dicts to the data types.
 def _from_dict(cls, data):
@@ -108,6 +100,5 @@ def _group_from_dict(cls, data):
 
 # Now add the from_dict class methods defined above to the data types.
 Data.from_dict   = classmethod(_from_dict)
-Stream.from_dict = classmethod(_from_dict)
 Feed.from_dict   = classmethod(_feed_from_dict)
 Group.from_dict  = classmethod(_group_from_dict)
