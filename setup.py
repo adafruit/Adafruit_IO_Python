@@ -3,8 +3,7 @@ use_setuptools()
 from setuptools import setup, find_packages
 import re
 
-VERSIONFILE="_version.py"
-verstrline = open(VERSIONFILE, "rt").read()
+verstrline = open('Adafruit_IO/_version.py', "rt").read()
 VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
 mo = re.search(VSRE, verstrline, re.M)
 if mo:
