@@ -72,9 +72,11 @@ Group  = namedtuple('Group', GROUP_FIELDS)
 
 # Magic incantation to make all parameters to the initializers optional with a
 # default value of None.
-Data.__new__.__defaults__   = tuple(None for x in DATA_FIELDS)
-Feed.__new__.__defaults__ = tuple(None for x in FEED_FIELDS)
 Group.__new__.__defaults__  = tuple(None for x in GROUP_FIELDS)
+Data.__new__.__defaults__   = tuple(None for x in DATA_FIELDS)
+
+# explicitly set feed values
+Feed.__new__.__defaults__ = (None, None, None, None, None, 'ON', 'Private', None, None, None)
 
 # Define methods to convert from dicts to the data types.
 def _from_dict(cls, data):
