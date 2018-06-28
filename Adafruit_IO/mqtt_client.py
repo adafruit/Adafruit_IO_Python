@@ -35,7 +35,7 @@ class MQTTClient(object):
     using the MQTT protocol.
     """
 
-    def __init__(self, username, key, service_host='io.adafruit.com', service_port=8883):
+    def __init__(self, username, key, service_host='io.adafruit.com', service_port=1883):
         """Create instance of MQTT client.
 
         Required parameters:
@@ -52,7 +52,6 @@ class MQTTClient(object):
         self.on_message    = None
         # Initialize MQTT client.
         self._client = mqtt.Client()
-        self._client.tls_set_context() # mqqts
         self._client.username_pw_set(username, key)
         self._client.on_connect    = self._mqtt_connect
         self._client.on_disconnect = self._mqtt_disconnect
