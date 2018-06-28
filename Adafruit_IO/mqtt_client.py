@@ -21,7 +21,8 @@
 import logging
 
 import paho.mqtt.client as mqtt
-
+import sys
+from .errors import MQTTError, RequestError
 
 # How long to wait before sending a keep alive (paho-mqtt configuration).
 KEEP_ALIVE_SEC = 60  # One minute
@@ -62,11 +63,12 @@ class MQTTClient(object):
         # Check if the result code is success (0) or some error (non-zero) and
         # raise an exception if failed.
         if rc == 0:
+            #raise RequestError(rc)
             self._connected = True
+            print('Connected to Adafruit IO!')
         else:
-            # TODO: Make explicit exception classes for these failures:
-            # 0: Connection successful 1: Connection refused - incorrect protocol version 2: Connection refused - invalid client identifier 3: Connection refused - server unavailable 4: Connection refused - bad username or password 5: Connection refused - not authorised 6-255: Currently unused.
-            raise RuntimeError('Error connecting to Adafruit IO with rc: {0}'.format(rc))
+            # handle RC errors within `errors.py`'s MQTTError class
+            raise MQTTError(rc)
         # Call the on_connect callback if available.
         if self.on_connect is not None:
             self.on_connect(self)
@@ -78,7 +80,8 @@ class MQTTClient(object):
         # log the RC as an error.  Continue on to call any disconnect handler
         # so clients can potentially recover gracefully.
         if rc != 0:
-            logger.debug('Unexpected disconnect with rc: {0}'.format(rc))
+            raise MQTTError(rc)
+        print('Disconnected from Adafruit IO!')
         # Call the on_disconnect callback if available.
         if self.on_disconnect is not None:
             self.on_disconnect(self)
