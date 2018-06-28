@@ -21,7 +21,8 @@
 import logging
 
 import paho.mqtt.client as mqtt
-
+import sys
+from .errors import MQTTError, RequestError
 
 # How long to wait before sending a keep alive (paho-mqtt configuration).
 KEEP_ALIVE_SEC = 60  # One minute
@@ -34,23 +35,29 @@ class MQTTClient(object):
     using the MQTT protocol.
     """
 
-    def __init__(self, username, key, service_host='io.adafruit.com', service_port=1883):
+    def __init__(self, username, key, service_host='io.adafruit.com', secure=True):
         """Create instance of MQTT client.
 
-        Required parameters:
-        - username: The Adafruit.IO username for your account (found on the
-                    accounts site https://accounts.adafruit.com/).
-        - key: The Adafruit.IO access key for your account.
+            :param username: Adafruit.IO Username for your account.
+            :param key: Adafruit IO access key (AIO Key) for your account.
+            :param secure: (optional, boolean) Switches secure/insecure connections
         """
         self._username = username
         self._service_host = service_host
-        self._service_port = service_port
+        if secure:
+            self._service_port = 8883
+        elif not secure:
+            self._service_port = 1883
         # Initialize event callbacks to be None so they don't fire.
         self.on_connect    = None
         self.on_disconnect = None
         self.on_message    = None
         # Initialize MQTT client.
         self._client = mqtt.Client()
+        if secure:
+            self._client.tls_set_context()
+        elif not secure:
+            print('**THIS CONNECTION IS INSECURE** SSL/TLS not supported for this platform')
         self._client.username_pw_set(username, key)
         self._client.on_connect    = self._mqtt_connect
         self._client.on_disconnect = self._mqtt_disconnect
@@ -62,11 +69,12 @@ class MQTTClient(object):
         # Check if the result code is success (0) or some error (non-zero) and
         # raise an exception if failed.
         if rc == 0:
+            #raise RequestError(rc)
             self._connected = True
+            print('Connected to Adafruit IO!')
         else:
-            # TODO: Make explicit exception classes for these failures:
-            # 0: Connection successful 1: Connection refused - incorrect protocol version 2: Connection refused - invalid client identifier 3: Connection refused - server unavailable 4: Connection refused - bad username or password 5: Connection refused - not authorised 6-255: Currently unused.
-            raise RuntimeError('Error connecting to Adafruit IO with rc: {0}'.format(rc))
+            # handle RC errors within `errors.py`'s MQTTError class
+            raise MQTTError(rc)
         # Call the on_connect callback if available.
         if self.on_connect is not None:
             self.on_connect(self)
@@ -78,7 +86,8 @@ class MQTTClient(object):
         # log the RC as an error.  Continue on to call any disconnect handler
         # so clients can potentially recover gracefully.
         if rc != 0:
-            logger.debug('Unexpected disconnect with rc: {0}'.format(rc))
+            raise MQTTError(rc)
+        print('Disconnected from Adafruit IO!')
         # Call the on_disconnect callback if available.
         if self.on_disconnect is not None:
             self.on_disconnect(self)

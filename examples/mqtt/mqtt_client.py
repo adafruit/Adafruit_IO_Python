@@ -38,8 +38,11 @@ def message(client, feed_id, payload):
     print('Feed {0} received new value: {1}'.format(feed_id, payload))
 
 
-# Create an MQTT client instance.
-client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
+# Create a SECURE MQTT client instance
+# Note: This client will always be secure, an optional parameter can be added
+# to make it insecure, comment out the below line
+# client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY, secure=False)
+client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY, secure=False)
 
 # Setup the callback functions defined above.
 client.on_connect    = connected
