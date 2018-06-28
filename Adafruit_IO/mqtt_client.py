@@ -35,29 +35,24 @@ class MQTTClient(object):
     using the MQTT protocol.
     """
 
-    def __init__(self, username, key, service_host='io.adafruit.com', secure=True):
+    def __init__(self, username, key, service_host='io.adafruit.com', service_port=8883):
         """Create instance of MQTT client.
 
-            :param username: Adafruit.IO Username for your account.
-            :param key: Adafruit IO access key (AIO Key) for your account.
-            :param secure: (optional, boolean) Switches secure/insecure connections
+        Required parameters:
+        - username: The Adafruit.IO username for your account (found on the
+                    accounts site https://accounts.adafruit.com/).
+        - key: The Adafruit.IO access key for your account.
         """
         self._username = username
         self._service_host = service_host
-        if secure:
-            self._service_port = 8883
-        elif not secure:
-            self._service_port = 1883
+        self._service_port = service_port
         # Initialize event callbacks to be None so they don't fire.
         self.on_connect    = None
         self.on_disconnect = None
         self.on_message    = None
         # Initialize MQTT client.
         self._client = mqtt.Client()
-        if secure:
-            self._client.tls_set_context()
-        elif not secure:
-            print('**THIS CONNECTION IS INSECURE** SSL/TLS not supported for this platform')
+        self._client.tls_set_context() # mqqts
         self._client.username_pw_set(username, key)
         self._client.on_connect    = self._mqtt_connect
         self._client.on_disconnect = self._mqtt_disconnect
