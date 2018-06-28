@@ -39,10 +39,10 @@ def message(client, feed_id, payload):
 
 
 # Create a SECURE MQTT client instance
-# Note: This client will always be secure, an optional parameter can be added
+# Note: This client will default to secure, an optional parameter can be added
 # to make it insecure, comment out the below line
 # client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY, secure=False)
-client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY, secure=False)
+client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
 # Setup the callback functions defined above.
 client.on_connect    = connected
