@@ -3,42 +3,41 @@
 Table of Contents
 =================
 
+
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 5
     :hidden:
 
     self
 
 .. toctree::
-    :caption: Examples
+    :caption: IO Python Client Usage
+    :maxdepth: 7
 
-    examples
+    quickstart
+    io-basics-examples
+    api-examples
+    mqtt-examples
+
 
 .. toctree::
     :caption: API Reference
-    :maxdepth: 3
+    :maxdepth: 6
 
-    api
+    feeds
+    data
+    groups
 
-.. toctree::
-    :caption: Tutorials
 
-.. todo:: Add any Learn guide links here. If there are none, then simply delete this todo and leave
-    the toctree above for use later.
-
-.. toctree::
-    :caption: Related Products
-
-.. todo:: Add any product links here. If there are none, then simply delete this todo and leave
-    the toctree above for use later.
 
 .. toctree::
     :caption: Other Links
 
-    Download <https://github.com/adafruit/CircuitPython_io-client-python/releases/latest>
-    CircuitPython Reference Documentation <https://circuitpython.readthedocs.io>
-    CircuitPython Support Forum <https://forums.adafruit.com/viewforum.php?f=60>
-    Discord Chat <https://adafru.it/discord>
+    Download Library <https://github.com/adafruit/io-client-python/releases/latest>
+    Adafruit IO <https://io.adafruit.com>
+    Welcome to Adafruit IO Learning Guide <https://learn.adafruit.com/welcome-to-adafruit-io>
+    Adafruit IO Support Forum <https://forums.adafruit.com/viewforum.php?f=56>
+    Discord Chat (#adafruit-io) <https://adafru.it/discord>
     Adafruit Learning System <https://learn.adafruit.com>
     Adafruit Blog <https://blog.adafruit.com>
     Adafruit Store <https://www.adafruit.com>

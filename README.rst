@@ -17,27 +17,6 @@ A Python client and examples for use with `io.adafruit.com <https://io.adafruit.
 
 Compatible with Python 3.6+
 
-
-Client Installation
-===================
-
-Easy Installation
------------------
-
-If you have pip installed (typically with apt-get install python-pip on a Debian/Ubuntu-based system) then run:
-
-.. code-block:: shell
-
-    sudo pip install adafruit-io
-
-
-Manual Installation
--------------------
-.. code-block:: shell
-
-    sudo python setup.py install
-
-
 Documentation
 ================
 
