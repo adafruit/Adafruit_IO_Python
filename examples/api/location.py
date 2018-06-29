@@ -13,8 +13,8 @@ from Adafruit_IO import Client, Feed, Data, RequestError
 import datetime
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_USERNAME = 'YOUR_IO_USERNAME'
-ADAFRUIT_IO_KEY = 'YOUR_IO_KEY'
+ADAFRUIT_IO_USERNAME = 'YOUR_USERNAME'
+ADAFRUIT_IO_KEY = 'YOUR_KEY'
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -28,14 +28,13 @@ except RequestError:
 
 
 # Adafruit HQ Coordinates
+value = 0
 lat = 40.726190
-lon = 74.005334
+lon = -74.005334
 ele = 0
 
-# WIP: send_location_data implementation
-#aio.send_location_data(location.key,lat,lon,ele)
-
-# send implementation
+# new send_location_data implementation
+aio.send_location_data(location.key,value,lat,lon,ele)
 
 
 # send_batch_data implementation
