@@ -130,6 +130,17 @@ class Client(object):
         """
         return self.create_data(feed, Data(value=value))
 
+    def send_location_data(self, feed, value, lat, lon, ele):
+        """Sends locational data to a feed
+
+        args:
+            - lat: latitude 
+            - lon: logitude
+            - ele: elevation
+            - (optional) value: value to send to the feed
+        """
+        return self.create_data(feed, Data(value = value,lat=lat, lon=lon, ele=ele))
+
     def receive(self, feed):
         """Retrieve the most recent value for the specified feed.  Feed can be a
         feed ID, feed key, or feed name.  Returns a Data instance whose value
