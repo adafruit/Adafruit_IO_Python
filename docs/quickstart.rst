@@ -18,7 +18,7 @@ Here's a short example of how to send a new value to a feed (creating the feed i
     data = aio.receive('Foo')
     print('Received value: {0}'.format(data.value))
 
-If you want to be notified of feed changes immediately without polling, consider using the MQTT client. See the examples/mqtt_client.py for an example of using the MQTT client.
+If you want to be notified of feed changes immediately without polling, consider using the MQTT client. See the ``examples/mqtt_client.py`` for an example of using the MQTT client.
 
 Basic Client Usage
 -------------------

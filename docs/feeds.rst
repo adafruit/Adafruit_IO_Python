@@ -5,7 +5,7 @@ Feeds are the core of the Adafruit IO system. The feed holds metadata about data
 
 Feed Creation
 ~~~~~~~~~~~~~
-Create a feed by constructing a Feed instance with at least a name specified, and then pass it to the create_feed(feed) function:
+Create a feed by constructing a Feed instance with at least a name specified, and then pass it to the ``create_feed(feed)`` function:
 
 .. code-block:: python
 
@@ -24,7 +24,7 @@ Note that you can use the send function to create a feed and send it a new value
 
 Feed  Retrieval
 ~~~~~~~~~~~~~~~
-You can get a list of your feeds by using the feeds() method which will return a list of Feed instances:
+You can get a list of your feeds by using the ``feeds()`` method which will return a list of Feed instances:
 
 .. code-block:: python
 
@@ -39,7 +39,7 @@ You can get a list of your feeds by using the feeds() method which will return a
     for f in feeds:
         print('Feed: {0}'.format(f.name))
 
-Alternatively you can retrieve the metadata for a single feed by calling feeds(feed) and passing the name, ID, or key of a feed to retrieve:
+Alternatively you can retrieve the metadata for a single feed by calling ``feeds(feed)`` and passing the ``name``, ``ID``, or ``key`` of a feed to retrieve:
 
 .. code-block:: python
 
@@ -59,7 +59,7 @@ TODO: This is not tested in the python client yet, but calling create_feed with 
 
 Feed  Deletion
 ~~~~~~~~~~~~~~
-You can delete a feed by ID, key, or name by calling delete_feed(feed). ALL data in the feed will be deleted after calling this API!
+You can delete a feed by ID, key, or name by calling ``delete_feed(feed)``. ALL data in the feed will be deleted after calling this API!
 
 .. code-block:: python
 

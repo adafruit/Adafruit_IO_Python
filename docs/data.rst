@@ -37,7 +37,7 @@ You can also get a specific value by ID by using the ``feeds(feed, data_id)`` me
 
 Data Retrieval
 ~~~~~~~~~~~~~
-TODO: This is not tested in the python client, but calling create_data with a Data instance should update it.
+TODO: This is not tested in the python client, but calling ``create_data`` with a Data instance should update it.
 
 Data Deletion
 ~~~~~~~~~~~~~
