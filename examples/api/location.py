@@ -9,17 +9,16 @@ Author(s): Brent Rubell
 """
 
 # Import Adafruit IO REST client.
-from Adafruit_IO import Client, Feed, Data, RequestError
-import datetime
+from Adafruit_IO import Client, Feed, RequestError
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_USERNAME = 'YOUR_USERNAME'
-ADAFRUIT_IO_KEY = 'YOUR_KEY'
+ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
-# create a location feed
+# Create a location feed
 try:
     location = aio.feeds('location')
 except RequestError:
@@ -27,18 +26,11 @@ except RequestError:
     location = aio.create_feed(feed)
 
 
-# Adafruit HQ Coordinates
-value = 0
+# Top Secret Adafruit HQ Location
+value = 1
 lat = 40.726190
 lon = -74.005334
-ele = 0
+ele = 6 # elevation above sea level (meters)
 
-# new send_location_data implementation
-aio.send_location_data(location.key,value,lat,lon,ele)
-
-
-# send_batch_data implementation
-data_list = [Data(value=0, id='value', 
-lat = 40.726190,lon=-74.005334, ele=0)]
-aio.send_batch_data(location.key, data_list)
-
+# Send location data to Adafruit IO
+aio.send_location_data(location.key, value, lat, lon, ele)
