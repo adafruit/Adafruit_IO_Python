@@ -21,6 +21,14 @@
 
 import json
 
+# MQTT RC Error Types
+MQTT_ERRORS   = [ 'Connection successful',
+                  'Incorrect protocol version',
+                  'Invalid Client ID',
+                  'Server unavailable ',
+                  'Bad username or password',
+                  'Not authorized' ]
+
 class AdafruitIOError(Exception):
     """Base class for all Adafruit IO request failures."""
     pass
@@ -49,3 +57,11 @@ class ThrottlingError(AdafruitIOError):
         super(ThrottlingError, self).__init__("Exceeded the limit of Adafruit IO "  \
             "requests in a short period of time. Please reduce the rate of requests " \
             "and try again later.")
+
+class MQTTError(Exception):
+    """Handles connection attempt failed errors.
+    """
+    def __init__(self, response):
+        error = MQTT_ERRORS[response]
+        super(MQTTError, self).__init__(error)
+    pass
