@@ -50,7 +50,7 @@ def on_connect(client, userdata, flags, rc):
 def on_disconnect(client, userdata, rc):
     print('Disconnected!')
 
-def on_message(client, userdata, msg):
+def on_message(client, userdata, msg, retain):
     print('Received on {0}: {1}'.format(msg.topic, msg.payload.decode('utf-8')))
 
 

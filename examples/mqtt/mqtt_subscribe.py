@@ -33,7 +33,7 @@ def disconnected(client):
     print('Disconnected from Adafruit IO!')
     sys.exit(1)
 
-def message(client, feed_id, payload):
+def message(client, feed_id, payload, retain):
     # Message function will be called when a subscribed feed has a new value.
     # The feed_id parameter identifies the feed, and the payload parameter has
     # the new value.
