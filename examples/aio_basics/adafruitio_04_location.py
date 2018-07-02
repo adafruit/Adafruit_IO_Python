@@ -12,8 +12,8 @@ import time
 from Adafruit_IO import Client, Feed, RequestError
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_USERNAME = 'YOUR-USERNAME'
-ADAFRUIT_IO_KEY = 'YOUR-KEY'
+ADAFRUIT_IO_USERNAME = 'YOUR_USERNAME'
+ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -50,9 +50,8 @@ while True:
     ele += 1
 
     # Read the location data back from IO
+    print('\nData Received by Adafruit IO Feed:\n')
     data = aio.receive(location.key)
-    print(data)
-    print('\nData from Adafruit IO Feed:\n')
     print('\tValue: {0}\n\tLat: {1}\n\tLon: {2}\n\tEle: {3}'.format(data.value, data.lat, data.lon, data.ele))
-    # wait loop_delay seconds to avoid throttle
+    # wait loop_delay seconds to avoid api throttle
     time.sleep(loop_delay)
