@@ -57,5 +57,8 @@ Your program can use either or both the REST API client and MQTT client, dependi
 
 Error Handling
 ---------------
-The python client library will raise an exception if it runs into an error it cannot handle. You should be prepared to catch explicit exceptions you know how to handle, or bubble them up to the user as an error. Adafruit IO exceptions generally are children of the base exception type AdafruitIOError.
+The python client library will raise an exception if it runs into an error it cannot handle. 
+You should be prepared to catch explicit exceptions you know how to handle, or bubble them up to the user as an error. 
+Adafruit IO exceptions generally are children of the base exception type AdafruitIOError. There are also three sub-exceptions to handle, depending on which if you're using the REST API 
+or MQTT Client: MQTTError (for the MQTT Client), RequestError (REST Client), and ThrottlingError (REST Client).
 

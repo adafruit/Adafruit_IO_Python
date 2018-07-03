@@ -35,9 +35,6 @@ You can get all of the data for a feed by using the ``data(feed)`` method. The r
 
 You can also get a specific value by ID by using the ``feeds(feed, data_id)`` method. This will return a single piece of feed data with the provided data ID if it exists in the feed. The returned object will be an instance of the Data class.
 
-Data Retrieval
-~~~~~~~~~~~~~
-TODO: This is not tested in the python client, but calling ``create_data`` with a Data instance should update it.
 
 Data Deletion
 ~~~~~~~~~~~~~
@@ -142,5 +139,6 @@ You can get the last record that has been processed (read) by using the ``receiv
 
 Publishing and Subscribing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-You can get a readable stream of live data from your feed using the included MQTT client class.
+You can get a readable stream of live data from your feed using the included MQTT client class:
 
+.. literalinclude:: ../examples/mqtt/mqtt_subscribe.py

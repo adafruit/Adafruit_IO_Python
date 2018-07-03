@@ -53,9 +53,6 @@ Alternatively you can retrieve the metadata for a single feed by calling ``feeds
     # Print out the feed metadata.
     print(feed)
 
-Feed  Retrieval
-~~~~~~~~~~~~~~~
-TODO: This is not tested in the python client yet, but calling create_feed with a Feed instance should update the feed.
 
 Feed  Deletion
 ~~~~~~~~~~~~~~
