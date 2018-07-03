@@ -1,11 +1,26 @@
 Groups
-----
+-------
 Groups allow you to update and retrieve multiple feeds with one request. You can add feeds to multiple groups.
 
 
 Group Creation
 ~~~~~~~~~~~~~~
-Groups must be created in the UI, group creation is unsupported with the API.
+The creation of groups is now supported in API-V2, rejoyce! The process of creating a group is similar to creating a feed.
+Create a group by constructing a Group instance with at least a name specified, and then pass it to the ``create_group(group)`` function:
+
+.. code-block:: python
+
+    # Import library and create instance of REST client.
+    from Adafruit_IO import Client, Group
+    aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
+
+    # Create a group instance
+    group = Group(name="weatherstation")
+
+    # Send the group for IO to create:
+    # The returned object will contain all the details about the created group.
+    group = aio.create_group(group
+
 
 Group Retrieval
 ~~~~~~~~~~~~~~~
@@ -30,6 +45,7 @@ This will return a list of Group instances. Each Group instance has metadata abo
 You can also get a specific group by ID, key, or name by using the ``groups(group)`` method:
 
 .. code-block:: python
+
     # Import library and create instance of REST client.
     from Adafruit_IO import Client
     aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
