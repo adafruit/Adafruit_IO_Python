@@ -10,7 +10,7 @@ Author(s): Brent Rubell, Todd Treece
 import time
 
 # import Adafruit Blinka
-from digitalio import DigitalInOut, Direction
+import digitalio
 import board
 
 # import Adafruit IO REST client.
@@ -36,7 +36,7 @@ except RequestError: # create a digital feed
 
 # led set up
 led = digitalio.DigitalInOut(board.D5)
-led.direction = Direction.OUTPUT
+led.direction = digitalio.Direction.OUTPUT
 
 
 while True:
@@ -48,6 +48,5 @@ while True:
 
     # set the LED to the feed value
     led.value = int(data.value)
-    print(led.value)
-    # timeout so we dont flood adafruitio with requests
+    # timeout so we dont flood adafruit-io with requests
     time.sleep(0.5)

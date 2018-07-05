@@ -10,8 +10,8 @@ Author(s): Brent Rubell, Todd Treece
 import time
 
 # import Adafruit Blinka
-from digitalio import DigitalInOut, Direction, Pull
 import board
+import digitalio
 
 # import Adafruit IO REST client.
 from Adafruit_IO import Client, Feed, RequestError
@@ -36,8 +36,8 @@ except RequestError: # create a digital feed
 
 # button set up
 button = digitalio.DigitalInOut(board.D12)
-button.direction = Direction.INPUT
-button.pull = None
+button.direction = digitalio.Direction.INPUT
+button.pull = digitalio.Pull.UP
 button_current = 0
 
 
@@ -47,7 +47,7 @@ while True:
     else:
         button_current = 0
 
-    print('Sending Value to IO: ', button_current)
+    print('Button -> ', button_current)
     aio.send(digital.key, button_current)
 
     # avoid timeout from adafruit io
