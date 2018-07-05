@@ -6,12 +6,14 @@ Adafruit IO Python
     :alt: Documentation Status
 
 .. image:: https://img.shields.io/discord/327254708534116352.svg
-    :target: https://discord.gg/nBQh6qu
-    :alt: Discord
+   :target: https://discord.gg/nBQh6qu
+   :alt: Chat
 
 .. image:: https://travis-ci.org/adafruit/io-client-python.svg?branch=master
     :target: https://travis-ci.org/adafruit/io-client-python
     :alt: Build Status
+
+.. image:: https://cdn-learn.adafruit.com/assets/assets/000/057/153/original/adafruit_io_iopython.png?1530802073
 
 A Python client and examples for use with `io.adafruit.com <https://io.adafruit.com>`_. 
 
