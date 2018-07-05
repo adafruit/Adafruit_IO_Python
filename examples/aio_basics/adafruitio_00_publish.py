@@ -6,7 +6,9 @@ value to a feed
 
 Author(s): Brent Rubell, Todd Treece for Adafruit Industries
 """
+# Import standard python modules
 import time
+
 # Import Adafruit IO REST client.
 from Adafruit_IO import Client, Feed
 
@@ -14,8 +16,13 @@ from Adafruit_IO import Client, Feed
 run_count = 0
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+# Remember, your key is a secret,
+# so make sure not to publish it when you publish this code!
 ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
+
+# Set to your Adafruit IO username.
+# (go to https://accounts.adafruit.com to find your username)
+ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -32,4 +39,3 @@ while True:
     # Adafruit IO is rate-limited for publishing
     # so we'll need a delay for calls to aio.send_data()
     time.sleep(3)
-

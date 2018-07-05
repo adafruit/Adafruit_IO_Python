@@ -6,20 +6,24 @@ from the Adafruit IO Python Client
 
 Author(s): Brent Rubell, Todd Treece
 """
-# import python system libraries
+# Import standard python modules
 import time
 
 # import Adafruit Blinka
 from digitalio import DigitalInOut, Direction
-import digitalio
 import board
 
 # import Adafruit IO REST client.
 from Adafruit_IO import Client, Feed, RequestError
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+# Remember, your key is a secret,
+# so make sure not to publish it when you publish this code!
 ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
+
+# Set to your Adafruit IO username.
+# (go to https://accounts.adafruit.com to find your username)
+ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -33,6 +37,7 @@ except RequestError: # create a digital feed
 # led set up
 led = digitalio.DigitalInOut(board.D5)
 led.direction = Direction.OUTPUT
+
 
 while True:
     data = aio.receive(digital.key)

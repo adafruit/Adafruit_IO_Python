@@ -8,22 +8,27 @@ Author(s): Brent Rubell, Todd Treece for Adafruit Industries
 # Import standard python modules.
 import sys
 
-# This example uses the MQTTClient, instead of the REST client
+# This example uses the MQTTClient instead of the REST client
 from Adafruit_IO import MQTTClient
 
-# Set to your Adafruit IO key & username below.
-ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+# Set to your Adafruit IO key.
+# Remember, your key is a secret,
+# so make sure not to publish it when you publish this code!
 ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
+
+# Set to your Adafruit IO username.
+# (go to https://accounts.adafruit.com to find your username)
+ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
 # Set to the ID of the feed to subscribe to for updates.
 FEED_ID = 'counter'
 
 # Define callback functions which will be called when certain events happen.
 def connected(client):
-    """Connected function will be called when the client is connected to Adafruit IO.
-    This is a good place to subscribe to feed changes.  The client parameter
-    passed to this function is the Adafruit IO MQTT client so you can make
-    calls against it easily.
+    """Connected function will be called when the client is connected to
+    Adafruit IO.This is a good place to subscribe to feed changes.  The client
+    parameter passed to this function is the Adafruit IO MQTT client so you
+    can make calls against it easily.
     """
     # Subscribe to changes on a feed named Counter.
     print('Subscribing to Feed {0}'.format(FEED_ID))
