@@ -100,7 +100,10 @@ class MQTTClient(object):
         if self.on_message is not None and self._username == parsed_topic[0]:
             feed = parsed_topic[2]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
-            self.on_message(self, feed, payload)
+        elif self.on_message is not None and parsed_topic[0] == 'time':
+            feed = parsed_topic[0]
+            payload = msg.payload.decode('utf-8')
+        self.on_message(self, feed, payload)
 
     def connect(self, **kwargs):
         """Connect to the Adafruit.IO service.  Must be called before any loop
@@ -162,6 +165,22 @@ class MQTTClient(object):
         the on_message function will be called with the feed_id and new value.
         """
         self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_id))
+
+    def subscribe_time(self, time):
+        """Subscribe to changes on the Adafruit IO time feeds. When the feed is
+        updated, the on_message function will be called and publish a new value:
+        time =
+            millis: milliseconds
+            seconds: seconds
+            iso: ISO-8601 (https://en.wikipedia.org/wiki/ISO_8601)
+        """
+        if time == 'millis' or time == 'seconds':
+            self._client.subscribe('time/{0}'.format(time))
+        elif time == 'iso':
+            self._client.subscribe('time/ISO-8601')
+        else:
+            print('ERROR: Invalid time type specified')
+            return
 
     def publish(self, feed_id, value):
         """Publish a value to a specified feed.

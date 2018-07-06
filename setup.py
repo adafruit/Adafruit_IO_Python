@@ -35,6 +35,6 @@ setup(
     keywords         = 'Adafruit IO',
     classifiers      = classifiers,
     description      = 'Client library for Adafruit IO (http://io.adafruit.com/).',
-    long_description = open('README.md').read(),
+    long_description = open('README.rst').read(),
     install_requires = ["requests", "paho-mqtt"]
 )
