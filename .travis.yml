@@ -1,0 +1,23 @@
+# .travis.yml for Adafruit IO Python Client Library
+
+dist: trusty
+sudo: false
+language: python
+python:
+    - "3.6"
+
+cache:
+    pip: true
+
+install:
+  - pip install pylint Sphinx sphinx-rtd-theme
+
+script:
+  # test adafruit_io_basics examples
+  - pylint --disable=missing-docstring,invalid-name examples/aio_basics/*.py
+  # test API examples
+   pylint --disable=missing-docstring,invalid-name examples/api/*.py
+   # test MQTT examples
+    pylint --disable=missing-docstring,invalid-name examples/aio_basics/*.py 
+  # finally, let's build the docs
+  - cd docs && sphinx-build -E -W -b html . _build/html

@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Adafruit Industries
+# Copyright (c) 2018 Adafruit Industries
 # Authors: Justin Cooper & Tony DiCola
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -60,8 +60,11 @@ class Client(object):
         # constructing the path.
         self.base_url = base_url.rstrip('/')
 
-    def _compose_url(self, path):
-        return '{0}/api/{1}/{2}/{3}'.format(self.base_url, self.api_version, self.username, path)
+    def _compose_url(self, path, is_time=None):
+        if not is_time:
+            return '{0}/api/{1}/{2}/{3}'.format(self.base_url, self.api_version, self.username, path)
+        else: # return a call to https://io.adafruit.com/api/v2/time/{unit}
+            return '{0}/api/{1}/{2}'.format(self.base_url, self.api_version, path)
 
 
     def _handle_error(self, response):
@@ -78,12 +81,15 @@ class Client(object):
         headers.update(given)
         return headers
 
-    def _get(self, path):
-        response = requests.get(self._compose_url(path),
+    def _get(self, path, is_time=None):
+        response = requests.get(self._compose_url(path, is_time),
                                 headers=self._headers({'X-AIO-Key': self.key}),
                                 proxies=self.proxies)
         self._handle_error(response)
-        return response.json()
+        if not is_time:
+            return response.json()
+        else: # time doesn't need to serialize into json, just return text
+            return response.text
 
     def _post(self, path, data):
         response = requests.post(self._compose_url(path),
@@ -129,6 +135,26 @@ class Client(object):
         Note that unlike send the feed should exist before calling append.
         """
         return self.create_data(feed, Data(value=value))
+
+    def send_location_data(self, feed, value, lat, lon, ele):
+        """Sends locational data to a feed
+
+        args:
+            - lat: latitude 
+            - lon: logitude
+            - ele: elevation
+            - (optional) value: value to send to the feed
+        """
+        return self.create_data(feed, Data(value = value,lat=lat, lon=lon, ele=ele))
+
+    def receive_time(self, time):
+        """Returns the time from the Adafruit IO server.
+
+        args:
+            - time (string): millis, seconds, ISO-8601
+        """
+        timepath = "time/{0}".format(time)
+        return self._get(timepath, is_time=True)
 
     def receive(self, feed):
         """Retrieve the most recent value for the specified feed.  Feed can be a

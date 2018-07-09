@@ -18,7 +18,6 @@ classifiers = ['Development Status :: 4 - Beta',
                'Operating System :: MacOS',
                'License :: OSI Approved :: MIT License',
                'Intended Audience :: Developers',
-               'Programming Language :: Python :: 2.7',
                'Programming Language :: Python :: 3',
                'Topic :: Software Development',
                'Topic :: Home Automation',
@@ -36,6 +35,6 @@ setup(
     keywords         = 'Adafruit IO',
     classifiers      = classifiers,
     description      = 'Client library for Adafruit IO (http://io.adafruit.com/).',
-    long_description = open('README.md').read(),
+    long_description = open('README.rst').read(),
     install_requires = ["requests", "paho-mqtt"]
 )

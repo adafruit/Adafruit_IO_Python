@@ -36,7 +36,10 @@ DATA_FIELDS   = [ 'created_epoch',
                   'feed_id',
                   'expiration',
                   'position',
-                  'id' ]
+                  'id',
+                  'lat',
+                  'lon',
+                  'ele']
 
 FEED_FIELDS   = [ 'name',
                   'key',

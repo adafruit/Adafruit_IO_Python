@@ -1,4 +1,4 @@
-Copyright (c) 2014 Adafruit
+Copyright (c) 2014-2018 Adafruit
 Author: Justin Cooper and Tony DiCola
 
 MIT License

@@ -19,6 +19,7 @@ ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
 ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
 
+
 # Define callback functions which will be called when certain events happen.
 def connected(client):
     # Connected function will be called when the client is connected to Adafruit IO.
