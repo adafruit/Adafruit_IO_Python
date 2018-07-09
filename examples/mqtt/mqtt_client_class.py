@@ -9,11 +9,15 @@ import time
 # Import Adafruit IO MQTT client.
 from Adafruit_IO import MQTTClient
 
+# Set to your Adafruit IO key.
+# Remember, your key is a secret,
+# so make sure not to publish it when you publish this code!
+ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
 
-# Set to your Adafruit IO key & username below.
-ADAFRUIT_IO_KEY      = 'YOUR ADAFRUIT IO KEY'
-ADAFRUIT_IO_USERNAME = 'YOUR ADAFRUIT IO USERNAME'  # See https://accounts.adafruit.com
-                                                    # to find your username.
+# Set to your Adafruit IO username.
+# (go to https://accounts.adafruit.com to find your username)
+ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+
 
 
 # Define callback functions which will be called when certain events happen.
@@ -31,17 +35,14 @@ def disconnected(client):
     print('Disconnected from Adafruit IO!')
     sys.exit(1)
 
-def message(client, feed_id, payload):
+def message(client, feed_id, payload, retain):
     # Message function will be called when a subscribed feed has a new value.
     # The feed_id parameter identifies the feed, and the payload parameter has
     # the new value.
     print('Feed {0} received new value: {1}'.format(feed_id, payload))
 
 
-# Create a SECURE MQTT client instance
-# Note: This client will default to secure, an optional parameter can be added
-# to make it insecure, comment out the below line
-# client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY, secure=False)
+# Create an MQTT client instance.
 client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
 # Setup the callback functions defined above.

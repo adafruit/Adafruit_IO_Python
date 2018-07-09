@@ -29,3 +29,6 @@ nosetests.xml
 
 # Translations
 *.mo
+
+# Local files
+release.md

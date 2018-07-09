@@ -7,8 +7,13 @@ from Adafruit_IO import Client, Feed, Data, RequestError
 import datetime
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_USERNAME = 'YOUR ADAFRUIT IO USERNAME'
-ADAFRUIT_IO_KEY = 'YOUR ADAFRUIT IO KEY'
+# Remember, your key is a secret,
+# so make sure not to publish it when you publish this code!
+ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
+
+# Set to your Adafruit IO username.
+# (go to https://accounts.adafruit.com to find your username)
+ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
