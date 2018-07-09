@@ -18,7 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from Adafruit_IO import Data
+from Adafruit_IO import Data, Feed, Group
 
 import base
 
@@ -26,6 +26,8 @@ import base
 class TestData(base.IOTestCase):
 
     def test_data_properties_are_optional(self):
+        """Data fields have optional properties
+        """
         data = Data(value='foo', feed_id=10)
         self.assertEqual(data.value, 'foo')
         self.assertEqual(data.feed_id, 10)
@@ -36,6 +38,37 @@ class TestData(base.IOTestCase):
         self.assertIsNone(data.expiration)
         self.assertIsNone(data.position)
         self.assertIsNone(data.id)
+        self.assertIsNone(data.lat)
+        self.assertIsNone(data.lon)
+        self.assertIsNone(data.ele)
+
+
+    def test_feeds_have_explicitly_set_values(self):
+        """ Let's make sure feeds are explicitly set from within the model:
+        Feed.__new__.__defaults__ = (None, None, None, None, None, 'ON', 'Private', None, None, None)
+        """
+        feed = Feed(name='foo')
+        self.assertEqual(feed.name, 'foo')
+        self.assertIsNone(feed.key)
+        self.assertIsNone(feed.description)
+        self.assertIsNone(feed.unit_type)
+        self.assertIsNone(feed.unit_symbol)
+        self.assertEqual(feed.history, 'ON')
+        self.assertEqual(feed.visibility, 'Private')
+        self.assertIsNone(feed.license)
+        self.assertIsNone(feed.status_notify)
+        self.assertIsNone(feed.status_timeout)
+    
+    def test_group_properties_are_optional(self):
+        group = Group(name="foo")
+        self.assertEqual(group.name, 'foo')
+        self.assertIsNone(group.description)
+        self.assertIsNone(group.source_keys)
+        self.assertIsNone(group.id)
+        self.assertIsNone(group.key)
+        self.assertIsNone(group.feeds)
+        self.assertIsNone(group.properties)
+
 
     def test_from_dict_ignores_unknown_items(self):
         data = Data.from_dict({'value': 'foo', 'feed_id': 10, 'unknown_param': 42})
