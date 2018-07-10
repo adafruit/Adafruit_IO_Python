@@ -25,6 +25,7 @@ class TestClient(base.IOTestCase):
     #def tearDown(self):
     #    time.sleep(30.0)
 
+    # Helper Methods
     def get_client(self):
         # Construct an Adafruit IO REST client and return it.
         return Client(self.get_test_username(), self.get_test_key(), proxies=PROXIES, base_url=BASE_URL, api_version = "v2")
@@ -51,7 +52,7 @@ class TestClient(base.IOTestCase):
         for d in data:
             client.delete(feed, d.id)
 
-
+    # Test Adafruit IO Key Functionality
     def test_set_key_and_username(self):
         username = "unique_username"
         key = "unique_key_id"
@@ -59,6 +60,7 @@ class TestClient(base.IOTestCase):
         self.assertEqual(username, io.username)
         self.assertEqual(key, io.key)
 
+    # Test Data Functionality
     def test_send_and_receive(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
@@ -85,19 +87,18 @@ class TestClient(base.IOTestCase):
         data = io.receive_next('testfeed')
         self.assertEqual(int(data.value), 1)
 
-    # BUG: Previous jumps too far back: https://github.com/adafruit/io/issues/55
-    @unittest.expectedFailure
     def test_receive_previous(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        io.send_data('TestFeed', 1)
-        io.send_data('TestFeed', 2)
-        io.receive_next('TestFeed')  # Receive 1
-        io.receive_next('TestFeed')  # Receive 2
-        data = io.receive_previous('TestFeed')
-        self.assertEqual(int(data.value), 2)
-        data = io.receive_previous('TestFeed')
+        self.ensure_feed_deleted(io, 'testfeed')
+        test_feed = io.create_feed(Feed(name="testfeed"))
+        io.send_data(test_feed.key, 1)
+        io.receive_next(test_feed.key)  # Receive 1
+        data = io.receive_previous(test_feed.key)
         self.assertEqual(int(data.value), 1)
+        io.send_data(test_feed.key, 2)
+        io.receive_next(test_feed.key)  # Receive 2
+        data = io.receive_previous(test_feed.key)
+        self.assertEqual(int(data.value), 2)
 
     def test_data_on_feed_returns_all_data(self):
         io = self.get_client()
@@ -127,7 +128,20 @@ class TestClient(base.IOTestCase):
         data = Data(value=42)
         result = aio.create_data('testfeed', data)
         self.assertEqual(int(result.value), 42)
+    
+    def test_location_data(self):
+        aio = self.get_client()
+        self.ensure_feed_deleted(aio, 'testlocfeed')
+        test_feed = aio.create_feed(Feed(name="testlocfeed"))
+        aio.send_location_data(test_feed.key, 0, 40, -74, 6)
+        data = aio.receive(test_feed.key)
+        self.assertEqual(int(data.value), 0)
+        self.assertEqual(float(data.lat), 40.0)
+        self.assertEqual(float(data.lon), -74.0)
+        self.assertEqual(float(data.ele), 6.0)
 
+
+    # Test Feed Functionality
     def test_append_by_feed_name(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
@@ -178,6 +192,8 @@ class TestClient(base.IOTestCase):
         self.ensure_feed_deleted(io, 'testfeed')
         self.assertRaises(RequestError, io.delete_feed, 'testfeed')
 
+
+    # Test Group Functionality
     def test_groups_returns_all_groups(self):
         io = self.get_client()
         groups = io.groups()
@@ -192,31 +208,23 @@ class TestClient(base.IOTestCase):
         self.assertEqual(response.name, 'grouptest')
         self.assertEqual(response.key, 'grouptest')
 
-    # BUG: Group create doesn't work: https://github.com/adafruit/io/issues/58
-    @unittest.expectedFailure
-    def test_create_group(self):
-        io = self.get_client()
-        self.ensure_group_deleted(io, 'GroupTest2')
-        self.ensure_feed_deleted(io, 'GroupTest3')
-        self.ensure_feed_deleted(io, 'GroupTest4')
-        feed1 = io.create_feed(Feed(name='GroupTest3'))
-        feed2 = io.create_feed(Feed(name='GroupTest4'))
-        io.send_data('GroupTest3', 10)
-        io.send_data('GroupTest4', 20)
-        group = Group(name='GroupTest2', feeds=[feed1, feed2])
-        response = io.create_group(group)
-        self.assertEqual(response.name, 'GroupTest2')
-        self.assertEqual(len(response.feeds), 2)
-
-    # BUG: Group create doesn't work: https://github.com/adafruit/io/issues/58
-    @unittest.expectedFailure
     def test_delete_group(self):
         io = self.get_client()
-        self.ensure_group_deleted(io, 'GroupDeleteTest')
-        group = io.create_group(Group(name='GroupDeleteTest'))
-        io.delete_group('GroupDeleteTest')
-        self.assertRaises(RequestError, io.groups, 'GroupDeleteTest')
+        self.ensure_group_deleted(io, 'groupdeletetest')
+        group = io.create_group(Group(name='groupdeletetest'))
+        io.delete_group('groupdeletetest')
+        self.assertRaises(RequestError, io.groups, 'groupdeletetest')
 
-    # TODO: Get by group name, key, and ID
-    # TODO: Get data by name, key, ID
-    # TODO: Tests around Adafruit IO keys (make multiple, test they work, etc.)
+    def test_receive_group_by_name(self):
+        io = self.get_client()
+        self.ensure_group_deleted(io, 'grouprx')
+        group = io.create_group(Group(name='grouprx'))
+        response = io.groups(group.name)
+        self.assertEqual(response.name, 'grouprx')
+
+    def test_receive_group_by_key(self):
+        io = self.get_client()
+        self.ensure_group_deleted(io, 'grouprx')
+        group = io.create_group(Group(name='grouprx'))
+        response = io.groups(group.key)
+        self.assertEqual(response.key, 'grouprx')

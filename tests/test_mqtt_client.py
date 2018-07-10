@@ -113,13 +113,13 @@ class TestMQTTClient(base.IOTestCase):
         client.connect()
         self.wait_until_connected(client)
         # Subscribe to changes on a feed.
-        client.subscribe('TestFeed')
+        client.subscribe('testfeed')
         # Publish a message on the feed.
-        client.publish('TestFeed', 42)
+        client.publish('testfeed', 42)
         # Wait for message to be received or timeout.
         start = time.time()
         while len(messages) == 0 and (time.time() - start) < TIMEOUT_SEC:
             client.loop()
             time.sleep(0)
         # Verify one update message with payload is received.
-        self.assertListEqual(messages, [('TestFeed', '42')])
+        self.assertListEqual(messages, [('testfeed', '42')])
