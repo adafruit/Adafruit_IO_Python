@@ -9,15 +9,15 @@ python:
 cache:
     pip: true
 
+before_install:
+  #pip install -r requirements.txt
+
 install:
   - pip install pylint Sphinx sphinx-rtd-theme
+  - pip install .
 
 script:
-  # test adafruit_io_basics examples
-  - pylint --disable=missing-docstring,invalid-name examples/aio_basics/*.py
-  # test API examples
-   pylint --disable=missing-docstring,invalid-name examples/api/*.py
-   # test MQTT examples
-    pylint --disable=missing-docstring,invalid-name examples/aio_basics/*.py 
-  # finally, let's build the docs
+  # run /tests/
+  - python -m unittest discover
+  # build library docs
   - cd docs && sphinx-build -E -W -b html . _build/html
