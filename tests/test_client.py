@@ -27,7 +27,7 @@ class TestClient(base.IOTestCase):
 
     def get_client(self):
         # Construct an Adafruit IO REST client and return it.
-        return Client(self.get_test_username(), self.get_test_key(), proxies=PROXIES, base_url=BASE_URL)
+        return Client(self.get_test_username(), self.get_test_key(), proxies=PROXIES, base_url=BASE_URL, api_version = "v2")
 
     def ensure_feed_deleted(self, client, feed):
         # Delete the specified feed if it exists.
@@ -50,6 +50,7 @@ class TestClient(base.IOTestCase):
         data = client.data(feed)
         for d in data:
             client.delete(feed, d.id)
+    
 
     def test_set_key_and_username(self):
         username = "unique_username"
@@ -60,27 +61,28 @@ class TestClient(base.IOTestCase):
 
     def test_send_and_receive(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        response = io.send_data('TestFeed', 'foo')
+        self.ensure_feed_deleted(io, 'testfeed')
+        test_feed = io.create_feed(Feed(name="testfeed"))
+        response = io.send_data('testfeed', 'foo')
         self.assertEqual(response.value, 'foo')
-        data = io.receive('TestFeed')
+        data = io.receive('testfeed')
         self.assertEqual(data.value, 'foo')
 
     def test_send_batch_data(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        feed = Feed(name="TestFeed")
-        test_feed = aio.create_feed(feed)
+        self.ensure_feed_deleted(io, 'testfeed')
+        test_feed = io.create_feed(Feed(name="testfeed"))
         data_list = [Data(value='batch'), Data(value='batch')]
         io.send_batch_data(test_feed.key, 'foo')
-        data = io.receive('TestFeed')
+        data = io.receive('testfeed')
         self.assertEqual(data.value, 'batch')
 
     def test_receive_next(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        io.send_data('TestFeed', 1)
-        data = io.receive_next('TestFeed')
+        self.ensure_feed_deleted(io, 'testfeed')
+        test_feed = io.create_feed(Feed(name="testfeed"))
+        io.send_data('testfeed', 1)
+        data = io.receive_next('testfeed')
         self.assertEqual(int(data.value), 1)
 
     # BUG: Previous jumps too far back: https://github.com/adafruit/io/issues/55
@@ -99,51 +101,45 @@ class TestClient(base.IOTestCase):
 
     def test_data_on_feed_returns_all_data(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        io.send_data('TestFeed', 1)
-        io.send_data('TestFeed', 2)
-        result = io.data('TestFeed')
+        self.ensure_feed_deleted(io, 'testfeed')
+        test_feed = io.create_feed(Feed(name="testfeed"))
+        io.send_data('testfeed', 1)
+        io.send_data('testfeed', 2)
+        result = io.data('testfeed')
         self.assertEqual(len(result), 2)
         self.assertEqual(int(result[0].value), 2)
         self.assertEqual(int(result[1].value), 1)
 
     def test_data_on_feed_and_data_id_returns_data(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        data = io.send_data('TestFeed', 1)
-        result = io.data('TestFeed', data.id)
+        self.ensure_feed_deleted(io, 'testfeed')
+        test_feed = io.create_feed(Feed(name="testfeed"))
+        data = io.send_data('testfeed', 1)
+        result = io.data('testfeed', data.id)
         self.assertEqual(data.id, result.id)
         self.assertEqual(int(data.value), int(result.value))
 
     def test_create_data(self):
         aio = self.get_client()
-        self.ensure_feed_deleted(aio, 'TestFeed')
-        feed = Feed(name="TestFeed")
-        test_feed = aio.create_feed(feed)
-        aio.send_data('TestFeed', 1)  # Make sure TestFeed exists.
+        self.ensure_feed_deleted(aio, 'testfeed')
+        test_feed = aio.create_feed(Feed(name="testfeed"))
+        aio.send_data('testfeed', 1)  # Make sure TestFeed exists.
         data = Data(value=42)
-        result = aio.create_data('TestFeed', data)
+        result = aio.create_data('testfeed', data)
         self.assertEqual(int(result.value), 42)
 
     def test_append_by_feed_name(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        feed = io.create_feed(Feed(name='TestFeed'))
-        result = io.append('TestFeed', 42)
+        self.ensure_feed_deleted(io, 'testfeed')
+        feed = io.create_feed(Feed(name='testfeed'))
+        result = io.append('testfeed', 42)
         self.assertEqual(int(result.value), 42)
 
     def test_append_by_feed_key(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'Test Feed Fancy Name')
-        feed = io.create_feed(Feed(name='Test Feed Fancy Name'))
+        self.ensure_feed_deleted(io, 'test feed fancy name')
+        feed = io.create_feed(Feed(name='test feed fancy name'))
         result = io.append(feed.key, 42)
-        self.assertEqual(int(result.value), 42)
-
-    def test_append_by_feed_id(self):
-        io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        feed = io.create_feed(Feed(name='TestFeed'))
-        result = io.append(feed.id, 42)
         self.assertEqual(int(result.value), 42)
 
     def test_create_feed(self):
