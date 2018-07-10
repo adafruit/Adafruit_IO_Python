@@ -50,7 +50,7 @@ class TestClient(base.IOTestCase):
         data = client.data(feed)
         for d in data:
             client.delete(feed, d.id)
-    
+
 
     def test_set_key_and_username(self):
         username = "unique_username"
@@ -72,10 +72,10 @@ class TestClient(base.IOTestCase):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
         test_feed = io.create_feed(Feed(name="testfeed"))
-        data_list = [Data(value='batch'), Data(value='batch')]
-        io.send_batch_data(test_feed.key, 'foo')
-        data = io.receive('testfeed')
-        self.assertEqual(data.value, 'batch')
+        data_list = [Data(value=42), Data(value=42)]
+        io.send_batch_data(test_feed.key, data_list)
+        data = io.receive(test_feed.key)
+        self.assertEqual(int(data.value), 42)
 
     def test_receive_next(self):
         io = self.get_client()
@@ -137,56 +137,60 @@ class TestClient(base.IOTestCase):
 
     def test_append_by_feed_key(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'test feed fancy name')
-        feed = io.create_feed(Feed(name='test feed fancy name'))
+        self.ensure_feed_deleted(io, 'testfeed')
+        feed = io.create_feed(Feed(name='testfeed'))
         result = io.append(feed.key, 42)
         self.assertEqual(int(result.value), 42)
 
     def test_create_feed(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        feed = Feed(name='TestFeed')
+        self.ensure_feed_deleted(io, 'testfeed')
+        feed = Feed(name='testfeed')
         result = io.create_feed(feed)
-        self.assertEqual(result.name, 'TestFeed')
+        self.assertEqual(result.name, 'testfeed')
 
     def test_feeds_returns_all_feeds(self):
         io = self.get_client()
-        io.send_data('TestFeed', 1)  # Make sure TestFeed exists.
+        self.ensure_feed_deleted(io, 'testfeed')
+        feed = io.create_feed(Feed(name='testfeed'))
+        io.send_data('testfeed', 1)  # Make sure TestFeed exists.
         feeds = io.feeds()
         self.assertGreaterEqual(len(feeds), 1)
         names = set(map(lambda x: x.name, feeds))
-        self.assertTrue('TestFeed' in names)
+        self.assertTrue('testfeed' in names)
 
     def test_feeds_returns_requested_feed(self):
         io = self.get_client()
-        io.send_data('TestFeed', 1)  # Make sure TestFeed exists.
-        result = io.feeds('TestFeed')
-        self.assertEqual(result.name, 'TestFeed')
-        self.assertEqual(int(result.last_value), 1)
+        self.ensure_feed_deleted(io, 'testfeed')
+        feed = io.create_feed(Feed(name='testfeed'))
+        io.send_data('testfeed', 1)  # Make sure TestFeed exists.
+        result = io.feeds('testfeed')
+        self.assertEqual(result.name, 'testfeed')
 
     def test_delete_feed(self):
         io = self.get_client()
-        io.send_data('TestFeed', 'foo')  # Make sure a feed called TestFeed exists.
-        io.delete_feed('TestFeed')
-        self.assertRaises(RequestError, io.receive, 'TestFeed')
+        io.send_data('testfeed', 'foo')  # Make sure a feed called TestFeed exists.
+        io.delete_feed('testfeed')
+        self.assertRaises(RequestError, io.receive, 'testfeed')
 
     def test_delete_nonexistant_feed_fails(self):
         io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
-        self.assertRaises(RequestError, io.delete_feed, 'TestFeed')
+        self.ensure_feed_deleted(io, 'testfeed')
+        self.assertRaises(RequestError, io.delete_feed, 'testfeed')
 
     def test_groups_returns_all_groups(self):
         io = self.get_client()
         groups = io.groups()
         self.assertGreaterEqual(len(groups), 1)
         names = set(map(lambda x: x.name, groups))
-        self.assertTrue('GroupTest' in names)
+        self.assertTrue('grouptest' in names)
 
     def test_groups_retrieves_requested_group(self):
         io = self.get_client()
-        response = io.groups('GroupTest')
-        self.assertEqual(response.name, 'GroupTest')
-        self.assertEqual(len(response.feeds), 2)
+        self.ensure_group_deleted(io, 'grouptest')
+        response = io.create_group(Group(name='grouptest'))
+        self.assertEqual(response.name, 'grouptest')
+        self.assertEqual(response.key, 'grouptest')
 
     # BUG: Group create doesn't work: https://github.com/adafruit/io/issues/58
     @unittest.expectedFailure
