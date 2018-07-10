@@ -56,8 +56,10 @@ class MQTTClient(object):
         self._client = mqtt.Client()
         if secure:
             self._client.tls_set_context()
+            self._secure = True
         elif not secure:
             print('**THIS CONNECTION IS INSECURE** SSL/TLS not supported for this platform')
+            self._secure = False
         self._client.username_pw_set(username, key)
         self._client.on_connect    = self._mqtt_connect
         self._client.on_disconnect = self._mqtt_disconnect

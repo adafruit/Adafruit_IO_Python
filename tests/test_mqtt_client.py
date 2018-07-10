@@ -49,8 +49,10 @@ class TestMQTTClient(base.IOTestCase):
         # Verify not connected by default.
         self.assertFalse(client.is_connected())
 
-    def test_connect(self):
-        # Create MQTT test client.
+    def test_secure_connect(self):
+        """Test a secure (port 8883, TLS enabled) AIO connection
+        """
+        # Create MQTT-Secure test client.
         client = MQTTClient(self.get_test_username(), self.get_test_key())
         # Verify on_connect handler is called and expected client is provided.
         def on_connect(mqtt_client):
@@ -61,6 +63,25 @@ class TestMQTTClient(base.IOTestCase):
         self.wait_until_connected(client)
         # Verify connected.
         self.assertTrue(client.is_connected())
+        self.assertTrue(client._secure)
+
+    def test_insecure_connect(self):
+        """Test an insecure (port 1883, TLS disabled) AIO connection
+        """
+        # Create MQTT-Insecure (non-SSL) test client.
+        client = MQTTClient(self.get_test_username(), self.get_test_key(), secure=False)
+        # Verify on_connect handler is called and expected client is provided.
+        def on_connect(mqtt_client):
+            self.assertEqual(mqtt_client, client)
+        client.on_connect = on_connect
+        # Connect and wait until on_connect event is fired.
+        client.connect()
+        self.wait_until_connected(client)
+        # Verify connected.
+        self.assertTrue(client.is_connected())
+        # Verify insecure connection established
+        self.assertFalse(client._secure)
+
 
     def test_disconnect(self):
         # Create MQTT test client.
