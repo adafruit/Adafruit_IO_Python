@@ -19,6 +19,9 @@ install:
 
 script:
   # run /tests/
-  - python -m unittest discover
+  - python -m unittest test_client.py
+  - python -m unittest test_mqtt_client.py
+  - python -m unittest test_model.py
+  - python -m unittest test_errors.py
   # build library docs
   - cd docs && sphinx-build -E -W -b html . _build/html
