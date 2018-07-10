@@ -15,9 +15,6 @@ Table of Contents
     :maxdepth: 7
 
     quickstart
-    io-basics-examples
-    api-examples
-    mqtt-examples
 
 
 .. toctree::

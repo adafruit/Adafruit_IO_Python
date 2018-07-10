@@ -17,7 +17,7 @@ Data can be created after you create a feed, by using the ``create_data(feed, da
     aio.create_data('Test', data)
 
 Data Retrieval
-~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 You can get all of the data for a feed by using the ``data(feed)`` method. The result will be an array of all feed data, each returned as an instance of the Data class. Use the value property on each Data instance to get the data value, and remember values are always returned as strings (so you might need to convert to an int or number if you expect a numeric value).
 
 .. code-block:: python
@@ -50,7 +50,7 @@ Values can be deleted by using the ``delete(feed, data_id)`` method:
     data = aio.delete('Test', 1)
 
 Data Helper methods
----------------
+--------------------
 There are a few helper methods that can make interacting with data a bit easier.
 
 Send Data
@@ -87,6 +87,7 @@ Receive Data
 You can get the last inserted value by using the ``receive(feed)`` method.
 
 .. code-block:: python
+
     # Import library and create instance of REST client.
     from Adafruit_IO import Client
     aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
