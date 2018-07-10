@@ -12,13 +12,13 @@ else:
     raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
 print('version: ', verstr)
 
-classifiers = ['Development Status :: 4 - Beta',
+classifiers = ['Development Status :: 5 - Production/Stable',
                'Operating System :: POSIX :: Linux',
                'Operating System :: Microsoft :: Windows',
                'Operating System :: MacOS',
                'License :: OSI Approved :: MIT License',
                'Intended Audience :: Developers',
-               'Programming Language :: Python :: 3',
+               'Programming Language :: Python :: 3.6',
                'Topic :: Software Development',
                'Topic :: Home Automation',
                'Topic :: System :: Hardware']
@@ -34,6 +34,7 @@ setup(
     license          = 'MIT',
     keywords         = 'Adafruit IO',
     classifiers      = classifiers,
+    python_requires  = ">=3.6",
     description      = 'Client library for Adafruit IO (http://io.adafruit.com/).',
     long_description = open('README.rst').read(),
     install_requires = ["requests", "paho-mqtt"]

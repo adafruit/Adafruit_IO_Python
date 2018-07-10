@@ -9,12 +9,12 @@ import base
 
 
 # Default config for tests to run against real Adafruit IO service with no proxy.
-#BASE_URL  = 'https://io.adafruit.com/'
+BASE_URL  = 'https://io.adafruit.com/'
 PROXIES   = None
 
 # Config to run tests against real Adafruit IO service over non-SSL and with a
 # a proxy running on localhost 8888 (good for getting traces with fiddler).
-BASE_URL  = 'http://io.adafruit.vm/'
+#BASE_URL  = 'http://io.adafruit.vm/'
 #PROXIES   = {'http': 'http://localhost:8888/'}
 
 
@@ -116,13 +116,13 @@ class TestClient(base.IOTestCase):
         self.assertEqual(int(data.value), int(result.value))
 
     def test_create_data(self):
-        io = self.get_client()
-        self.ensure_feed_deleted(io, 'TestFeed')
+        aio = self.get_client()
+        self.ensure_feed_deleted(aio, 'TestFeed')
         feed = Feed(name="TestFeed")
         test_feed = aio.create_feed(feed)
-        io.send_data('TestFeed', 1)  # Make sure TestFeed exists.
+        aio.send_data('TestFeed', 1)  # Make sure TestFeed exists.
         data = Data(value=42)
-        result = io.create_data('TestFeed', data)
+        result = aio.create_data('TestFeed', data)
         self.assertEqual(int(result.value), 42)
 
     def test_append_by_feed_name(self):
