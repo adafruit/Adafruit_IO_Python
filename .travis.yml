@@ -19,6 +19,7 @@ install:
 
 script:
   # run /tests/
+  - cd /tests
   - python -m unittest test_client.py
   - python -m unittest test_mqtt_client.py
   - python -m unittest test_model.py
