@@ -1,5 +1,5 @@
 """
-'adafruitio_01_subscribe.py'
+'subscribe.py'
 ==========================
 Subscribes to an Adafruit IO Feed
 

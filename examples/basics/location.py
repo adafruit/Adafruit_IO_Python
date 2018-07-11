@@ -1,6 +1,6 @@
 """
-'adafruitio_04_location.py'
-==================================
+'location.py'
+====================================
 Example of sending GPS data points
 to an Adafruit IO Feed using the API
 

@@ -1,5 +1,5 @@
 """
-'adafruitio_07_digital_out.py'
+'digital_out.py'
 ===================================
 Example of turning on and off a LED
 from the Adafruit IO Python Client

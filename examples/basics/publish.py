@@ -1,8 +1,7 @@
 """
-'adafruitio_00_publish.py'
-==========================
-Publishes an incrementing
-value to a feed
+'publish.py'
+=========================================
+Publishes an incrementing value to a feed
 
 Author(s): Brent Rubell, Todd Treece for Adafruit Industries
 """

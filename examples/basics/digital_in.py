@@ -1,5 +1,5 @@
 """
-'adafruitio_06_digital_in.py'
+'digital_in.py'
 ==================================
 Example of sending button values
 to an Adafruit IO feed.
