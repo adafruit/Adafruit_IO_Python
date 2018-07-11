@@ -1,8 +1,8 @@
 # .travis.yml for Adafruit IO Python Client Library
-
-dist: trusty
-sudo: false
 language: python
+dist: trusty
+sudo: required
+
 python:
     - "3.6"
 
@@ -10,7 +10,9 @@ cache:
     pip: true
 
 before_install:
-  #pip install -r requirements.txt
+  - git clone https://github.com/adafruit/io-client-python.git
+  - cd io-client-python/tests
+  - git checkout api-v2
 
 install:
   - python setup.py install
@@ -18,11 +20,8 @@ install:
   - pip install .
 
 script:
-  # run /tests/
-  - cd /tests
-  - python -m unittest test_client.py
-  - python -m unittest test_mqtt_client.py
-  - python -m unittest test_model.py
-  - python -m unittest test_errors.py
+  # clone fresh 
+  - cd home/travis/build/adafruit/io-client-python/tests
+  - python -m unittest discover
   # build library docs
   - cd docs && sphinx-build -E -W -b html . _build/html
