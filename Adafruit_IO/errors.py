@@ -58,6 +58,7 @@ class ThrottlingError(AdafruitIOError):
             "requests in a short period of time. Please reduce the rate of requests " \
             "and try again later.")
 
+
 class MQTTError(Exception):
     """Handles connection attempt failed errors.
     """
