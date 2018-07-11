@@ -19,5 +19,4 @@ script:
   - cd docs && sphinx-build -E -W -b html . _build/html
   - cd ..
   - cd tests/
-  - git checkout api-v2
   - python -m unittest discover
