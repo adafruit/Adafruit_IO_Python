@@ -28,7 +28,7 @@ except ImportError:
 
 
 # List of fields/properties that are present on a data object from IO.
-DATA_FIELDS   = [ 'created_epoch', 
+DATA_FIELDS   = [ 'created_epoch',
                   'created_at',
                   'updated_at',
                   'value',
@@ -36,25 +36,21 @@ DATA_FIELDS   = [ 'created_epoch',
                   'feed_id',
                   'expiration',
                   'position',
-                  'id' ]
-
-STREAM_FIELDS = [ 'completed_at',
-                  'created_at',
                   'id',
-                  'value' ]
+                  'lat',
+                  'lon',
+                  'ele']
 
-FEED_FIELDS   = [ 'last_value_at',
-                  'name',
-                  'stream',
-                  'created_at',
-                  'updated_at',
-                  'unit_type',
-                  'mode',
+FEED_FIELDS   = [ 'name',
                   'key',
+                  'description',
+                  'unit_type',
                   'unit_symbol',
-                  'fixed',
-                  'last_value',
-                  'id' ]
+                  'history',
+                  'visibility',
+                  'license',
+                  'status_notify',
+                  'status_timeout']
 
 GROUP_FIELDS  = [ 'description',
                   'source_keys',
@@ -73,18 +69,17 @@ GROUP_FIELDS  = [ 'description',
 # client it might be prudent to revisit this decision and consider making these
 # full fledged classes that are mutable.
 Data   = namedtuple('Data', DATA_FIELDS)
-Stream = namedtuple('Stream', STREAM_FIELDS)
 Feed   = namedtuple('Feed', FEED_FIELDS)
 Group  = namedtuple('Group', GROUP_FIELDS)
 
 
 # Magic incantation to make all parameters to the initializers optional with a
 # default value of None.
-Data.__new__.__defaults__   = tuple(None for x in DATA_FIELDS)
-Stream.__new__.__defaults__ = tuple(None for x in STREAM_FIELDS)
-Feed.__new__.__defaults__   = tuple(None for x in FEED_FIELDS)
 Group.__new__.__defaults__  = tuple(None for x in GROUP_FIELDS)
+Data.__new__.__defaults__   = tuple(None for x in DATA_FIELDS)
 
+# explicitly set feed values
+Feed.__new__.__defaults__ = (None, None, None, None, None, 'ON', 'Private', None, None, None)
 
 # Define methods to convert from dicts to the data types.
 def _from_dict(cls, data):
@@ -98,8 +93,6 @@ def _from_dict(cls, data):
 
 def _feed_from_dict(cls, data):
     params = {x: data.get(x, None) for x in cls._fields}
-    # Parse the stream if provided and generate a stream instance.
-    params['stream'] = Stream.from_dict(data.get('stream', {}))
     return cls(**params)
 
 
@@ -112,6 +105,5 @@ def _group_from_dict(cls, data):
 
 # Now add the from_dict class methods defined above to the data types.
 Data.from_dict   = classmethod(_from_dict)
-Stream.from_dict = classmethod(_from_dict)
 Feed.from_dict   = classmethod(_feed_from_dict)
 Group.from_dict  = classmethod(_group_from_dict)

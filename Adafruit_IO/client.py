@@ -1,4 +1,4 @@
-# Copyright (c) 2014 Adafruit Industries
+# Copyright (c) 2018 Adafruit Industries
 # Authors: Justin Cooper & Tony DiCola
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,6 +21,7 @@
 import json
 import pkg_resources
 import platform
+# import logging
 
 import requests
 
@@ -41,7 +42,7 @@ class Client(object):
     REST API.  Use this client class to send, receive, and enumerate feed data.
     """
 
-    def __init__(self, key, proxies=None, base_url='https://io.adafruit.com', api_version='v1'):
+    def __init__(self, username, key, proxies=None, base_url='https://io.adafruit.com', api_version = 'v2'):
         """Create an instance of the Adafruit IO REST API client.  Key must be
         provided and set to your Adafruit IO access key value.  Optionaly
         provide a proxies dict in the format used by the requests library, a
@@ -49,15 +50,22 @@ class Client(object):
         the production Adafruit IO service over SSL), and a api_version to
         add support for future API versions.
         """
+        self.username = username
         self.key = key
         self.proxies = proxies
         self.api_version = api_version
+        # self.logger = logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
         # Save URL without trailing slash as it will be added later when
         # constructing the path.
         self.base_url = base_url.rstrip('/')
 
-    def _compose_url(self, path):
-        return '{0}/api/{1}/{2}'.format(self.base_url, self.api_version, path)
+    def _compose_url(self, path, is_time=None):
+        if not is_time:
+            return '{0}/api/{1}/{2}/{3}'.format(self.base_url, self.api_version, self.username, path)
+        else: # return a call to https://io.adafruit.com/api/v2/time/{unit}
+            return '{0}/api/{1}/{2}'.format(self.base_url, self.api_version, path)
+
 
     def _handle_error(self, response):
         # Handle explicit errors.
@@ -73,12 +81,15 @@ class Client(object):
         headers.update(given)
         return headers
 
-    def _get(self, path):
-        response = requests.get(self._compose_url(path),
+    def _get(self, path, is_time=None):
+        response = requests.get(self._compose_url(path, is_time),
                                 headers=self._headers({'X-AIO-Key': self.key}),
                                 proxies=self.proxies)
         self._handle_error(response)
-        return response.json()
+        if not is_time:
+            return response.json()
+        else: # time doesn't need to serialize into json, just return text
+            return response.text
 
     def _post(self, path, data):
         response = requests.post(self._compose_url(path),
@@ -97,14 +108,25 @@ class Client(object):
         self._handle_error(response)
 
     # Data functionality.
-    def send(self, feed_name, value):
-        """Helper function to simplify adding a value to a feed.  Will find the
-        specified feed by name or create a new feed if it doesn't exist, then
-        will append the provided value to the feed.  Returns a Data instance
-        with details about the newly appended row of data.
+    def send_data(self, feed, value):
+        """Helper function to simplify adding a value to a feed.  Will append the
+        specified value to the feed identified by either name, key, or ID.
+        Returns a Data instance with details about the newly appended row of data.
+        Note that send_data now operates the same as append.
         """
-        path = "feeds/{0}/data/send".format(feed_name)
-        return Data.from_dict(self._post(path, {'value': value}))
+        return self.create_data(feed, Data(value=value))
+
+    send = send_data
+
+    def send_batch_data(self, feed, data_list):
+        """Create a new row of data in the specified feed.  Feed can be a feed
+        ID, feed key, or feed name.  Data must be an instance of the Data class
+        with at least a value property set on it.  Returns a Data instance with
+        details about the newly appended row of data.
+        """
+        path = "feeds/{0}/data/batch".format(feed)
+        data_dict = type(data_list)((data._asdict() for data in data_list))
+        self._post(path, {"data": data_dict})
 
     def append(self, feed, value):
         """Helper function to simplify adding a value to a feed.  Will append the
@@ -113,6 +135,26 @@ class Client(object):
         Note that unlike send the feed should exist before calling append.
         """
         return self.create_data(feed, Data(value=value))
+
+    def send_location_data(self, feed, value, lat, lon, ele):
+        """Sends locational data to a feed
+
+        args:
+            - lat: latitude 
+            - lon: logitude
+            - ele: elevation
+            - (optional) value: value to send to the feed
+        """
+        return self.create_data(feed, Data(value = value,lat=lat, lon=lon, ele=ele))
+
+    def receive_time(self, time):
+        """Returns the time from the Adafruit IO server.
+
+        args:
+            - time (string): millis, seconds, ISO-8601
+        """
+        timepath = "time/{0}".format(time)
+        return self._get(timepath, is_time=True)
 
     def receive(self, feed):
         """Retrieve the most recent value for the specified feed.  Feed can be a
@@ -185,7 +227,7 @@ class Client(object):
         type with at least the name property set.
         """
         path = "feeds/"
-        return Feed.from_dict(self._post(path, feed._asdict()))
+        return Feed.from_dict(self._post(path, {"feed": feed._asdict()}))
 
     def delete_feed(self, feed):
         """Delete the specified feed.  Feed can be a feed ID, feed key, or feed
@@ -193,25 +235,6 @@ class Client(object):
         """
         path = "feeds/{0}".format(feed)
         self._delete(path)
-
-    # Group functionality.
-    def send_group(self, group_name, data):
-        """Update all feeds in a group with one call.  Group_name should be the
-        name of a group to update.  Data should be a dict with an item for each
-        feed in the group, where the key is the feed name and value is the new
-        data row value.  For example a group 'TestGroup' with feeds 'FeedOne'
-        and 'FeedTwo' could be updated by calling:
-
-        send_group('TestGroup', {'FeedOne': 'value1', 'FeedTwo': 10})
-
-        This would add the value 'value1' to the feed 'FeedOne' and add the
-        value 10 to the feed 'FeedTwo'.
-
-        After a successful update an instance of Group will be returned with
-        metadata about the updated group.
-        """
-        path = "groups/{0}/send".format(group_name)
-        return Group.from_dict(self._post(path, {'value': data}))
 
     def receive_group(self, group):
         """Retrieve the most recent value for the specified group.  Group can be

@@ -28,7 +28,7 @@ import base
 class TestErrors(base.IOTestCase):
 
     def test_request_error_from_bad_key(self):
-        io = Client("this is a bad key from a test")
+        io = Client("test_user", "this is a bad key from a test")
         with self.assertRaises(RequestError):
             io.send("TestStream", 42)
 

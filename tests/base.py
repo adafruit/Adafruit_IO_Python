@@ -28,7 +28,7 @@ class IOTestCase(unittest.TestCase):
         """Return the AIO key specified in the ADAFRUIT_IO_KEY environment
         variable, or raise an exception if it doesn't exist.
         """
-        key = os.environ.get('ADAFRUIT_IO_KEY', None)
+        key = '68163f6f6ee24475b5edb0ed1f77f80a'
         if key is None:
             raise RuntimeError("ADAFRUIT_IO_KEY environment variable must be " \
               "set with valid Adafruit IO key to run this test!")
@@ -38,7 +38,7 @@ class IOTestCase(unittest.TestCase):
         """Return the AIO username specified in the ADAFRUIT_IO_USERNAME
         environment variable, or raise an exception if it doesn't exist.
         """
-        username = os.environ.get('ADAFRUIT_IO_USERNAME', None)
+        username = 'travisiotester'
         if username is None:
             raise RuntimeError("ADAFRUIT_IO_USERNAME environment variable must be " \
               "set with valid Adafruit IO username to run this test!")

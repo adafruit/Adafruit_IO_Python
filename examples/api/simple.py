@@ -6,18 +6,22 @@
 from Adafruit_IO import Client
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_KEY = 'YOUR ADAFRUIT IO KEY'
+# Remember, your key is a secret,
+# so make sure not to publish it when you publish this code!
+ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
+
+# Set to your Adafruit IO username.
+# (go to https://accounts.adafruit.com to find your username)
+ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
 # Create an instance of the REST client.
-aio = Client(ADAFRUIT_IO_KEY)
+aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
-# Send a value to the feed 'Test'.  This will create the feed if it doesn't
-# exist already.
-aio.send('Test', 42)
+# Send a value to the feed 'Test'.
+aio.send_data('Test', 42)
 
-# Send a string value 'bar' to the feed 'Foo', again creating it if it doesn't 
-# exist already.
-aio.send('Foo', 'bar')
+# Send a string value 'bar' to the feed 'Foo'.
+aio.send_data('Foo', 'bar')
 
 # Now read the most recent value from the feed 'Test'.  Notice that it comes
 # back as a string and should be converted to an int if performing calculations

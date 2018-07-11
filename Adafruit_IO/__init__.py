@@ -20,5 +20,6 @@
 # SOFTWARE.
 from .client import Client
 from .mqtt_client import MQTTClient
-from .errors import AdafruitIOError, RequestError, ThrottlingError
-from .model import Data, Stream, Feed, Group
+from .errors import AdafruitIOError, RequestError, ThrottlingError, MQTTError
+from .model import Data, Feed, Group
+from ._version import __version__

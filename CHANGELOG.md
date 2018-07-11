@@ -1,3 +1,9 @@
+2.0.0
+- Drop support for API V1. Defaults to API V2
+- Add support for Python3
+- New send_batch_data method
+- Add error messages from response body in RequestError
+
 0.9.0
 ----
 Author: Tony DiCola
