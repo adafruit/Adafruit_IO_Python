@@ -1,22 +1,30 @@
-# .travis.yml for Adafruit IO Python Client Library
 language: python
 dist: trusty
 sudo: required
-
 python:
-    - "3.6"
-
+- '3.6'
 cache:
-    pip: true
-
-
+  pip: true
 install:
-  - python setup.py install
-  - pip install pylint Sphinx sphinx-rtd-theme
-  - pip install .
-
+- python3 setup.py install
+- pip3 install pylint Sphinx sphinx-rtd-theme
+- pip3 install .
 script:
-  - cd docs && sphinx-build -E -W -b html . _build/html
-  - cd ..
-  - cd tests/
-  - python -m unittest discover
+- cd docs && sphinx-build -E -W -b html . _build/html && cd ..
+- cd tests/
+- python3 -m unittest discover
+deploy:
+- provider: releases
+  api_key: "$GITHUB_TOKEN"
+  file_glob: true
+  file: "$TRAVIS_BUILD_DIR/bundles/*"
+  skip_cleanup: true
+  overwrite: true
+  on:
+    tags: true
+- provider: pypi
+  user: adafruit-travis
+  on:
+    tags: true
+  password:
+    secure: WYAvV+71bL0EjUV2MMmIuf/P0RNLBUGiHcjFZnvRhZriOP7MPSXoePG31k309mWE/0e26gxPWdZH/zpWEm5Vzb2RbGGvTypjD9u/c5HJqcLohVy9mPCqgvkJNQi+Sqe0u4XsMHMaueZd8vry+MLH5+h6Py7fjx/4MVZKHLxHdMI=
