@@ -40,11 +40,10 @@ classifiers = ['Development Status :: 5 - Production/Stable',
                'Programming Language :: Python :: 3.5',
                'Topic :: Home Automation',
                'Topic :: Software Development',
-               'Topic :: System :: Hardware']
+               'Topic :: Syste  m :: Hardware']
 
 setup(
-    name             = 'adafruit-io-python',
-
+    name             = 'adafruit-io',
     use_scm_version  =  True,
     setup_requires   =  ['setuptools_scm'],
 
