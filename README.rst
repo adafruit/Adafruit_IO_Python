@@ -28,7 +28,7 @@ If you have `PIP <https://pip.pypa.io/en/stable/installing/>`_ installed (typica
 
 .. code-block:: shell
 
-   pip install adafruit-io
+   pip3 install adafruit-io
 
 This will automatically install the Adafruit IO Python client code for your Python scripts to use. You might want to examine the examples folder in this GitHub repository to see examples of usage.
 
