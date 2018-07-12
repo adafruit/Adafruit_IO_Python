@@ -17,6 +17,6 @@ deploy:
   - provider: pypi
     user: adafruit-travis
     password:
-      secure: WYAvV+71bL0EjUV2MMmIuf/P0RNLBUGiHcjFZnvRhZriOP7MPSXoePG31k309mWE/0e26gxPWdZH/zpWEm5Vzb2RbGGvTypjD9u/c5HJqcLohVy9mPCqgvkJNQi+Sqe0u4XsMHMaueZd8vry+MLH5+h6Py7fjx/4MVZKHLxHdMI=
-    on:
-      tags: true
+        secure: B23uQWyBD9nE4zP+D8n3c8P9h2XsOdJWelVIwBoOL/E8LAqQ60xKRhYo+dbYFj/4L0xPsYxVoF8xdZCu+1rjXvFU6Eot9pgna7DBGzu8Qwzq7CS0Hq014+XhZR+36T9YAOl6Ehr7JR3XMCf51FGfq15myPvKFkCMjxpvxIlVsqg=
+      on:
+        tags: false
