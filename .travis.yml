@@ -6,9 +6,9 @@ python:
 cache:
   pip: true
 install:
-- python setup.py install
-- pip install pylint Sphinx sphinx-rtd-theme
-- pip install .
+- python3 setup.py install
+- pip3 install pylint Sphinx sphinx-rtd-theme
+- pip3 install .
 script:
 - cd docs && sphinx-build -E -W -b html . _build/html && cd ..
 - cd tests/
