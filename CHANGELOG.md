@@ -1,8 +1,14 @@
 2.0.0
 - Drop support for API V1. Defaults to API V2
+- MQTT/SSL support is now default.
 - Add support for Python3
 - New send_batch_data method
 - Add error messages from response body in RequestError
+- Add error messages from MQTT in MQTTError
+- New location (lat/lon/ele) support
+- New time topics support
+- New examples added
+- Unit tests updated to support API V2
 
 0.9.0
 ----

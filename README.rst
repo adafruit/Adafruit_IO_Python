@@ -17,7 +17,7 @@ Adafruit IO Python
 
 A Python client and examples for use with `io.adafruit.com <https://io.adafruit.com>`_. 
 
-Compatible with Python 3.6+
+Compatible with Python Versions 3.4+
 
 Installation
 ================
