@@ -14,17 +14,9 @@ script:
 - cd tests/
 - python3 -m unittest discover
 deploy:
-- provider: releases
-  api_key: "$GITHUB_TOKEN"
-  file_glob: true
-  file: "$TRAVIS_BUILD_DIR/bundles/*"
-  skip_cleanup: true
-  overwrite: true
-  on:
-    tags: true
-- provider: pypi
-  user: adafruit-travis
-  on:
-    tags: true
-  password:
-    secure: WYAvV+71bL0EjUV2MMmIuf/P0RNLBUGiHcjFZnvRhZriOP7MPSXoePG31k309mWE/0e26gxPWdZH/zpWEm5Vzb2RbGGvTypjD9u/c5HJqcLohVy9mPCqgvkJNQi+Sqe0u4XsMHMaueZd8vry+MLH5+h6Py7fjx/4MVZKHLxHdMI=
+  - provider: pypi
+    user: adafruit-travis
+    password:
+      secure: WYAvV+71bL0EjUV2MMmIuf/P0RNLBUGiHcjFZnvRhZriOP7MPSXoePG31k309mWE/0e26gxPWdZH/zpWEm5Vzb2RbGGvTypjD9u/c5HJqcLohVy9mPCqgvkJNQi+Sqe0u4XsMHMaueZd8vry+MLH5+h6Py7fjx/4MVZKHLxHdMI=
+    on:
+      tags: true
