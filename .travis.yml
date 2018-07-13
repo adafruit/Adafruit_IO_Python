@@ -13,7 +13,7 @@ script:
 - cd docs && sphinx-build -E -W -b html . _build/html && cd ..
 - cd tests/
 - python3 -m unittest discover
-- cd..
+- cd ..
 deploy:
     provider: pypi
     user: adafruit-travis
