@@ -39,8 +39,7 @@ classifiers = ['Development Status :: 5 - Production/Stable',
                'Programming Language :: Python :: 3.4',
                'Programming Language :: Python :: 3.5',
                'Topic :: Home Automation',
-               'Topic :: Software Development',
-               'Topic :: Syste  m :: Hardware']
+               'Topic :: Software Development']
 
 setup(
     name             = 'adafruit-io',
