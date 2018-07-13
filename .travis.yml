@@ -21,3 +21,4 @@ deploy:
         secure: B23uQWyBD9nE4zP+D8n3c8P9h2XsOdJWelVIwBoOL/E8LAqQ60xKRhYo+dbYFj/4L0xPsYxVoF8xdZCu+1rjXvFU6Eot9pgna7DBGzu8Qwzq7CS0Hq014+XhZR+36T9YAOl6Ehr7JR3XMCf51FGfq15myPvKFkCMjxpvxIlVsqg=
     on:
         tags: false
+        branch: travis-testing-pypi
