@@ -6,7 +6,7 @@ Here's a short example of how to send a new value to a feed (creating the feed i
 
     # Import library and create instance of REST client.
     from Adafruit_IO import Client
-    aio = Client('YOUR ADAFRUIT IO KEY')
+    aio = Client('YOUR ADAFRUIT USER', 'YOUR ADAFRUIT IO KEY')
 
     # Send the value 100 to a feed called 'Foo'.
     aio.send('Foo', 100)
@@ -41,17 +41,20 @@ Then a REST API client can be created with code like:
 
 .. code-block:: python
 
-    aio = Client('xxxxxxxxxxxx')
+    aio = Client('user', 'xxxxxxxxxxxx')
 
 Where ``'xxxxxxxxxxxx'`` is your Adafruit IO API key.
+Where ``'user'`` is your Adafruit username.
+
 
 Alternatively an MQTT client can be created with code like:
 
 .. code-block:: python
 
-    mqtt = MQTTClient('xxxxxxxxxxxx')
+    mqtt = MQTTClient('user', 'xxxxxxxxxxxx')
 
 Again where ``'xxxxxxxxxxxx'`` is your Adafruit IO API key.
+Again where ``'user'`` is your Adafruit username.
 
 Your program can use either or both the REST API client and MQTT client, depending on your needs.
 
