@@ -36,8 +36,7 @@ classifiers = ['Development Status :: 5 - Production/Stable',
                'License :: OSI Approved :: MIT License',
                'Intended Audience :: Developers',
                'Programming Language :: Python :: 3',
-               'Programming Language :: Python :: 3.4',
-               'Programming Language :: Python :: 3.5',
+               'Programming Language :: Python :: 3.6',
                'Topic :: Home Automation',
                'Topic :: Software Development']
 
@@ -60,7 +59,7 @@ setup(
 
     version          =  verstr,
     install_requires = ["requests", "paho-mqtt"],
-    python_requires  = ">=3.4.0",
+    python_requires  = ">=3.6.0",
 
 
 
