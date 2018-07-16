@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import json
+import json, requests
 
 # MQTT RC Error Types
 MQTT_ERRORS   = [ 'Connection successful',
@@ -42,9 +42,9 @@ class RequestError(Exception):
             response.status_code, response.reason, error_message))
 
     def _parse_error(self, response):
+        content = response.json()
         try:
-            content = json.loads(response.content)
-            return ' - '.join(content['error'])
+            return content['error']
         except ValueError:
             return ""
 

@@ -68,9 +68,12 @@ class Client(object):
 
 
     def _handle_error(self, response):
-        # Handle explicit errors.
+        # Throttling Error
         if response.status_code == 429:
             raise ThrottlingError()
+        # Resource on AdafruitIO not Found Error
+        elif response.status_code == 400:
+            raise RequestError(response)
         # Handle all other errors (400 & 500 level HTTP responses)
         elif response.status_code >= 400:
             raise RequestError(response)
