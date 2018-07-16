@@ -19,7 +19,6 @@ ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
 ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
 
-
 # Define callback functions which will be called when certain events happen.
 def connected(client):
     # Connected function will be called when the client is connected to Adafruit IO.
@@ -35,7 +34,7 @@ def disconnected(client):
     print('Disconnected from Adafruit IO!')
     sys.exit(1)
 
-def message(client, feed_id, payload, retain):
+def message(client, feed_id, payload):
     # Message function will be called when a subscribed feed has a new value.
     # The feed_id parameter identifies the feed, and the payload parameter has
     # the new value.
