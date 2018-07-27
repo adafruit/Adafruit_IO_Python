@@ -24,7 +24,8 @@ import busio
 from Adafruit_IO import Client, Feed, RequestError
 
 # import Adafruit CircuitPython MCP3xxx library
-from adafruit_mcp3xxx import adafruit_mcp3xxx
+from adafruit_mcp3xxx.mcp3008 import MCP3008
+from adafruit_mcp3xxx.analog_in import AnalogIn
 
 # Set to your Adafruit IO key.
 # Remember, your key is a secret,
@@ -48,14 +49,15 @@ spi = busio.SPI(board.SCLK, board.MOSI, board.MISO)
 
 # create the cs (chip select)
 cs = digitalio.DigitalInOut(board.D12)
+
 # create a mcp3008 object
-mcp = adafruit_mcp3xxx.MCP3008(spi,cs)
+mcp = MCP3008(spi, cs)
 
 # create an an adc (single-ended) on pin 0
-adc_single_ended = adafruit_mcp3xxx.AnalogIn(mcp,0)
+chan = AnalogIn(mcp, MCP3008.pin_0)
 
 while True:
-    sensor_data = adc_single_ended.value
+    sensor_data = chan.value
 
     print('Analog Data -> ', sensor_data)
     aio.send(analog.key, sensor_data)
