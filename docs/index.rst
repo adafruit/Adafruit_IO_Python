@@ -22,6 +22,7 @@ Table of Contents
     :maxdepth: 6
 
     feeds
+    feed-sharing
     data
     groups
 

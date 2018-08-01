@@ -52,6 +52,7 @@ class MQTTClient(object):
         self.on_connect    = None
         self.on_disconnect = None
         self.on_message    = None
+        self.on_subscribe  = None
         # Initialize MQTT client.
         self._client = mqtt.Client()
         if secure:
@@ -66,6 +67,7 @@ class MQTTClient(object):
         self._client.on_message    = self._mqtt_message
         self._connected = False
 
+
     def _mqtt_connect(self, client, userdata, flags, rc):
         logger.debug('Client on_connect called.')
         # Check if the result code is success (0) or some error (non-zero) and
@@ -75,7 +77,7 @@ class MQTTClient(object):
             self._connected = True
             print('Connected to Adafruit IO!')
         else:
-            # handle RC errors within `errors.py`'s MQTTError class
+            # handle RC errors within MQTTError class
             raise MQTTError(rc)
         # Call the on_connect callback if available.
         if self.on_connect is not None:
@@ -88,6 +90,7 @@ class MQTTClient(object):
         # log the RC as an error.  Continue on to call any disconnect handler
         # so clients can potentially recover gracefully.
         if rc != 0:
+            print("Unexpected disconnection.")
             raise MQTTError(rc)
         print('Disconnected from Adafruit IO!')
         # Call the on_disconnect callback if available.
@@ -99,13 +102,17 @@ class MQTTClient(object):
         # Parse out the feed id and call on_message callback.
         # Assumes topic looks like "username/feeds/id"
         parsed_topic = msg.topic.split('/')
-        if self.on_message is not None and self._username == parsed_topic[0]:
+        if self.on_message is not None:
             feed = parsed_topic[2]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         elif self.on_message is not None and parsed_topic[0] == 'time':
             feed = parsed_topic[0]
             payload = msg.payload.decode('utf-8')
         self.on_message(self, feed, payload)
+    
+    def _mqtt_subscribe(client, userdata, mid, granted_qos):
+        """Called when broker responds to a subscribe request."""
+
 
     def connect(self, **kwargs):
         """Connect to the Adafruit.IO service.  Must be called before any loop
@@ -162,16 +169,24 @@ class MQTTClient(object):
         """
         self._client.loop(timeout=timeout_sec)
 
-    def subscribe(self, feed_id):
+    def subscribe(self, feed_id, feed_user=None):
         """Subscribe to changes on the specified feed.  When the feed is updated
         the on_message function will be called with the feed_id and new value.
+
+        Params:
+        - feed_id: The id of the feed to update.
+        - feed_user (optional): The user id of the feed. Used for feed sharing.
         """
-        self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_id))
+        if feed_user is not None:
+            (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(feed_user, feed_id))
+        else:
+            (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_id))
+        return res, mid
 
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
         updated, the on_message function will be called and publish a new value:
-        time =
+        time feeds:
             millis: milliseconds
             seconds: seconds
             iso: ISO-8601 (https://en.wikipedia.org/wiki/ISO_8601)
@@ -181,15 +196,27 @@ class MQTTClient(object):
         elif time == 'iso':
             self._client.subscribe('time/ISO-8601')
         else:
-            print('ERROR: Invalid time type specified')
+            raise TypeError('Invalid Time Feed Specified.')
             return
+    
+    def unsubscribe(self, feed_id):
+        """Unsubscribes from a specified MQTT feed.
+        Note: this does not prevent publishing to a feed, it will unsubscribe
+        from receiving messages via on_message.
+        """
+        (res, mid) = self._client.unsubscribe('{0}/feeds/{1}'.format(self._username, feed_id))
 
-    def publish(self, feed_id, value):
+    def publish(self, feed_id, value=None, feed_user=None):
         """Publish a value to a specified feed.
 
-        Required parameters:
+        Params:
         - feed_id: The id of the feed to update.
+        - feed_user (optional): The user id of the feed. Used for feed sharing.
         - value: The new value to publish to the feed.
         """
-        self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
-            payload=value)
+        if feed_user is not None:
+            (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(feed_user, feed_id),
+                payload=value)
+        else:
+            (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
+                payload=value)
