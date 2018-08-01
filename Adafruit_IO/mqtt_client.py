@@ -187,12 +187,17 @@ class MQTTClient(object):
             raise TypeError('Invalid Time Feed Specified.')
             return
 
-    def publish(self, feed_id, value=None):
+    def publish(self, feed_id, feed_user=None, value=None):
         """Publish a value to a specified feed.
 
         Required parameters:
         - feed_id: The id of the feed to update.
         - value: The new value to publish to the feed.
         """
-        self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
-            payload=value)
+        print('Feed User: ', feed_user)
+        if feed_user is not None:
+            self._client.publish('{0}/feeds/{1}'.format(feed_user, feed_id),
+                payload=value)
+        else:
+            self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
+                payload=value)
