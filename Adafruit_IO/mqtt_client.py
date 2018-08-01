@@ -99,7 +99,7 @@ class MQTTClient(object):
         # Parse out the feed id and call on_message callback.
         # Assumes topic looks like "username/feeds/id"
         parsed_topic = msg.topic.split('/')
-        if self.on_message is not None and self._username == parsed_topic[0]:
+        if self.on_message is not None:
             feed = parsed_topic[2]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         elif self.on_message is not None and parsed_topic[0] == 'time':
@@ -162,11 +162,14 @@ class MQTTClient(object):
         """
         self._client.loop(timeout=timeout_sec)
 
-    def subscribe(self, feed_id):
+    def subscribe(self, feed_id, feed_user=None):
         """Subscribe to changes on the specified feed.  When the feed is updated
         the on_message function will be called with the feed_id and new value.
         """
-        self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_id))
+        if feed_user is not None:
+            self._client.subscribe('{0}/feeds/{1}'.format(feed_user, feed_id))
+        else:
+            self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_id))
 
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
@@ -181,10 +184,10 @@ class MQTTClient(object):
         elif time == 'iso':
             self._client.subscribe('time/ISO-8601')
         else:
-            print('ERROR: Invalid time type specified')
+            raise TypeError('Invalid Time Feed Specified.')
             return
 
-    def publish(self, feed_id, value):
+    def publish(self, feed_id, value=None):
         """Publish a value to a specified feed.
 
         Required parameters:
