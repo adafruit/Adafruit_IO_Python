@@ -52,6 +52,7 @@ class MQTTClient(object):
         self.on_connect    = None
         self.on_disconnect = None
         self.on_message    = None
+        self.on_publish    = None
         # Initialize MQTT client.
         self._client = mqtt.Client()
         if secure:
@@ -88,6 +89,7 @@ class MQTTClient(object):
         # log the RC as an error.  Continue on to call any disconnect handler
         # so clients can potentially recover gracefully.
         if rc != 0:
+            print(rc)
             raise MQTTError(rc)
         print('Disconnected from Adafruit IO!')
         # Call the on_disconnect callback if available.
@@ -165,6 +167,10 @@ class MQTTClient(object):
     def subscribe(self, feed_id, feed_user=None):
         """Subscribe to changes on the specified feed.  When the feed is updated
         the on_message function will be called with the feed_id and new value.
+
+        Params:
+        - feed_id: The id of the feed to update.
+        - feed_user (optional): The user id of the feed. Used for feed sharing.
         """
         if feed_user is not None:
             self._client.subscribe('{0}/feeds/{1}'.format(feed_user, feed_id))
@@ -174,7 +180,7 @@ class MQTTClient(object):
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
         updated, the on_message function will be called and publish a new value:
-        time =
+        time feeds:
             millis: milliseconds
             seconds: seconds
             iso: ISO-8601 (https://en.wikipedia.org/wiki/ISO_8601)
@@ -187,17 +193,17 @@ class MQTTClient(object):
             raise TypeError('Invalid Time Feed Specified.')
             return
 
-    def publish(self, feed_id, feed_user=None, value=None):
+    def publish(self, feed_id, value=None, feed_user=None):
         """Publish a value to a specified feed.
 
-        Required parameters:
+        Params:
         - feed_id: The id of the feed to update.
+        - feed_user (optional): The user id of the feed. Used for feed sharing.
         - value: The new value to publish to the feed.
         """
-        print('Feed User: ', feed_user)
         if feed_user is not None:
-            self._client.publish('{0}/feeds/{1}'.format(feed_user, feed_id),
+            (res, mid) = self._client.publish('{0}/feeds/{1}'.format(feed_user, feed_id),
                 payload=value)
         else:
-            self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
+            (res, mid) = self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
                 payload=value)
