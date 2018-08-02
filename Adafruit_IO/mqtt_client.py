@@ -139,11 +139,16 @@ class MQTTClient(object):
         if self._connected:
             self._client.disconnect()
 
-    def loop_background(self):
+    def loop_background(self, stop=None):
         """Starts a background thread to listen for messages from Adafruit.IO
         and call the appropriate callbacks when feed events occur.  Will return
         immediately and will not block execution.  Should only be called once.
+        
+        Params:
+        - stop: boolean, stops the execution of the background loop.
         """
+        is stop:
+            self._client.loop_stop()
         self._client.loop_start()
 
     def loop_blocking(self):
