@@ -147,7 +147,7 @@ class MQTTClient(object):
         Params:
         - stop: boolean, stops the execution of the background loop.
         """
-        is stop:
+        if stop:
             self._client.loop_stop()
         self._client.loop_start()
 
