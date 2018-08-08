@@ -211,6 +211,21 @@ class Client(object):
         """
         path = "feeds/{0}/data/{1}".format(feed, data_id)
         self._delete(path)
+    
+    def toRed(self, data):
+        """Hex color feed to red channel. 
+        """
+        return ((int(data[1], 16))*16) + int(data[2], 16)
+    
+    def toGreen(self, data):
+        """Hex color feed to green channel. 
+        """
+        return (int(data[3], 16) * 16) + int(data[4], 16)
+
+    def toBlue(self, data):
+        """Hex color feed to blue channel. 
+        """
+        return (int(data[5], 16) * 16) + int(data[6], 16)
 
     # Feed functionality.
     def feeds(self, feed=None):
