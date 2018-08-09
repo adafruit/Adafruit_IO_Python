@@ -1,13 +1,26 @@
 """
 `analog_output.py`
--------------------
-PWM a LED from
-Adafruit IO!
+===============================================================================
+PWM a LED from Adafruit IO!
 
-Requires:
-    - Adafruit-Blinka
-    - Adafruit-CircuitPython-PCA9685
+Tutorial Link: https://learn.adafruit.com/adafruit-io-basics-analog-output
+
+Adafruit invests time and resources providing this open source code.
+Please support Adafruit and open source hardware by purchasing
+products from Adafruit!
+
+Author(s): Brent Rubell for Adafruit Industries
+Copyright (c) 2018 Adafruit Industries
+Licensed under the MIT license.
+All text above must be included in any redistribution.
+
+Dependencies:
+    - Adafruit_Blinka
+        (https://github.com/adafruit/Adafruit_Blinka)
+    - Adafruit_CircuitPython_PCA9685
+        (https://github.com/adafruit/Adafruit_CircuitPython_PCA9685)
 """
+
 # import system libraries
 import time
 
