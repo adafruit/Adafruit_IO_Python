@@ -115,18 +115,20 @@ while True:
     aio.send(eCO2_feed.key, eCO2_data)
     print('tvoc:', tvoc_data)
     aio.send(tvoc_feed.key, tvoc_data)
+    time.sleep(2)
     # Send VEML6070 Data to Adafruit IO.
     print('UV Level: ', uv_data)
     aio.send(uv_feed.key, uv_data)
+    time.sleep(2)
     # Send BME280 Data to Adafruit IO.
     print('Temperature: %0.1f C' % temp_data)
     aio.send(temperature_feed.key, temp_data)
     print("Humidity: %0.1f %%" % humid_data)
     aio.send(humidity_feed.key, humid_data)
+    time.sleep(2)
     print("Pressure: %0.1f hPa" % pressure_data)
     aio.send(pressure_feed.key, pressure_data)
     print("Altitude = %0.2f meters" % alt_data)
     aio.send(altitude_feed.key, alt_data)
-
     # avoid timeout from adafruit io
-    time.sleep(LOOP_DELAY)
+    time.sleep(LOOP_DELAY * 60)
