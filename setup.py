@@ -13,8 +13,6 @@ from codecs import open
 from os import path
 import re
 
-
-# Get the version string from _version.py
 verstrline = open('Adafruit_IO/_version.py', "rt").read()
 VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
 mo = re.search(VSRE, verstrline, re.M)
@@ -23,6 +21,7 @@ if mo:
 else:
     raise RuntimeError("Unable to find version string in %s." % (VERSIONFILE,))
 print('version: ', verstr)
+
 
 # Get the long description from the README file
 here = path.abspath(path.dirname(__file__))
