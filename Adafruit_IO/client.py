@@ -211,7 +211,7 @@ class Client(object):
         """
         path = "feeds/{0}/data/{1}".format(feed, data_id)
         self._delete(path)
-    
+
     def toRed(self, data):
         """Hex color feed to red channel. 
         """
@@ -254,32 +254,7 @@ class Client(object):
         path = "feeds/{0}".format(feed)
         self._delete(path)
 
-    def receive_group(self, group):
-        """Retrieve the most recent value for the specified group.  Group can be
-        a group ID, group key, or group name.  Returns a Group instance whose
-        feeds property holds an array of Feed instances associated with the group.
-        """
-        path = "groups/{0}/last".format(group)
-        return Group.from_dict(self._get(path))
-
-    def receive_next_group(self, group):
-        """Retrieve the next unread value from the specified group.  Group can
-        be a group ID, group key, or group name.  Returns a Group instance whose
-        feeds property holds an array of Feed instances associated with the
-        group.
-        """
-        path = "groups/{0}/next".format(group)
-        return Group.from_dict(self._get(path))
-
-    def receive_previous_group(self, group):
-        """Retrieve the previous unread value from the specified group.  Group
-        can be a group ID, group key, or group name.  Returns a Group instance
-        whose feeds property holds an array of Feed instances associated with
-        the group.
-        """
-        path = "groups/{0}/previous".format(group)
-        return Group.from_dict(self._get(path))
-
+    # Group functionality.
     def groups(self, group=None):
         """Retrieve a list of all groups, or the specified group.  If group is
         not specified a list of all groups will be returned.  If group is
