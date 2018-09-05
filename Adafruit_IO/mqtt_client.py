@@ -213,12 +213,24 @@ class MQTTClient(object):
             raise TypeError('Invalid Time Feed Specified.')
             return
     
-    def unsubscribe(self, feed_id):
-      """Unsubscribes from a specified MQTT feed.
-      Note: this does not prevent publishing to a feed, it will unsubscribe
+    def unsubscribe(self, feed_id=None, group_id=None):
+      """Unsubscribes from a specified MQTT topic.
+      Note: this does not prevent publishing to a topic, it will unsubscribe
       from receiving messages via on_message.
       """
-      (res, mid) = self._client.unsubscribe('{0}/feeds/{1}'.format(self._username, feed_id))
+      if feed_id is not None:
+        self._client.unsubscribe('{0}/feeds/{1}'.format(self._username, feed_id))
+      elif group_id is not None:
+        self._client.unsubscribe('{0}/groups/{1}'.format(self._username, group_id))
+      else:
+        raise TypeError('Invalid topic type specified.')
+        return
+
+    def publish_group(self, group_id, feed_id, value=None):
+      """Publish a value to a specified feed within a group
+      """
+      pub_string = '{0}/feeds/{1}.{2}'.format(self._username, group_id, feed_id)
+      self._client.publish('{0}/feeds/{1}.{2}'.format(self._username, group_id, feed_id), payload=value)
 
     def publish(self, feed_id, value=None, feed_user=None):
         """Publish a value to a specified feed.
