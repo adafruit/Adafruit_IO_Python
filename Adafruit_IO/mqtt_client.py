@@ -99,20 +99,23 @@ class MQTTClient(object):
 
     def _mqtt_message(self, client, userdata, msg):
         logger.debug('Client on_message called.')
-        # Parse out the feed id and call on_message callback.
-        # Assumes topic looks like "username/feeds/id"
+        """Parse out the topic and call on_message callback
+        assume topic looks like `username/topic/id`
+        """
         parsed_topic = msg.topic.split('/')
         if self.on_message is not None:
-            feed = parsed_topic[2]
+            topic = parsed_topic[2]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         elif self.on_message is not None and parsed_topic[0] == 'time':
-            feed = parsed_topic[0]
+            topic = parsed_topic[0]
             payload = msg.payload.decode('utf-8')
-        self.on_message(self, feed, payload)
+        elif self.on_message is not None and parsed_topic[1] == 'groups':
+            topic = parsed_topic[3]
+            payload = msg.payload.decode('utf-8')
+        self.on_message(self, topic, payload)
     
     def _mqtt_subscribe(client, userdata, mid, granted_qos):
         """Called when broker responds to a subscribe request."""
-
 
     def connect(self, **kwargs):
         """Connect to the Adafruit.IO service.  Must be called before any loop
@@ -179,14 +182,20 @@ class MQTTClient(object):
         the on_message function will be called with the feed_id and new value.
 
         Params:
-        - feed_id: The id of the feed to update.
-        - feed_user (optional): The user id of the feed. Used for feed sharing.
+        - feed_id: The id of the feed to subscribe to.
+        - feed_user (optional): The user id of the feed. Used for feed sharing functionality.
         """
         if feed_user is not None:
             (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(feed_user, feed_id))
         else:
             (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_id))
         return res, mid
+
+    def subscribe_group(self, group_id):
+      """Subscribe to changes on the specified group. When the group is updated
+      the on_message function will be called with the group_id and the new value.
+      """
+      self._client.subscribe('{0}/groups/{1}'.format(self._username, group_id))      
 
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
@@ -205,11 +214,11 @@ class MQTTClient(object):
             return
     
     def unsubscribe(self, feed_id):
-        """Unsubscribes from a specified MQTT feed.
-        Note: this does not prevent publishing to a feed, it will unsubscribe
-        from receiving messages via on_message.
-        """
-        (res, mid) = self._client.unsubscribe('{0}/feeds/{1}'.format(self._username, feed_id))
+      """Unsubscribes from a specified MQTT feed.
+      Note: this does not prevent publishing to a feed, it will unsubscribe
+      from receiving messages via on_message.
+      """
+      (res, mid) = self._client.unsubscribe('{0}/feeds/{1}'.format(self._username, feed_id))
 
     def publish(self, feed_id, value=None, feed_user=None):
         """Publish a value to a specified feed.
