@@ -1,5 +1,7 @@
-# Example of using the MQTT client class to subscribe to and publish feed values.
-# Author: Tony DiCola
+# Example of subscribing to an Adafruit IO group
+# and publishing to the feeds within it
+
+# Author: Brent Rubell for Adafruit Industries, 2018
 
 # Import standard python modules.
 import random
@@ -18,17 +20,21 @@ ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
 # (go to https://accounts.adafruit.com to find your username)
 ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
-# name of the group to subscribe to changes on
+# Group Name
 group_name = 'grouptest'
+
+# Feeds within the group
+group_feed_one = 'one'
+group_feed_two = 'two'
 
 # Define callback functions which will be called when certain events happen.
 def connected(client):
     # Connected function will be called when the client is connected to Adafruit IO.
-    # This is a good place to subscribe to feed changes.  The client parameter
+    # This is a good place to subscribe to topic changes.  The client parameter
     # passed to this function is the Adafruit IO MQTT client so you can make
     # calls against it easily.
-    # Subscribe to changes on a group_id.
-    print('Subscribing to ', group_name)
+    print('Listening for changes on ', group_name)
+    # Subscribe to changes on a group, `group_name`
     client.subscribe_group(group_name)
 
 def disconnected(client):
@@ -40,7 +46,7 @@ def message(client, topic_id, payload):
     # Message function will be called when a subscribed topic has a new value.
     # The topic_id parameter identifies the topic, and the payload parameter has
     # the new value.
-    print('{0} received new value: {1}'.format(topic_id, payload))
+    print('Topic {0} received new value: {1}'.format(topic_id, payload))
 
 
 # Create an MQTT client instance.
@@ -54,5 +60,21 @@ client.on_message    = message
 # Connect to the Adafruit IO server.
 client.connect()
 
-# Run a message loop forever to listen
-client.loop_blocking()
+# Now the program needs to use a client loop function to ensure messages are
+# sent and received.  There are a few options for driving the message loop,
+# depending on what your program needs to do.
+
+# The first option is to run a thread in the background so you can continue
+# doing things in your program.
+client.loop_background()
+# Now send new values every 5 seconds.
+print('Publishing a new message every 5 seconds (press Ctrl-C to quit)...')
+while True:
+    value = random.randint(0, 100)
+    print('Publishing {0} to {1}.{2}.'.format(value, group_name, group_feed_one))
+    client.publish('one', value, group_name)
+
+    value = random.randint(0,100)
+    print('Publishing {0} to {1}.{2}.'.format(value, group_name, group_feed_two))
+    client.publish('two', value, group_name)
+    time.sleep(5)
