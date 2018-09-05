@@ -195,7 +195,7 @@ class MQTTClient(object):
       """Subscribe to changes on the specified group. When the group is updated
       the on_message function will be called with the group_id and the new value.
       """
-      self._client.subscribe('{0}/groups/{1}'.format(self._username, group_id))      
+      self._client.subscribe('{0}/groups/{1}'.format(self._username, group_id))
 
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
@@ -226,23 +226,21 @@ class MQTTClient(object):
         raise TypeError('Invalid topic type specified.')
         return
 
-    def publish_group(self, group_id, feed_id, value=None):
-      """Publish a value to a specified feed within a group
-      """
-      pub_string = '{0}/feeds/{1}.{2}'.format(self._username, group_id, feed_id)
-      self._client.publish('{0}/feeds/{1}.{2}'.format(self._username, group_id, feed_id), payload=value)
-
-    def publish(self, feed_id, value=None, feed_user=None):
+    def publish(self, feed_id, value=None, group_id=None, feed_user=None):
         """Publish a value to a specified feed.
 
         Params:
         - feed_id: The id of the feed to update.
-        - feed_user (optional): The user id of the feed. Used for feed sharing.
         - value: The new value to publish to the feed.
+        - (optional) group_id: The id of the group to update. 
+        - (optional) feed_user: The feed owner's username. Used for Sharing Feeds.
         """
-        if feed_user is not None:
-            (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(feed_user, feed_id),
-                payload=value)
-        else:
-            (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
-                payload=value)
+        if feed_user is not None: # shared feed
+          (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(feed_user, feed_id),
+              payload=value)
+        elif group_id is not None: # group-specified feed
+          self._client.publish('{0}/feeds/{1}.{2}'.format(self._username, group_id, feed_id),
+              payload=value)
+        else: # regular feed
+          (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
+              payload=value)
