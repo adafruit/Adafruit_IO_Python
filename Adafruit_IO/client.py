@@ -232,13 +232,18 @@ class Client(object):
         """Retrieve a list of all feeds, or the specified feed.  If feed is not
         specified a list of all feeds will be returned.  If feed is specified it
         can be a feed name, key, or ID and the requested feed will be returned.
+        If the feed name does not exist, it will be created and returned.
         """
         if feed is None:
             path = "feeds"
             return list(map(Feed.from_dict, self._get(path)))
         else:
             path = "feeds/{0}".format(feed)
-            return Feed.from_dict(self._get(path))
+            try:
+              return Feed.from_dict(self._get(path))
+            except RequestError:
+              self.create_feed(Feed(name=feed))
+              return Feed.from_dict(self._get(path)) 
 
     def create_feed(self, feed):
         """Create the specified feed.  Feed should be an instance of the Feed
