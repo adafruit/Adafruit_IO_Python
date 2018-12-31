@@ -116,6 +116,8 @@ class Client(object):
         specified value to the feed identified by either name, key, or ID.
         Returns a Data instance with details about the newly appended row of data.
         Note that send_data now operates the same as append.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param string value: Value to send.
         """
         return self.create_data(feed, Data(value=value))
 
@@ -126,6 +128,8 @@ class Client(object):
         ID, feed key, or feed name.  Data must be an instance of the Data class
         with at least a value property set on it.  Returns a Data instance with
         details about the newly appended row of data.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param Data data_list: Multiple data values.
         """
         path = "feeds/{0}/data/batch".format(feed)
         data_dict = type(data_list)((data._asdict() for data in data_list))
@@ -136,58 +140,57 @@ class Client(object):
         specified value to the feed identified by either name, key, or ID.
         Returns a Data instance with details about the newly appended row of data.
         Note that unlike send the feed should exist before calling append.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param string value: Value to append to feed.
         """
         return self.create_data(feed, Data(value=value))
 
-    def send_location_data(self, feed, value, lat, lon, ele):
-        """Sends locational data to a feed
-
-        args:
-            - lat: latitude 
-            - lon: logitude
-            - ele: elevation
-            - (optional) value: value to send to the feed
+    def send_location_data(self, feed, lat, lon, ele, value=None):
+        """Sends locational data to a feed.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param int lat: Latitude.
+        :param int lon: Longitude.
+        :param int ele: Elevation.
+        :param int value: Optional value to send, defaults to None.
         """
-        return self.create_data(feed, Data(value = value,lat=lat, lon=lon, ele=ele))
+        return self.create_data(feed, Data(value=value,lat=lat, lon=lon, ele=ele))
 
     def receive_time(self, time):
         """Returns the time from the Adafruit IO server.
-
-        args:
-            - time (string): millis, seconds, ISO-8601
+        :param string time: Time to be returned: `millis`, `seconds`, `ISO-8601`.
         """
         timepath = "time/{0}".format(time)
         return self._get(timepath, is_time=True)
 
     def receive(self, feed):
-        """Retrieve the most recent value for the specified feed.  Feed can be a
-        feed ID, feed key, or feed name.  Returns a Data instance whose value
-        property holds the retrieved value.
+        """Retrieve the most recent value for the specified feed. Returns a Data
+        instance whose value property holds the retrieved value.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/{0}/data/last".format(feed)
         return Data.from_dict(self._get(path))
 
     def receive_next(self, feed):
-        """Retrieve the next unread value from the specified feed.  Feed can be
-        a feed ID, feed key, or feed name.  Returns a Data instance whose value
-        property holds the retrieved value.
+        """Retrieve the next unread value from the specified feed. Returns a Data 
+        instance whose value property holds the retrieved value.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/{0}/data/next".format(feed)
         return Data.from_dict(self._get(path))
 
     def receive_previous(self, feed):
-        """Retrieve the previous unread value from the specified feed.  Feed can
-        be a feed ID, feed key, or feed name.  Returns a Data instance whose
-        value property holds the retrieved value.
+        """Retrieve the previous unread value from the specified feed. Returns a
+        Data instance whose value property holds the retrieved value.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/{0}/data/previous".format(feed)
         return Data.from_dict(self._get(path))
 
     def data(self, feed, data_id=None):
-        """Retrieve data from a feed.  Feed can be a feed ID, feed key, or feed
-        name.  Data_id is an optional id for a single data value to retrieve.
-        If data_id is not specified then all the data for the feed will be
-        returned in an array.
+        """Retrieve data from a feed. If data_id is not specified then all the data
+        for the feed will be returned in an array.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param string data_id: ID of the piece of data to delete.
         """
         if data_id is None:
             path = "feeds/{0}/data".format(feed)
@@ -197,41 +200,46 @@ class Client(object):
             return Data.from_dict(self._get(path))
 
     def create_data(self, feed, data):
-        """Create a new row of data in the specified feed.  Feed can be a feed
-        ID, feed key, or feed name.  Data must be an instance of the Data class
-        with at least a value property set on it.  Returns a Data instance with
-        details about the newly appended row of data.
+        """Create a new row of data in the specified feed.
+        Returns a Data instance with details about the newly 
+        appended row of data.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param Data data: Instance of the Data class. Must have a value property set. 
         """
         path = "feeds/{0}/data".format(feed)
         return Data.from_dict(self._post(path, data._asdict()))
 
     def delete(self, feed, data_id):
-        """Delete data from a feed.  Feed can be a feed ID, feed key, or feed
-        name.  Data_id must be the ID of the piece of data to delete.
+        """Delete data from a feed.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param string data_id: ID of the piece of data to delete.
         """
         path = "feeds/{0}/data/{1}".format(feed, data_id)
         self._delete(path)
 
     def toRed(self, data):
-        """Hex color feed to red channel. 
+        """Hex color feed to red channel.
+        :param int data: Color value, in hexadecimal.
         """
         return ((int(data[1], 16))*16) + int(data[2], 16)
     
     def toGreen(self, data):
         """Hex color feed to green channel. 
+        :param int data: Color value, in hexadecimal.
         """
         return (int(data[3], 16) * 16) + int(data[4], 16)
 
     def toBlue(self, data):
-        """Hex color feed to blue channel. 
+        """Hex color feed to blue channel.
+        :param int data: Color value, in hexadecimal.
         """
         return (int(data[5], 16) * 16) + int(data[6], 16)
 
-    # Feed functionality.
+    # feed functionality.
     def feeds(self, feed=None):
         """Retrieve a list of all feeds, or the specified feed.  If feed is not
-        specified a list of all feeds will be returned.  If feed is specified it
-        can be a feed name, key, or ID and the requested feed will be returned.
+        specified a list of all feeds will be returned.
+        :param string feed: Name/Key/ID of Adafruit IO feed, defaults to None.
         """
         if feed is None:
             path = "feeds"
@@ -241,25 +249,23 @@ class Client(object):
             return Feed.from_dict(self._get(path))
 
     def create_feed(self, feed):
-        """Create the specified feed.  Feed should be an instance of the Feed
-        type with at least the name property set.
+        """Create the specified feed.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/"
         return Feed.from_dict(self._post(path, {"feed": feed._asdict()}))
 
     def delete_feed(self, feed):
-        """Delete the specified feed.  Feed can be a feed ID, feed key, or feed
-        name.
+        """Delete the specified feed.
+        :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/{0}".format(feed)
         self._delete(path)
 
     # Group functionality.
     def groups(self, group=None):
-        """Retrieve a list of all groups, or the specified group.  If group is
-        not specified a list of all groups will be returned.  If group is
-        specified it can be a group name, key, or ID and the requested group
-        will be returned.
+        """Retrieve a list of all groups, or the specified group.
+        :param string group: Name/Key/ID of Adafruit IO Group. Defaults to None.
         """
         if group is None:
             path = "groups/"
@@ -269,15 +275,15 @@ class Client(object):
             return Group.from_dict(self._get(path))
 
     def create_group(self, group):
-        """Create the specified group.  Group should be an instance of the Group
-        type with at least the name and feeds property set.
+        """Create the specified group.
+        :param string group: Name/Key/ID of Adafruit IO Group.
         """
         path = "groups/"
         return Group.from_dict(self._post(path, group._asdict()))
 
     def delete_group(self, group):
-        """Delete the specified group.  Group can be a group ID, group key, or
-        group name.
+        """Delete the specified group.
+        :param string group: Name/Key/ID of Adafruit IO Group.
         """
         path = "groups/{0}".format(group)
         self._delete(path)

@@ -23,7 +23,7 @@ class TestClient(base.IOTestCase):
     # If your IP isn't put on the list of non-throttled IPs, uncomment the
     # function below to waste time between tests to prevent throttling.
     #def tearDown(self):
-    #    time.sleep(30.0)
+    time.sleep(30.0)
 
     # Helper Methods
     def get_client(self):
@@ -132,14 +132,13 @@ class TestClient(base.IOTestCase):
     def test_location_data(self):
         aio = self.get_client()
         self.ensure_feed_deleted(aio, 'testlocfeed')
-        test_feed = aio.create_feed(Feed(name="testlocfeed"))
-        aio.send_location_data(test_feed.key, 0, 40, -74, 6)
+        test_feed = aio.create_feed(Feed(name='testlocfeed'))
+        aio.send_location_data(test_feed.key, 40, -74, 6, 0)
         data = aio.receive(test_feed.key)
-        self.assertEqual(int(data.value), 0)
+        self.assertEqual(int(data.value), 0.0)
         self.assertEqual(float(data.lat), 40.0)
         self.assertEqual(float(data.lon), -74.0)
         self.assertEqual(float(data.ele), 6.0)
-
 
     # Test Feed Functionality
     def test_append_by_feed_name(self):
