@@ -33,4 +33,4 @@ lon = -74.005334
 ele = 6 # elevation above sea level (meters)
 
 # Send location data to Adafruit IO
-aio.send_location_data(location.key, value, lat, lon, ele)
+aio.send_location_data(location.key, lat, lon, ele, value)

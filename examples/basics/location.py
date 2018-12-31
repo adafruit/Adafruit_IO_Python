@@ -49,7 +49,7 @@ while True:
     print('\tLon: ', lon)
     print('\tEle: ', ele)
     # Send location data to Adafruit IO
-    aio.send_location_data(location.key, value, lat, lon, ele)
+    aio.send_location_data(location.key, lat, lon, ele, value)
     # shift all values (for test/demo purposes)
     value += 1
     lat -= 0.01
