@@ -108,10 +108,8 @@ class MQTTClient(object):
         assume topic looks like `username/topic/id`
         """
         parsed_topic = msg.topic.split('/')
-        print(parsed_topic) # BR: Remove this
         if self.on_message is not None and parsed_topic[2] == 'weather':
-            print('Weather Subscription')
-            topic = parsed_topic[4]
+            topic = parsed_topic[4] # parse out the forecast type
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         elif self.on_message is not None and parsed_topic[0] == 'time':
             topic = parsed_topic[0]
