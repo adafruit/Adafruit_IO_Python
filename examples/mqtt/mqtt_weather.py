@@ -3,6 +3,8 @@ Example of using the Adafruit IO MQTT Client
 for subscribing to the Adafruit IO Weather Service
 Note: This feature is avaliable for IO Plus Subscribers ONLY
 
+API Documentation: https://io.adafruit.com/services/weather
+
 Author: Brent Rubell for Adafruit Industries
 """
 
@@ -93,10 +95,13 @@ def parseForecast(forecast_data):
   """
   # incoming data is a utf-8 string, encode it as a json object
   forecast = json.loads(forecast_data)
-  print(forecast)
-  print('It is {0} and {1} F.'.format(forecast['summary'], forecast['temperature']))
-  print('with a humidity of {0}% and a wind speed of {1}mph.'.format(forecast['humidity'], forecast['windSpeed']))
-  print('There is a {0}% chance of precipitation. It feels like {1} F'.format(forecast['precipProbability'], forecast['apparentTemperature']))
+  try:
+    print('It is {0} and of {1}F.'.format(forecast['summary'], forecast['temperature']))
+  except KeyError:
+    # future weather forecasts return a high and low temperature, instead of 'temperature'
+    print('It will be {0} with a high of {1}F and a low of {2}F.'.format(forecast['summary'], forecast['temperatureLow'], forecast['temperatureHigh']))
+    print('with a humidity of {0}% and a wind speed of {1}mph.'.format(forecast['humidity'], forecast['windSpeed']))
+    print('There is a {0}% chance of precipitation.'.format(forecast['precipProbability']))
 
 # Create an MQTT client instance.
 client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
