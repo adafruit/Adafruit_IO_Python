@@ -118,7 +118,7 @@ class MQTTClient(object):
             topic = parsed_topic[3]
             payload = msg.payload.decode('utf-8')
         else: # default topic
-            topic = parsed_topic[1]
+            topic = parsed_topic[2]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         self.on_message(self, topic, payload)
     
