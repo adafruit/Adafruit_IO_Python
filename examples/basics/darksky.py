@@ -9,12 +9,12 @@ from Adafruit_IO import Client, Feed, RequestError
 
 # Set to your Adafruit IO username.
 # (go to https://accounts.adafruit.com to find your username)
-ADAFRUIT_IO_USERNAME = 'USER'
+ADAFRUIT_IO_USERNAME = 'adafruitiotester'
 
 # Set to your Adafruit IO key.
 # Remember, your key is a secret,
 # so make sure not to publish it when you publish this code!
-ADAFRUIT_IO_KEY = 'PASSWORD'
+ADAFRUIT_IO_KEY = '1a6995af427747d7bd4a72c97af1d05a'
 
 
 # Create an instance of the REST client.
