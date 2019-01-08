@@ -8,6 +8,7 @@ Author: Brent Rubell for Adafruit Industries
 
 # Import standard python modules.
 import sys
+import json
 
 # Import Adafruit IO MQTT client.
 from Adafruit_IO import MQTTClient
@@ -41,7 +42,7 @@ forecast_days_5
 # Subscribe to the current forecast
 forecast_today = 'current'
 # Subscribe to tomorrow's forecast
-forecast_tomorrow = 'forecast_days_2'
+forecast_two_days = 'forecast_days_2'
 # Subscribe to forecast in 5 days
 forecast_in_5_days = 'forecast_days_5'
 
@@ -56,7 +57,7 @@ def connected(client):
     client.subscribe_weather(forecast_id, forecast_today)
 
     # Subscribe to changes on tomorrow's forecast.
-    client.subscribe_weather(forecast_id, forecast_tomorrow)
+    client.subscribe_weather(forecast_id, forecast_two_days)
 
     # Subscribe to changes on forecast in 5 days.
     client.subscribe_weather(forecast_id, forecast_in_5_days)
@@ -70,19 +71,32 @@ def message(client, topic, payload):
     """Message function will be called when any subscribed forecast has an update.
     Weather data is updated at most once every 20 minutes.
     """
-    # Raw data from feed
-    print(topic)
-    print(payload)
-    # parse based on topic
-    if topic is 'current':
+    # forecast based on mqtt topic
+    if topic == 'current':
       # Print out today's forecast
-      print('Current Forecast: {0}'.format(payload))
-    elif topic is 'forecast_days_2':
-      # print out tomorrow's forecast
-      print('Forecast Tomorrow: {0}'.format(payload))
-    elif topic is 'forecast_days_5':
-      # print out forecast in 5 days
-      print('Forecast in 5 Days: {0}'.format(payload))
+      today_forecast = payload
+      print('\nCurrent Forecast')
+      parseForecast(today_forecast)
+    elif topic == 'forecast_days_2':
+      # Print out tomorrow's forecast
+      two_day_forecast = payload
+      print('\nWeather in Two Days')
+      parseForecast(two_day_forecast)
+    elif topic == 'forecast_days_5':
+      # Print out forecast in 5 days
+      five_day_forecast = payload
+      print('\nWeather in 5 Days')
+      parseForecast(five_day_forecast)
+
+def parseForecast(forecast_data):
+  """Parses incoming forecast data
+  """
+  # incoming data is a utf-8 string, encode it as a json object
+  forecast = json.loads(forecast_data)
+  print(forecast)
+  print('It is {0} and {1} F.'.format(forecast['summary'], forecast['temperature']))
+  print('with a humidity of {0}% and a wind speed of {1}mph.'.format(forecast['humidity'], forecast['windSpeed']))
+  print('There is a {0}% chance of precipitation. It feels like {1} F'.format(forecast['precipProbability'], forecast['apparentTemperature']))
 
 # Create an MQTT client instance.
 client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
