@@ -117,7 +117,7 @@ class MQTTClient(object):
         elif self.on_message is not None and parsed_topic[1] == 'groups':
             topic = parsed_topic[3]
             payload = msg.payload.decode('utf-8')
-        else:
+        else: # default topic
             topic = parsed_topic[1]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         self.on_message(self, topic, payload)

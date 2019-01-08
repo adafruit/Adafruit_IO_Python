@@ -22,7 +22,7 @@ ADAFRUIT_IO_KEY = 'KEY'
 ADAFRUIT_IO_USERNAME = 'USER'
 
 # Set to ID of the forecast to subscribe to for updates
-forecast_id = 1234
+forecast_id = 2153
 
 # Set to the ID of the feed to subscribe to for updates.
 """
@@ -38,7 +38,12 @@ forecast_days_1
 forecast_days_2
 forecast_days_5
 """
-forecast_type = 'current'
+# Subscribe to the current forecast
+forecast_today = 'current'
+# Subscribe to tomorrow's forecast
+forecast_tomorrow = 'forecast_days_2'
+# Subscribe to forecast in 5 days
+forecast_in_5_days = 'forecast_days_5'
 
 # Define callback functions which will be called when certain events happen.
 def connected(client):
@@ -47,20 +52,37 @@ def connected(client):
     # passed to this function is the Adafruit IO MQTT client so you can make
     # calls against it easily.
     print('Connected to Adafruit IO!  Listening to forecast: {0}...'.format(forecast_id))
-    # Subscribe to changes on a feed named DemoFeed.
-    client.subscribe_weather(forecast_id, forecast_type)
+    # Subscribe to changes on the current forecast.
+    client.subscribe_weather(forecast_id, forecast_today)
+
+    # Subscribe to changes on tomorrow's forecast.
+    client.subscribe_weather(forecast_id, forecast_tomorrow)
+
+    # Subscribe to changes on forecast in 5 days.
+    client.subscribe_weather(forecast_id, forecast_in_5_days)
 
 def disconnected(client):
     # Disconnected function will be called when the client disconnects.
     print('Disconnected from Adafruit IO!')
     sys.exit(1)
 
-def message(client, feed_id, payload):
-    # Message function will be called when a subscribed feed has a new value.
-    # The feed_id parameter identifies the feed, and the payload parameter has
-    # the new value.
-    print('Weather Subscription {0} received new value: {1}'.format(forecast_id, payload))
-
+def message(client, topic, payload):
+    """Message function will be called when any subscribed forecast has an update.
+    Weather data is updated at most once every 20 minutes.
+    """
+    # Raw data from feed
+    print(topic)
+    print(payload)
+    # parse based on topic
+    if topic is 'current':
+      # Print out today's forecast
+      print('Current Forecast: {0}'.format(payload))
+    elif topic is 'forecast_days_2':
+      # print out tomorrow's forecast
+      print('Forecast Tomorrow: {0}'.format(payload))
+    elif topic is 'forecast_days_5':
+      # print out forecast in 5 days
+      print('Forecast in 5 Days: {0}'.format(payload))
 
 # Create an MQTT client instance.
 client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
