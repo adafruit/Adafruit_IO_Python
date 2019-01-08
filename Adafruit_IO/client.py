@@ -162,11 +162,14 @@ class Client(object):
         timepath = "time/{0}".format(time)
         return self._get(timepath, is_time=True)
     
-    def receive_weather(self, weather_id):
-        """Get the specified weather record with current weather and all available forecast information.
-        :param int id: ID for forecast
+    def receive_weather(self, weather_id=None):
+        """Adafruit IO Weather Service, Powered by Dark Sky
+        :param int id: optional ID for retrieving a specified weather record.
         """
-        weatherpath = "integrations/weather/{0}".format(weather_id)
+        if weather_id:
+          weatherpath = "integrations/weather/{0}".format(weather_id)
+        else:
+          weatherpath = "integrations/weather"
         return self._get(weatherpath)
 
     def receive(self, feed):
