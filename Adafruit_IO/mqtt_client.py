@@ -29,6 +29,11 @@ KEEP_ALIVE_SEC = 60  # One minute
 
 logger = logging.getLogger(__name__)
 
+forecast_types = ["current", "forecast_minutes_5",
+                  "forecast_minutes_30", "forecast_hours_1",
+                  "forecast_hours_2", "forecast_hours_6",
+                  "forecast_hours_24", "forecast_days_1",
+                  "forecast_days_2", "forecast_days_5",]
 
 class MQTTClient(object):
     """Interface for publishing and subscribing to feed changes on Adafruit IO
@@ -202,7 +207,10 @@ class MQTTClient(object):
       :param int weather_id: weather record you want data for
       :param string type: type of forecast data requested
       """
-      self._client.subscribe('{0}/integration/weather/{1}/{2}'.format(self._username, weather_id, forecast_type))
+      if forecast_type in forecast_types:
+        self._client.subscribe('{0}/integration/weather/{1}/{2}'.format(self._username, weather_id, forecast_type))
+      else:
+        raise TypeError("Invalid Forecast Type Specified.")
 
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
