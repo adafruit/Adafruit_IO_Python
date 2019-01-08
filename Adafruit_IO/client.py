@@ -61,10 +61,10 @@ class Client(object):
         self.base_url = base_url.rstrip('/')
 
     def _compose_url(self, path, is_time=None):
-        if not is_time:
+        if is_time: # return a call to https://io.adafruit.com/api/v2/time/{unit}
+          return '{0}/api/{1}/{2}'.format(self.base_url, self.api_version, path)
+        else:
             return '{0}/api/{1}/{2}/{3}'.format(self.base_url, self.api_version, self.username, path)
-        else: # return a call to https://io.adafruit.com/api/v2/time/{unit}
-            return '{0}/api/{1}/{2}'.format(self.base_url, self.api_version, path)
 
 
     def _handle_error(self, response):
@@ -161,6 +161,16 @@ class Client(object):
         """
         timepath = "time/{0}".format(time)
         return self._get(timepath, is_time=True)
+    
+    def receive_weather(self, weather_id=None):
+        """Adafruit IO Weather Service, Powered by Dark Sky
+        :param int id: optional ID for retrieving a specified weather record.
+        """
+        if weather_id:
+          weatherpath = "integrations/weather/{0}".format(weather_id)
+        else:
+          weatherpath = "integrations/weather"
+        return self._get(weatherpath)
 
     def receive(self, feed):
         """Retrieve the most recent value for the specified feed. Returns a Data

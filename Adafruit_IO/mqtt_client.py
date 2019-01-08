@@ -29,6 +29,11 @@ KEEP_ALIVE_SEC = 60  # One minute
 
 logger = logging.getLogger(__name__)
 
+forecast_types = ["current", "forecast_minutes_5",
+                  "forecast_minutes_30", "forecast_hours_1",
+                  "forecast_hours_2", "forecast_hours_6",
+                  "forecast_hours_24", "forecast_days_1",
+                  "forecast_days_2", "forecast_days_5",]
 
 class MQTTClient(object):
     """Interface for publishing and subscribing to feed changes on Adafruit IO
@@ -103,8 +108,8 @@ class MQTTClient(object):
         assume topic looks like `username/topic/id`
         """
         parsed_topic = msg.topic.split('/')
-        if self.on_message is not None:
-            topic = parsed_topic[2]
+        if self.on_message is not None and parsed_topic[2] == 'weather':
+            topic = parsed_topic[4] # parse out the forecast type
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         elif self.on_message is not None and parsed_topic[0] == 'time':
             topic = parsed_topic[0]
@@ -112,6 +117,9 @@ class MQTTClient(object):
         elif self.on_message is not None and parsed_topic[1] == 'groups':
             topic = parsed_topic[3]
             payload = msg.payload.decode('utf-8')
+        else: # default topic
+            topic = parsed_topic[2]
+            payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         self.on_message(self, topic, payload)
     
     def _mqtt_subscribe(client, userdata, mid, granted_qos):
@@ -196,6 +204,17 @@ class MQTTClient(object):
       the on_message function will be called with the group_id and the new value.
       """
       self._client.subscribe('{0}/groups/{1}'.format(self._username, group_id))
+
+    def subscribe_weather(self, weather_id, forecast_type):
+      """Subscribe to Adafruit IO Weather
+      :param int weather_id: weather record you want data for
+      :param string type: type of forecast data requested
+      """
+      if forecast_type in forecast_types:
+        self._client.subscribe('{0}/integration/weather/{1}/{2}'.format(self._username, weather_id, forecast_type))
+      else:
+        raise TypeError("Invalid Forecast Type Specified.")
+        return
 
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
