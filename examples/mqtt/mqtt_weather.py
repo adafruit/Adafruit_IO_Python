@@ -21,7 +21,7 @@ ADAFRUIT_IO_KEY = 'KEY'
 # (go to https://accounts.adafruit.com to find your username)
 ADAFRUIT_IO_USERNAME = 'USER'
 
-# Set to ID of the forecast to subscribe to for updates.
+# Set to ID of the forecast to subscribe to for updates
 forecast_id = 1234
 
 # Set to the ID of the feed to subscribe to for updates.
@@ -46,7 +46,7 @@ def connected(client):
     # This is a good place to subscribe to feed changes.  The client parameter
     # passed to this function is the Adafruit IO MQTT client so you can make
     # calls against it easily.
-    print('Connected to Adafruit IO!  Listening for {0} changes...'.format(FEED_ID))
+    print('Connected to Adafruit IO!  Listening to forecast: {0}...'.format(forecast_id))
     # Subscribe to changes on a feed named DemoFeed.
     client.subscribe_weather(forecast_id, forecast_type)
 
