@@ -197,6 +197,13 @@ class MQTTClient(object):
       """
       self._client.subscribe('{0}/groups/{1}'.format(self._username, group_id))
 
+    def subscribe_weather(self, weather_id, forecast_type):
+      """Subscribe to Adafruit IO Weather
+      :param int weather_id: weather record you want data for
+      :param string type: type of forecast data requested
+      """
+      self._client.subscribe('{0}/integration/weather/{1}/{2}'.format(self._username, weather_id, forecast_type))
+
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
         updated, the on_message function will be called and publish a new value:
