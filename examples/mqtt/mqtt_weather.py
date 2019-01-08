@@ -49,6 +49,7 @@ forecast_two_days = 'forecast_days_2'
 forecast_in_5_days = 'forecast_days_5'
 
 # Define callback functions which will be called when certain events happen.
+# pylint: disable=redefined-outer-name
 def connected(client):
     # Connected function will be called when the client is connected to Adafruit IO.
     # This is a good place to subscribe to feed changes.  The client parameter
@@ -64,45 +65,48 @@ def connected(client):
     # Subscribe to changes on forecast in 5 days.
     client.subscribe_weather(forecast_id, forecast_in_5_days)
 
+# pylint: disable=unused-argument
 def disconnected(client):
     # Disconnected function will be called when the client disconnects.
     print('Disconnected from Adafruit IO!')
     sys.exit(1)
 
+# pylint: disable=unused-argument
 def message(client, topic, payload):
     """Message function will be called when any subscribed forecast has an update.
     Weather data is updated at most once every 20 minutes.
     """
     # forecast based on mqtt topic
     if topic == 'current':
-      # Print out today's forecast
-      today_forecast = payload
-      print('\nCurrent Forecast')
-      parseForecast(today_forecast)
+        # Print out today's forecast
+        today_forecast = payload
+        print('\nCurrent Forecast')
+        parseForecast(today_forecast)
     elif topic == 'forecast_days_2':
-      # Print out tomorrow's forecast
-      two_day_forecast = payload
-      print('\nWeather in Two Days')
-      parseForecast(two_day_forecast)
+        # Print out tomorrow's forecast
+        two_day_forecast = payload
+        print('\nWeather in Two Days')
+        parseForecast(two_day_forecast)
     elif topic == 'forecast_days_5':
-      # Print out forecast in 5 days
-      five_day_forecast = payload
-      print('\nWeather in 5 Days')
-      parseForecast(five_day_forecast)
+        # Print out forecast in 5 days
+        five_day_forecast = payload
+        print('\nWeather in 5 Days')
+        parseForecast(five_day_forecast)
 
 def parseForecast(forecast_data):
-  """Parses and prints incoming forecast data
-  """
-  # incoming data is a utf-8 string, encode it as a json object
-  forecast = json.loads(forecast_data)
-  
-  # Print out the forecast
-  try:
-    print('It is {0} and {1}F.'.format(forecast['summary'], forecast['temperature']))
-  except KeyError:
-    # future weather forecasts return a high and low temperature, instead of 'temperature'
-    print('It will be {0} with a high of {1}F and a low of {2}F.'.format(forecast['summary'], forecast['temperatureLow'], forecast['temperatureHigh']))
-  print('with a humidity of {0}%, a wind speed of {1}mph, and a {2}% chance of precipitation.'.format(forecast['humidity'], forecast['windSpeed'], forecast['precipProbability']))
+    """Parses and prints incoming forecast data
+    """
+    # incoming data is a utf-8 string, encode it as a json object
+    forecast = json.loads(forecast_data)
+    # Print out the forecast
+    try:
+        print('It is {0} and {1}F.'.format(forecast['summary'], forecast['temperature']))
+    except KeyError:
+        # future weather forecasts return a high and low temperature, instead of 'temperature'
+        print('It will be {0} with a high of {1}F and a low of {2}F.'.format(
+            forecast['summary'], forecast['temperatureLow'], forecast['temperatureHigh']))
+    print('with humidity of {0}%, wind speed of {1}mph, and {2}% chance of precipitation.'.format(
+        forecast['humidity'], forecast['windSpeed'], forecast['precipProbability']))
 
 # Create an MQTT client instance.
 client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
