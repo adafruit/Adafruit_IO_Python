@@ -108,10 +108,9 @@ class MQTTClient(object):
         assume topic looks like `username/topic/id`
         """
         parsed_topic = msg.topic.split('/')
-        if self.on_message is not None:
-            topic = parsed_topic[1]
-            payload = '' if msg.payload is None else msg.payload.decode('utf-8')
-        elif self.on_message is not None and parsed_topic[2] == 'weather':
+        print(parsed_topic) # BR: Remove this
+        if self.on_message is not None and parsed_topic[2] == 'weather':
+            print('Weather Subscription')
             topic = parsed_topic[4]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         elif self.on_message is not None and parsed_topic[0] == 'time':
@@ -120,6 +119,9 @@ class MQTTClient(object):
         elif self.on_message is not None and parsed_topic[1] == 'groups':
             topic = parsed_topic[3]
             payload = msg.payload.decode('utf-8')
+        else:
+            topic = parsed_topic[1]
+            payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         self.on_message(self, topic, payload)
     
     def _mqtt_subscribe(client, userdata, mid, granted_qos):
