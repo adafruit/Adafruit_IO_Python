@@ -91,17 +91,18 @@ def message(client, topic, payload):
       parseForecast(five_day_forecast)
 
 def parseForecast(forecast_data):
-  """Parses incoming forecast data
+  """Parses and prints incoming forecast data
   """
   # incoming data is a utf-8 string, encode it as a json object
   forecast = json.loads(forecast_data)
+  
+  # Print out the forecast
   try:
-    print('It is {0} and of {1}F.'.format(forecast['summary'], forecast['temperature']))
+    print('It is {0} and {1}F.'.format(forecast['summary'], forecast['temperature']))
   except KeyError:
     # future weather forecasts return a high and low temperature, instead of 'temperature'
     print('It will be {0} with a high of {1}F and a low of {2}F.'.format(forecast['summary'], forecast['temperatureLow'], forecast['temperatureHigh']))
-    print('with a humidity of {0}% and a wind speed of {1}mph.'.format(forecast['humidity'], forecast['windSpeed']))
-    print('There is a {0}% chance of precipitation.'.format(forecast['precipProbability']))
+  print('with a humidity of {0}%, a wind speed of {1}mph, and a {2}% chance of precipitation.'.format(forecast['humidity'], forecast['windSpeed'], forecast['precipProbability']))
 
 # Create an MQTT client instance.
 client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
