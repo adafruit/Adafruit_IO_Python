@@ -109,7 +109,10 @@ class MQTTClient(object):
         """
         parsed_topic = msg.topic.split('/')
         if self.on_message is not None:
-            topic = parsed_topic[2]
+            topic = parsed_topic[1]
+            payload = '' if msg.payload is None else msg.payload.decode('utf-8')
+        elif self.on_message is not None and parsed_topic[2] == 'weather':
+            topic = parsed_topic[4]
             payload = '' if msg.payload is None else msg.payload.decode('utf-8')
         elif self.on_message is not None and parsed_topic[0] == 'time':
             topic = parsed_topic[0]
@@ -211,6 +214,7 @@ class MQTTClient(object):
         self._client.subscribe('{0}/integration/weather/{1}/{2}'.format(self._username, weather_id, forecast_type))
       else:
         raise TypeError("Invalid Forecast Type Specified.")
+        return
 
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
