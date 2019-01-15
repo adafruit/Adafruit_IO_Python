@@ -167,10 +167,21 @@ class Client(object):
         :param int id: optional ID for retrieving a specified weather record.
         """
         if weather_id:
-          weatherpath = "integrations/weather/{0}".format(weather_id)
+          weather_path = "integrations/weather/{0}".format(weather_id)
         else:
-          weatherpath = "integrations/weather"
-        return self._get(weatherpath)
+          weather_path = "integrations/weather"
+        return self._get(weather_path)
+    
+    def receive_random(self, id=None):
+        """Access to Adafruit IO's Random Data
+        service.
+        :param int id: optional ID for retrieving a specified randomizer.
+        """
+        if id:
+          random_path = "integrations/words/{0}".format(id)
+        else:
+          random_path = "integrations/words"
+        return self._get(random_path)
 
     def receive(self, feed):
         """Retrieve the most recent value for the specified feed. Returns a Data
