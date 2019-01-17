@@ -205,6 +205,17 @@ class MQTTClient(object):
       """
       self._client.subscribe('{0}/groups/{1}'.format(self._username, group_id))
 
+    def subscribe_randomizer(self, randomizer_id):
+      """Subscribe to changes on a specified random data stream from
+      Adafruit IO's random data service.
+      
+      MQTT random word subscriptions will publish data once per minute to
+      every client that is subscribed to the same topic.
+
+      :param int randomizer_id: ID of the random word record you want data for.
+      """
+      self._client.subscribe('{0}/integration/words/{1}'.format(self._username, randomizer_id))
+
     def subscribe_weather(self, weather_id, forecast_type):
       """Subscribe to Adafruit IO Weather
       :param int weather_id: weather record you want data for
