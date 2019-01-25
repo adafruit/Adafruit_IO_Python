@@ -50,7 +50,7 @@ setup(
     long_description = open('README.rst').read(),
     long_description_content_type='text/x-rst',
 
-    url              = 'https://github.com/adafruit/io-client-python',
+    url              = 'https://github.com/adafruit/Adafruit_IO_Python',
 
     author           = 'Adafruit Industries',
     author_email     = 'adafruitio@adafruit.com',
@@ -64,6 +64,6 @@ setup(
 
     packages         = ['Adafruit_IO'],
     py_modules       = ['ez_setup'],
-    keywords         = 'adafruitio io python circuitpython raspberrypi hardware MQTT',
+    keywords         = 'adafruitio io python circuitpython raspberrypi hardware MQTT REST',
     classifiers      = classifiers
 )
