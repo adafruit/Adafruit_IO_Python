@@ -18,7 +18,7 @@ Adafruit IO Python
 
 .. image:: https://cdn-learn.adafruit.com/assets/assets/000/057/153/original/adafruit_io_iopython.png?1530802073
 
-A Python client and examples for use with `io.adafruit.com <https://io.adafruit.com>`_. 
+A Python library and examples for use with `io.adafruit.com <https://io.adafruit.com>`_. 
 
 Compatible with Python Versions 3.4+
 
