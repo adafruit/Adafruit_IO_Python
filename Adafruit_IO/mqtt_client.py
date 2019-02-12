@@ -256,6 +256,15 @@ class MQTTClient(object):
         raise TypeError('Invalid topic type specified.')
         return
 
+    def receive(self, feed_id):
+      """Receive the last published value from a specified feed.
+
+      :param string feed_id: The ID of the feed to update.
+      :parm string value: The new value to publish to the feed
+      """
+      (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}/get'.format(self._username, feed_id),
+          payload='')
+
     def publish(self, feed_id, value=None, group_id=None, feed_user=None):
         """Publish a value to a specified feed.
 
