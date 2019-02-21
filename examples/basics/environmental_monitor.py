@@ -33,7 +33,7 @@ import time
 import board
 import busio
 
-# import sensor libraries
+# import CircuitPython sensor libraries
 import adafruit_sgp30
 import adafruit_veml6070
 import adafruit_bme280
@@ -91,12 +91,11 @@ def sample_VEML():
       uv_raw = uv.read
     return uv_raw
 
-
 while True:
     print('Reading sensors...')
     # Read SGP30.
-    eCO2_data = sgp30.co2eq
-    tvoc_data = sgp30.tvoc
+    eCO2_data = sgp30.eCO2
+    tvoc_data = sgp30.TVOC
 
     # Read VEML6070.
     uv_data = sample_VEML()
