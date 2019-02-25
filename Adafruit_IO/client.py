@@ -42,29 +42,28 @@ class Client(object):
     REST API.  Use this client class to send, receive, and enumerate feed data.
     """
 
-    def __init__(self, username, key, proxies=None, base_url='https://io.adafruit.com', api_version = 'v2'):
+    def __init__(self, username, key, proxies=None, base_url='https://io.adafruit.com'):
         """Create an instance of the Adafruit IO REST API client.  Key must be
         provided and set to your Adafruit IO access key value.  Optionaly
-        provide a proxies dict in the format used by the requests library, a
-        base_url to point at a different Adafruit IO service (the default is
-        the production Adafruit IO service over SSL), and a api_version to
-        add support for future API versions.
+        provide a proxies dict in the format used by the requests library,
+        and a base_url to point at a different Adafruit IO service
+        (the default is the production Adafruit IO service over SSL).
         """
         self.username = username
         self.key = key
         self.proxies = proxies
-        self.api_version = api_version
         # self.logger = logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
         # Save URL without trailing slash as it will be added later when
         # constructing the path.
         self.base_url = base_url.rstrip('/')
 
+
     def _compose_url(self, path, is_time=None):
         if is_time: # return a call to https://io.adafruit.com/api/v2/time/{unit}
-          return '{0}/api/{1}/{2}'.format(self.base_url, self.api_version, path)
+          return '{0}/api/{1}/{2}'.format(self.base_url, 'v2', path)
         else:
-            return '{0}/api/{1}/{2}/{3}'.format(self.base_url, self.api_version, self.username, path)
+            return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
 
 
     def _handle_error(self, response):

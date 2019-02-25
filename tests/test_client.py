@@ -28,7 +28,7 @@ class TestClient(base.IOTestCase):
     # Helper Methods
     def get_client(self):
         # Construct an Adafruit IO REST client and return it.
-        return Client(self.get_test_username(), self.get_test_key(), proxies=PROXIES, base_url=BASE_URL, api_version = "v2")
+        return Client(self.get_test_username(), self.get_test_key(), proxies=PROXIES, base_url=BASE_URL)
 
     def ensure_feed_deleted(self, client, feed):
         # Delete the specified feed if it exists.
