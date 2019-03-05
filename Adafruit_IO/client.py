@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import json
-import pkg_resources
 import platform
+import pkg_resources
 # import logging
 
 import requests
@@ -52,21 +52,50 @@ class Client(object):
         self.username = username
         self.key = key
         self.proxies = proxies
-        # self.logger = logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        # self.logger = logging.basicConfig(level=logging.DEBUG,
+        #                                   format='%(asctime)s - %(levelname)s - %(message)s')
 
         # Save URL without trailing slash as it will be added later when
         # constructing the path.
         self.base_url = base_url.rstrip('/')
 
+    @staticmethod
+    def to_red(data):
+        """Hex color feed to red channel.
+        :param int data: Color value, in hexadecimal.
+        """
+        return ((int(data[1], 16))*16) + int(data[2], 16)
 
-    def _compose_url(self, path, is_time=None):
-        if is_time: # return a call to https://io.adafruit.com/api/v2/time/{unit}
-          return '{0}/api/{1}/{2}'.format(self.base_url, 'v2', path)
-        else:
-            return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
+    @staticmethod
+    def to_green(data):
+        """Hex color feed to green channel.
+        :param int data: Color value, in hexadecimal.
+        """
+        return (int(data[3], 16) * 16) + int(data[4], 16)
 
+    @staticmethod
+    def to_blue(data):
+        """Hex color feed to blue channel.
+        :param int data: Color value, in hexadecimal.
+        """
+        return (int(data[5], 16) * 16) + int(data[6], 16)
 
-    def _handle_error(self, response):
+    @staticmethod
+    def _headers(given):
+        headers = default_headers.copy()
+        headers.update(given)
+        return headers
+
+    @staticmethod
+    def _create_payload(value, metadata):
+        if metadata is not None:
+            payload = Data(value=value, lat=metadata['lat'], lon=metadata['lon'],
+                           ele=metadata['ele'], created_at=metadata['created_at'])
+            return payload
+        return Data(value=value)
+
+    @staticmethod
+    def _handle_error(response):
         # Throttling Error
         if response.status_code == 429:
             raise ThrottlingError()
@@ -78,10 +107,10 @@ class Client(object):
             raise RequestError(response)
         # Else do nothing if there was no error.
 
-    def _headers(self, given):
-        headers = default_headers.copy()
-        headers.update(given)
-        return headers
+    def _compose_url(self, path, is_time=None):
+        if is_time: # return a call to https://io.adafruit.com/api/v2/time/{unit}
+            return '{0}/api/{1}/{2}'.format(self.base_url, 'v2', path)
+        return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
 
     def _get(self, path, is_time=None):
         response = requests.get(self._compose_url(path, is_time),
@@ -90,8 +119,7 @@ class Client(object):
         self._handle_error(response)
         if not is_time:
             return response.json()
-        else: # time doesn't need to serialize into json, just return text
-            return response.text
+        return response.text
 
     def _post(self, path, data):
         response = requests.post(self._compose_url(path),
@@ -105,20 +133,28 @@ class Client(object):
     def _delete(self, path):
         response = requests.delete(self._compose_url(path),
                                    headers=self._headers({'X-AIO-Key': self.key,
-                                            'Content-Type': 'application/json'}),
+                                                          'Content-Type': 'application/json'}),
                                    proxies=self.proxies)
         self._handle_error(response)
 
     # Data functionality.
-    def send_data(self, feed, value):
+    def send_data(self, feed, value, metadata=None, precision=None):
         """Helper function to simplify adding a value to a feed.  Will append the
         specified value to the feed identified by either name, key, or ID.
         Returns a Data instance with details about the newly appended row of data.
         Note that send_data now operates the same as append.
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param string value: Value to send.
+        :param dict metadata: Optional metadata associated with the value.
+        :param int precision: Optional amount of precision points to send.
         """
-        return self.create_data(feed, Data(value=value))
+        if precision:
+            try:
+                value = round(value, precision)
+            except NotImplementedError:
+                raise NotImplementedError("Using the precision kwarg requires a float value")
+        payload = self._create_payload(value, metadata)
+        return self.create_data(feed, payload)
 
     send = send_data
 
@@ -144,42 +180,32 @@ class Client(object):
         """
         return self.create_data(feed, Data(value=value))
 
-    def send_location_data(self, feed, lat, lon, ele, value=None):
-        """Sends locational data to a feed.
-        :param string feed: Name/Key/ID of Adafruit IO feed.
-        :param int lat: Latitude.
-        :param int lon: Longitude.
-        :param int ele: Elevation.
-        :param int value: Optional value to send, defaults to None.
-        """
-        return self.create_data(feed, Data(value=value,lat=lat, lon=lon, ele=ele))
-
     def receive_time(self, time):
         """Returns the time from the Adafruit IO server.
         :param string time: Time to be returned: `millis`, `seconds`, `ISO-8601`.
         """
         timepath = "time/{0}".format(time)
         return self._get(timepath, is_time=True)
-    
+
     def receive_weather(self, weather_id=None):
         """Adafruit IO Weather Service, Powered by Dark Sky
         :param int id: optional ID for retrieving a specified weather record.
         """
         if weather_id:
-          weather_path = "integrations/weather/{0}".format(weather_id)
+            weather_path = "integrations/weather/{0}".format(weather_id)
         else:
-          weather_path = "integrations/weather"
+            weather_path = "integrations/weather"
         return self._get(weather_path)
-    
-    def receive_random(self, id=None):
+
+    def receive_random(self, randomizer_id=None):
         """Access to Adafruit IO's Random Data
         service.
-        :param int id: optional ID for retrieving a specified randomizer.
+        :param int randomizer_id: optional ID for retrieving a specified randomizer.
         """
-        if id:
-          random_path = "integrations/words/{0}".format(id)
+        if randomizer_id:
+            random_path = "integrations/words/{0}".format(randomizer_id)
         else:
-          random_path = "integrations/words"
+            random_path = "integrations/words"
         return self._get(random_path)
 
     def receive(self, feed):
@@ -191,7 +217,7 @@ class Client(object):
         return Data.from_dict(self._get(path))
 
     def receive_next(self, feed):
-        """Retrieve the next unread value from the specified feed. Returns a Data 
+        """Retrieve the next unread value from the specified feed. Returns a Data
         instance whose value property holds the retrieved value.
         :param string feed: Name/Key/ID of Adafruit IO feed.
         """
@@ -215,16 +241,15 @@ class Client(object):
         if data_id is None:
             path = "feeds/{0}/data".format(feed)
             return list(map(Data.from_dict, self._get(path)))
-        else:
-            path = "feeds/{0}/data/{1}".format(feed, data_id)
-            return Data.from_dict(self._get(path))
+        path = "feeds/{0}/data/{1}".format(feed, data_id)
+        return Data.from_dict(self._get(path))
 
     def create_data(self, feed, data):
         """Create a new row of data in the specified feed.
-        Returns a Data instance with details about the newly 
+        Returns a Data instance with details about the newly
         appended row of data.
         :param string feed: Name/Key/ID of Adafruit IO feed.
-        :param Data data: Instance of the Data class. Must have a value property set. 
+        :param Data data: Instance of the Data class. Must have a value property set.
         """
         path = "feeds/{0}/data".format(feed)
         return Data.from_dict(self._post(path, data._asdict()))
@@ -237,24 +262,6 @@ class Client(object):
         path = "feeds/{0}/data/{1}".format(feed, data_id)
         self._delete(path)
 
-    def toRed(self, data):
-        """Hex color feed to red channel.
-        :param int data: Color value, in hexadecimal.
-        """
-        return ((int(data[1], 16))*16) + int(data[2], 16)
-    
-    def toGreen(self, data):
-        """Hex color feed to green channel. 
-        :param int data: Color value, in hexadecimal.
-        """
-        return (int(data[3], 16) * 16) + int(data[4], 16)
-
-    def toBlue(self, data):
-        """Hex color feed to blue channel.
-        :param int data: Color value, in hexadecimal.
-        """
-        return (int(data[5], 16) * 16) + int(data[6], 16)
-
     # feed functionality.
     def feeds(self, feed=None):
         """Retrieve a list of all feeds, or the specified feed.  If feed is not
@@ -264,9 +271,8 @@ class Client(object):
         if feed is None:
             path = "feeds"
             return list(map(Feed.from_dict, self._get(path)))
-        else:
-            path = "feeds/{0}".format(feed)
-            return Feed.from_dict(self._get(path))
+        path = "feeds/{0}".format(feed)
+        return Feed.from_dict(self._get(path))
 
     def create_feed(self, feed):
         """Create the specified feed.
@@ -290,9 +296,8 @@ class Client(object):
         if group is None:
             path = "groups/"
             return list(map(Group.from_dict, self._get(path)))
-        else:
-            path = "groups/{0}".format(group)
-            return Group.from_dict(self._get(path))
+        path = "groups/{0}".format(group)
+        return Group.from_dict(self._get(path))
 
     def create_group(self, group):
         """Create the specified group.
