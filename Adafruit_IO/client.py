@@ -109,16 +109,34 @@ class Client(object):
                                    proxies=self.proxies)
         self._handle_error(response)
 
+    @staticmethod
+    def _create_payload(value, metadata):
+        """
+        """
+        if metadata is not None:
+            payload = Data(value=value,lat=metadata['lat'], lon=metadata['lon'],
+                            ele=metadata['ele'], created_at=metadata['created_at'])
+            return payload
+        return Data(value=value)
+
     # Data functionality.
-    def send_data(self, feed, value):
+    def send_data(self, feed, value, metadata=None, precision=None):
         """Helper function to simplify adding a value to a feed.  Will append the
         specified value to the feed identified by either name, key, or ID.
         Returns a Data instance with details about the newly appended row of data.
         Note that send_data now operates the same as append.
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param string value: Value to send.
+        :param dict metadata: Optional metadata associated with the value.
+        :param int precision: Optional amount of precision points to send.
         """
-        return self.create_data(feed, Data(value=value))
+        if precision:
+            try:
+                value = round(value, precision)
+            except NotImplementedError:
+                raise NotImplementedError("Using the precision kwarg requires a floating point value")
+        payload = self._create_payload(value, metadata)
+        return self.create_data(feed, payload)
 
     send = send_data
 
