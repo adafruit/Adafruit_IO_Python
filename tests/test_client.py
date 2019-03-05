@@ -139,10 +139,10 @@ class TestClient(base.IOTestCase):
                     'created_at': None}
         aio.send_data(test_feed.key, 40, metadata)
         data = aio.receive(test_feed.key)
-        self.assertEqual(int(data.value), 0.0)
-        self.assertEqual(float(data.lat), 40.0)
-        self.assertEqual(float(data.lon), -74.0)
-        self.assertEqual(float(data.ele), 6.0)
+        self.assertEqual(int(data.value), 40)
+        self.assertEqual(float(data.lat), 40.726190)
+        self.assertEqual(float(data.lon), -74.005334)
+        self.assertEqual(float(data.ele), -6.0)
 
     # Test Feed Functionality
     def test_append_by_feed_name(self):
