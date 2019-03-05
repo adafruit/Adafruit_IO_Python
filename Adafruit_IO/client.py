@@ -58,13 +58,19 @@ class Client(object):
         # constructing the path.
         self.base_url = base_url.rstrip('/')
 
+    @staticmethod
+    def _create_payload(value, metadata):
+        if metadata is not None:
+            payload = Data(value=value,lat=metadata['lat'], lon=metadata['lon'],
+                            ele=metadata['ele'], created_at=metadata['created_at'])
+            return payload
+        return Data(value=value)
 
     def _compose_url(self, path, is_time=None):
         if is_time: # return a call to https://io.adafruit.com/api/v2/time/{unit}
           return '{0}/api/{1}/{2}'.format(self.base_url, 'v2', path)
         else:
             return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
-
 
     def _handle_error(self, response):
         # Throttling Error
@@ -109,16 +115,6 @@ class Client(object):
                                    proxies=self.proxies)
         self._handle_error(response)
 
-    @staticmethod
-    def _create_payload(value, metadata):
-        """
-        """
-        if metadata is not None:
-            payload = Data(value=value,lat=metadata['lat'], lon=metadata['lon'],
-                            ele=metadata['ele'], created_at=metadata['created_at'])
-            return payload
-        return Data(value=value)
-
     # Data functionality.
     def send_data(self, feed, value, metadata=None, precision=None):
         """Helper function to simplify adding a value to a feed.  Will append the
@@ -161,16 +157,6 @@ class Client(object):
         :param string value: Value to append to feed.
         """
         return self.create_data(feed, Data(value=value))
-
-    def send_location_data(self, feed, lat, lon, ele, value=None):
-        """Sends locational data to a feed.
-        :param string feed: Name/Key/ID of Adafruit IO feed.
-        :param int lat: Latitude.
-        :param int lon: Longitude.
-        :param int ele: Elevation.
-        :param int value: Optional value to send, defaults to None.
-        """
-        return self.create_data(feed, Data(value=value,lat=lat, lon=lon, ele=ele))
 
     def receive_time(self, time):
         """Returns the time from the Adafruit IO server.
