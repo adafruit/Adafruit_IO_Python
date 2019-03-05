@@ -133,7 +133,11 @@ class TestClient(base.IOTestCase):
         aio = self.get_client()
         self.ensure_feed_deleted(aio, 'testlocfeed')
         test_feed = aio.create_feed(Feed(name='testlocfeed'))
-        aio.send_location_data(test_feed.key, 40, -74, 6, 0)
+        metadata = {'lat': 40.726190,
+                    'lon': -74.005334,
+                    'ele': -6,
+                    'created_at': None}
+        aio.send_data(test_feed.key, 40, metadata)
         data = aio.receive(test_feed.key)
         self.assertEqual(int(data.value), 0.0)
         self.assertEqual(float(data.lat), 40.0)
