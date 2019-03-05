@@ -61,18 +61,13 @@ class Client(object):
     @staticmethod
     def _create_payload(value, metadata):
         if metadata is not None:
-            payload = Data(value=value,lat=metadata['lat'], lon=metadata['lon'],
-                            ele=metadata['ele'], created_at=metadata['created_at'])
+            payload = Data(value=value, lat=metadata['lat'], lon=metadata['lon'],
+                           ele=metadata['ele'], created_at=metadata['created_at'])
             return payload
         return Data(value=value)
 
-    def _compose_url(self, path, is_time=None):
-        if is_time: # return a call to https://io.adafruit.com/api/v2/time/{unit}
-          return '{0}/api/{1}/{2}'.format(self.base_url, 'v2', path)
-        else:
-            return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
-
-    def _handle_error(self, response):
+    @staticmethod
+    def _handle_error(response):
         # Throttling Error
         if response.status_code == 429:
             raise ThrottlingError()
@@ -83,6 +78,11 @@ class Client(object):
         elif response.status_code >= 400:
             raise RequestError(response)
         # Else do nothing if there was no error.
+
+    def _compose_url(self, path, is_time=None):
+        if is_time: # return a call to https://io.adafruit.com/api/v2/time/{unit}
+            return '{0}/api/{1}/{2}'.format(self.base_url, 'v2', path)
+        return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
 
     def _headers(self, given):
         headers = default_headers.copy()
@@ -111,7 +111,7 @@ class Client(object):
     def _delete(self, path):
         response = requests.delete(self._compose_url(path),
                                    headers=self._headers({'X-AIO-Key': self.key,
-                                            'Content-Type': 'application/json'}),
+                                   'Content-Type': 'application/json'}),
                                    proxies=self.proxies)
         self._handle_error(response)
 
@@ -130,7 +130,7 @@ class Client(object):
             try:
                 value = round(value, precision)
             except NotImplementedError:
-                raise NotImplementedError("Using the precision kwarg requires a floating point value")
+                raise NotImplementedError("Using the precision kwarg requires a float value")
         payload = self._create_payload(value, metadata)
         return self.create_data(feed, payload)
 
@@ -164,26 +164,26 @@ class Client(object):
         """
         timepath = "time/{0}".format(time)
         return self._get(timepath, is_time=True)
-    
+
     def receive_weather(self, weather_id=None):
         """Adafruit IO Weather Service, Powered by Dark Sky
         :param int id: optional ID for retrieving a specified weather record.
         """
         if weather_id:
-          weather_path = "integrations/weather/{0}".format(weather_id)
+            weather_path = "integrations/weather/{0}".format(weather_id)
         else:
-          weather_path = "integrations/weather"
+            weather_path = "integrations/weather"
         return self._get(weather_path)
-    
+
     def receive_random(self, id=None):
         """Access to Adafruit IO's Random Data
         service.
         :param int id: optional ID for retrieving a specified randomizer.
         """
         if id:
-          random_path = "integrations/words/{0}".format(id)
+            random_path = "integrations/words/{0}".format(id)
         else:
-          random_path = "integrations/words"
+            random_path = "integrations/words"
         return self._get(random_path)
 
     def receive(self, feed):
@@ -195,7 +195,7 @@ class Client(object):
         return Data.from_dict(self._get(path))
 
     def receive_next(self, feed):
-        """Retrieve the next unread value from the specified feed. Returns a Data 
+        """Retrieve the next unread value from the specified feed. Returns a Data
         instance whose value property holds the retrieved value.
         :param string feed: Name/Key/ID of Adafruit IO feed.
         """
@@ -225,10 +225,10 @@ class Client(object):
 
     def create_data(self, feed, data):
         """Create a new row of data in the specified feed.
-        Returns a Data instance with details about the newly 
+        Returns a Data instance with details about the newly
         appended row of data.
         :param string feed: Name/Key/ID of Adafruit IO feed.
-        :param Data data: Instance of the Data class. Must have a value property set. 
+        :param Data data: Instance of the Data class. Must have a value property set.
         """
         path = "feeds/{0}/data".format(feed)
         return Data.from_dict(self._post(path, data._asdict()))
@@ -248,7 +248,7 @@ class Client(object):
         return ((int(data[1], 16))*16) + int(data[2], 16)
     
     def toGreen(self, data):
-        """Hex color feed to green channel. 
+        """Hex color feed to green channel.
         :param int data: Color value, in hexadecimal.
         """
         return (int(data[3], 16) * 16) + int(data[4], 16)
