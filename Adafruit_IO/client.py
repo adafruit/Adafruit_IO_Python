@@ -19,8 +19,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import json
-import pkg_resources
 import platform
+import pkg_resources
 # import logging
 
 import requests
@@ -59,6 +59,33 @@ class Client(object):
         self.base_url = base_url.rstrip('/')
 
     @staticmethod
+    def to_red(data):
+        """Hex color feed to red channel.
+        :param int data: Color value, in hexadecimal.
+        """
+        return ((int(data[1], 16))*16) + int(data[2], 16)
+
+    @staticmethod
+    def to_green(data):
+        """Hex color feed to green channel.
+        :param int data: Color value, in hexadecimal.
+        """
+        return (int(data[3], 16) * 16) + int(data[4], 16)
+
+    @staticmethod
+    def to_blue(data):
+        """Hex color feed to blue channel.
+        :param int data: Color value, in hexadecimal.
+        """
+        return (int(data[5], 16) * 16) + int(data[6], 16)
+
+    @staticmethod
+    def _headers(given):
+        headers = default_headers.copy()
+        headers.update(given)
+        return headers
+
+    @staticmethod
     def _create_payload(value, metadata):
         if metadata is not None:
             payload = Data(value=value, lat=metadata['lat'], lon=metadata['lon'],
@@ -84,11 +111,6 @@ class Client(object):
             return '{0}/api/{1}/{2}'.format(self.base_url, 'v2', path)
         return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
 
-    def _headers(self, given):
-        headers = default_headers.copy()
-        headers.update(given)
-        return headers
-
     def _get(self, path, is_time=None):
         response = requests.get(self._compose_url(path, is_time),
                                 headers=self._headers({'X-AIO-Key': self.key}),
@@ -96,8 +118,7 @@ class Client(object):
         self._handle_error(response)
         if not is_time:
             return response.json()
-        else: # time doesn't need to serialize into json, just return text
-            return response.text
+        return response.text
 
     def _post(self, path, data):
         response = requests.post(self._compose_url(path),
@@ -111,8 +132,8 @@ class Client(object):
     def _delete(self, path):
         response = requests.delete(self._compose_url(path),
                                    headers=self._headers({'X-AIO-Key': self.key,
-                                   'Content-Type': 'application/json'}),
-                                   proxies=self.proxies)
+                                                          'Content-Type': 'application/json'}),
+                                    proxies=self.proxies)
         self._handle_error(response)
 
     # Data functionality.
@@ -240,24 +261,6 @@ class Client(object):
         """
         path = "feeds/{0}/data/{1}".format(feed, data_id)
         self._delete(path)
-
-    def toRed(self, data):
-        """Hex color feed to red channel.
-        :param int data: Color value, in hexadecimal.
-        """
-        return ((int(data[1], 16))*16) + int(data[2], 16)
-    
-    def toGreen(self, data):
-        """Hex color feed to green channel.
-        :param int data: Color value, in hexadecimal.
-        """
-        return (int(data[3], 16) * 16) + int(data[4], 16)
-
-    def toBlue(self, data):
-        """Hex color feed to blue channel.
-        :param int data: Color value, in hexadecimal.
-        """
-        return (int(data[5], 16) * 16) + int(data[6], 16)
 
     # feed functionality.
     def feeds(self, feed=None):
