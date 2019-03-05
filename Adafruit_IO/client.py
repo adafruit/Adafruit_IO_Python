@@ -52,7 +52,8 @@ class Client(object):
         self.username = username
         self.key = key
         self.proxies = proxies
-        # self.logger = logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        # self.logger = logging.basicConfig(level=logging.DEBUG,
+        #                                   format='%(asctime)s - %(levelname)s - %(message)s')
 
         # Save URL without trailing slash as it will be added later when
         # constructing the path.
