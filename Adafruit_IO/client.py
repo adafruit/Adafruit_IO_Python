@@ -133,7 +133,7 @@ class Client(object):
         response = requests.delete(self._compose_url(path),
                                    headers=self._headers({'X-AIO-Key': self.key,
                                                           'Content-Type': 'application/json'}),
-                                    proxies=self.proxies)
+                                   proxies=self.proxies)
         self._handle_error(response)
 
     # Data functionality.
@@ -196,13 +196,13 @@ class Client(object):
             weather_path = "integrations/weather"
         return self._get(weather_path)
 
-    def receive_random(self, id=None):
+    def receive_random(self, randomizer_id=None):
         """Access to Adafruit IO's Random Data
         service.
-        :param int id: optional ID for retrieving a specified randomizer.
+        :param int randomizer_id: optional ID for retrieving a specified randomizer.
         """
-        if id:
-            random_path = "integrations/words/{0}".format(id)
+        if randomizer_id:
+            random_path = "integrations/words/{0}".format(randomizer_id)
         else:
             random_path = "integrations/words"
         return self._get(random_path)
@@ -240,9 +240,8 @@ class Client(object):
         if data_id is None:
             path = "feeds/{0}/data".format(feed)
             return list(map(Data.from_dict, self._get(path)))
-        else:
-            path = "feeds/{0}/data/{1}".format(feed, data_id)
-            return Data.from_dict(self._get(path))
+        path = "feeds/{0}/data/{1}".format(feed, data_id)
+        return Data.from_dict(self._get(path))
 
     def create_data(self, feed, data):
         """Create a new row of data in the specified feed.
@@ -271,9 +270,8 @@ class Client(object):
         if feed is None:
             path = "feeds"
             return list(map(Feed.from_dict, self._get(path)))
-        else:
-            path = "feeds/{0}".format(feed)
-            return Feed.from_dict(self._get(path))
+        path = "feeds/{0}".format(feed)
+        return Feed.from_dict(self._get(path))
 
     def create_feed(self, feed):
         """Create the specified feed.
@@ -297,9 +295,8 @@ class Client(object):
         if group is None:
             path = "groups/"
             return list(map(Group.from_dict, self._get(path)))
-        else:
-            path = "groups/{0}".format(group)
-            return Group.from_dict(self._get(path))
+        path = "groups/{0}".format(group)
+        return Group.from_dict(self._get(path))
 
     def create_group(self, group):
         """Create the specified group.
