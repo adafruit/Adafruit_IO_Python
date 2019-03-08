@@ -103,23 +103,26 @@ class MQTTClient(object):
             self.on_disconnect(self)
 
     def _mqtt_message(self, client, userdata, msg):
-        logger.debug('Client on_message called.')
         """Parse out the topic and call on_message callback
         assume topic looks like `username/topic/id`
         """
+        logger.debug('Client on_message called.')
         parsed_topic = msg.topic.split('/')
-        if self.on_message is not None and parsed_topic[2] == 'weather':
-            topic = parsed_topic[4] # parse out the forecast type
-            payload = '' if msg.payload is None else msg.payload.decode('utf-8')
-        elif self.on_message is not None and parsed_topic[0] == 'time':
-            topic = parsed_topic[0]
-            payload = msg.payload.decode('utf-8')
-        elif self.on_message is not None and parsed_topic[1] == 'groups':
-            topic = parsed_topic[3]
-            payload = msg.payload.decode('utf-8')
-        else: # default topic
-            topic = parsed_topic[2]
-            payload = '' if msg.payload is None else msg.payload.decode('utf-8')
+        if self.on_message is not None:
+            if parsed_topic[0] == 'time':
+                topic = parsed_topic[0]
+                payload = msg.payload.decode('utf-8')    
+            elif parsed_topic[1] == 'groups':
+                topic = parsed_topic[3]
+                payload = msg.payload.decode('utf-8')
+            elif parsed_topic[2] == 'weather':
+                topic = parsed_topic[4]
+                payload = '' if msg.payload is None else msg.payload.decode('utf-8')    
+            else:
+                topic = parsed_topic[2]
+                payload = '' if msg.payload is None else msg.payload.decode('utf-8')
+        else:
+            raise ValueError('on_message not defined')
         self.on_message(self, topic, payload)
     
     def _mqtt_subscribe(client, userdata, mid, granted_qos):
