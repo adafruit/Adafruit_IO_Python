@@ -48,17 +48,14 @@ client.on_message = message
 # Connect to the Adafruit IO server.
 client.connect()
 
-# time per loop
-loop_time = 2
+# Subscribe to the time feeds
+print('* Subscribing to time/seconds')
+client.subscribe_time('seconds')
 
-client.loop_background()
-while True:
-    print('* Subscribing to /time/seconds')
-    client.subscribe_time('seconds')
-    time.sleep(loop_time)
-    print('* Subscribing to /time/millis')
-    client.subscribe_time('millis')
-    time.sleep(loop_time)
-    print('* Subscribing to iso-8601')
-    client.subscribe_time('iso')
-    time.sleep(loop_time)
+print('* Subscribing to time/millis')
+client.subscribe_time('millis')
+
+print('* Subscribing to time/ISO-8601')
+client.subscribe_time('iso')
+
+client.loop_blocking()
