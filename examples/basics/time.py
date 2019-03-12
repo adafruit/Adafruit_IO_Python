@@ -1,10 +1,11 @@
 """
-`time-topics.py`
-====================================
+`time.py`
+==========================================
 Don't have a RTC handy and need
 accurate time measurements?
 
-Let Adafruit IO serve real-time values!
+Let Adafruit IO serve up real-time values
+based off your device's IP-address!
 
 Author: Brent Rubell
 """
@@ -23,16 +24,8 @@ ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
-print('---Adafruit IO REST API Time Helpers---')
-
-print('Seconds: aio.receive_time(seconds)')
-secs_val = aio.receive_time('seconds')
-print('\t' + secs_val)
-
-print('Milliseconds: aio.receive_time(millis)')
-ms_val = aio.receive_time('millis')
-print('\t' + ms_val)
-
-print('ISO-8601: aio.receive_time(ISO-8601)')
-iso_val = aio.receive_time('ISO-8601')
-print('\t' + iso_val)
+# Get the time from Adafruit IO
+time = aio.receive_time()
+# Time is returned as a `struct_time`
+# https://docs.python.org/3.7/library/time.html#time.struct_time
+print(time)

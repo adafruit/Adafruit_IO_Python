@@ -18,6 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from time import struct_time
 import json
 import platform
 import pkg_resources
@@ -107,19 +108,15 @@ class Client(object):
             raise RequestError(response)
         # Else do nothing if there was no error.
 
-    def _compose_url(self, path, is_time=None):
-        if is_time: # return a call to https://io.adafruit.com/api/v2/time/{unit}
-            return '{0}/api/{1}/{2}'.format(self.base_url, 'v2', path)
+    def _compose_url(self, path):
         return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
 
-    def _get(self, path, is_time=None):
-        response = requests.get(self._compose_url(path, is_time),
+    def _get(self, path):
+        response = requests.get(self._compose_url(path),
                                 headers=self._headers({'X-AIO-Key': self.key}),
                                 proxies=self.proxies)
         self._handle_error(response)
-        if not is_time:
-            return response.json()
-        return response.text
+        return response.json()
 
     def _post(self, path, data):
         response = requests.post(self._compose_url(path),
@@ -180,12 +177,14 @@ class Client(object):
         """
         return self.create_data(feed, Data(value=value))
 
-    def receive_time(self, time):
-        """Returns the time from the Adafruit IO server.
-        :param string time: Time to be returned: `millis`, `seconds`, `ISO-8601`.
+    def receive_time(self):
+        """Returns a struct_time from the Adafruit IO Server based on the device's IP address.
+        https://docs.python.org/3.7/library/time.html#time.struct_time
         """
-        timepath = "time/{0}".format(time)
-        return self._get(timepath, is_time=True)
+        path = 'integrations/time/struct.json'
+        time = self._get(path)
+        return struct_time((time['year'], time['mon'], time['mday'], time['hour'],
+                            time['min'], time['sec'], time['wday'], time['yday'], time['isdst']))
 
     def receive_weather(self, weather_id=None):
         """Adafruit IO Weather Service, Powered by Dark Sky
