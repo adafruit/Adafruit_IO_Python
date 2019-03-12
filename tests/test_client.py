@@ -80,6 +80,8 @@ class TestClient(base.IOTestCase):
         self.assertEqual(int(data.value), 42)
 
     def test_receive_next(self):
+        """receive_next
+        """
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
         test_feed = io.create_feed(Feed(name="testfeed"))
@@ -88,6 +90,8 @@ class TestClient(base.IOTestCase):
         self.assertEqual(int(data.value), 1)
 
     def test_receive_previous(self):
+        """receive_previous
+        """
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
         test_feed = io.create_feed(Feed(name="testfeed"))
@@ -101,6 +105,8 @@ class TestClient(base.IOTestCase):
         self.assertEqual(int(data.value), 2)
 
     def test_data_on_feed_returns_all_data(self):
+        """send_data
+        """
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
         test_feed = io.create_feed(Feed(name="testfeed"))
@@ -112,6 +118,8 @@ class TestClient(base.IOTestCase):
         self.assertEqual(int(result[1].value), 1)
 
     def test_data_on_feed_and_data_id_returns_data(self):
+        """send_data
+        """
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
         test_feed = io.create_feed(Feed(name="testfeed"))
@@ -121,6 +129,8 @@ class TestClient(base.IOTestCase):
         self.assertEqual(int(data.value), int(result.value))
 
     def test_create_data(self):
+        """create_data
+        """
         aio = self.get_client()
         self.ensure_feed_deleted(aio, 'testfeed')
         test_feed = aio.create_feed(Feed(name="testfeed"))
@@ -130,6 +140,8 @@ class TestClient(base.IOTestCase):
         self.assertEqual(int(result.value), 42)
     
     def test_location_data(self):
+        """receive_location
+        """
         aio = self.get_client()
         self.ensure_feed_deleted(aio, 'testlocfeed')
         test_feed = aio.create_feed(Feed(name='testlocfeed'))
@@ -143,6 +155,16 @@ class TestClient(base.IOTestCase):
         self.assertEqual(float(data.lat), 40.726190)
         self.assertEqual(float(data.lon), -74.005334)
         self.assertEqual(float(data.ele), -6.0)
+
+    def test_time_data(self):
+        """receive_time
+        """
+        aio = self.get_client()
+        time = aio.receive_time()
+        # Check that each value is rx'd properly
+        # (should never be None type)
+        for time_data in time:
+            self.assertIsNotNone(time_data)
 
     # Test Feed Functionality
     def test_append_by_feed_name(self):
