@@ -78,11 +78,11 @@ while True:
     if color_val != prev_color:
         # print rgb values and hex value
         print('Received Color: ')
-        red = aio.toRed(color_val.value)
+        red = aio.to_red(color_val.value)
         print('\t - R: ', red)
-        green = aio.toGreen(color_val.value)
+        green = aio.to_green(color_val.value)
         print('\t - G: ', green)
-        blue = aio.toBlue(color_val.value)
+        blue = aio.to_blue(color_val.value)
         print('\t - B: ', blue)
         print('\t - HEX: ', color_val.value)
         # map color values (0-255) to  16-bit values for the pca
