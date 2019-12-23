@@ -31,6 +31,10 @@ def connected(client):
     # Subscribe to changes on a feed named DemoFeed.
     client.subscribe(FEED_ID)
 
+def subscribe(client, userdata, mid, granted_qos):
+    # This method is called when the client subscribes to a new feed.
+    print('Subscribed to {0} with QoS {1}'.format(FEED_ID, granted_qos[0]))
+
 def disconnected(client):
     # Disconnected function will be called when the client disconnects.
     print('Disconnected from Adafruit IO!')
@@ -50,6 +54,7 @@ client = MQTTClient(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 client.on_connect    = connected
 client.on_disconnect = disconnected
 client.on_message    = message
+client.on_subscribe  = subscribe
 
 # Connect to the Adafruit IO server.
 client.connect()
