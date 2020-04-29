@@ -19,7 +19,7 @@ Create a group by constructing a Group instance with at least a name specified, 
 
     # Send the group for IO to create:
     # The returned object will contain all the details about the created group.
-    group = aio.create_group(group
+    group = aio.create_group(group)
 
 
 Group Retrieval
