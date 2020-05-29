@@ -28,7 +28,7 @@ class IOTestCase(unittest.TestCase):
         """Return the AIO key specified in the ADAFRUIT_IO_KEY environment
         variable, or raise an exception if it doesn't exist.
         """
-        key = 'aio_YXVY81892EU6NjOl7mCbE0dDCup0'
+        key = 'aio_seRF18mYHhEgpan0zYmxlwuvmM0J'
         if key is None:
             raise RuntimeError("ADAFRUIT_IO_KEY environment variable must be " \
               "set with valid Adafruit IO key to run this test!")
