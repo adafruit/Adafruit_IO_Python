@@ -20,8 +20,8 @@ jobs:
       run: python3 setup.py install
     - name: Secret
       env: 
-        secret_io_key: ${{ secrets.CI_IO_KEY }
-        secret_io_user: ${{ secrets.CI_IO_USERNAME }
+        secret_io_key: ${{ secrets.CI_IO_KEY }}
+        secret_io_user: ${{ secrets.CI_IO_USERNAME }}
       run: cd tests/
     - name: Run all unittests
       run: python3 -m unittest discover
