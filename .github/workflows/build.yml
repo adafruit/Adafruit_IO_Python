@@ -18,6 +18,10 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Install library
       run: python3 setup.py install
+    - name: Secret
+      env: 
+        secret_io_key: ${{ secrets.CI_IO_KEY }
+        secret_io_user: ${{ secrets.CI_IO_USERNAME }
     - name: Run all unittests
       run: |
         cd tests/
