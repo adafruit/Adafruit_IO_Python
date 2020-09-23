@@ -22,7 +22,6 @@ jobs:
       env: 
         secret_io_key: ${{ secrets.CI_IO_KEY }
         secret_io_user: ${{ secrets.CI_IO_USERNAME }
+        run: cd tests/
     - name: Run all unittests
-      run: |
-        cd tests/
-        python3 -m unittest discover
+      run: python3 -m unittest discover
