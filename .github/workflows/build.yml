@@ -2,8 +2,6 @@ name: Build-CI
 
 on: [pull_request, push]
 
-name: Test
-on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
