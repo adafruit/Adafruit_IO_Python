@@ -219,7 +219,7 @@ class MQTTClient(object):
       """Subscribe to changes on the specified group. When the group is updated
       the on_message function will be called with the group_id and the new value.
 
-      :param str feed_id: The key of the feed to subscribe to.
+      :param str group_id: The id of the group to subscribe to.
       :param int qos: The QoS to use when subscribing. Defaults to 0.
 
       """
