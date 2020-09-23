@@ -1,0 +1,33 @@
+name: Build-CI
+
+on: [pull_request, push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.6
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.6
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Install library
+      run: python3 setup.py install
+    - name: Install sphinx
+      run: pip3 install pylint Sphinx sphinx-rtd-theme
+    - name: Run all unittests
+      env: 
+        SECRET_IO_KEY: ${{ secrets.CI_IO_KEY }}
+        SECRET_IO_USER: ${{ secrets.CI_IO_USERNAME }}
+      run: |
+        cd tests/
+        ADAFRUIT_IO_KEY="$SECRET_IO_KEY" ADAFRUIT_IO_USERNAME="$SECRET_IO_USER" python -m unittest discover
+        cd ..
+    - name: Generate documentation
+      run: |
+        cd docs && sphinx-build -E -W -b html . _build/html && cd ..
