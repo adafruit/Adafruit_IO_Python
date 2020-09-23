@@ -24,4 +24,6 @@ jobs:
         secret_io_user: ${{ secrets.CI_IO_USERNAME }}
       run: cd tests/
     - name: Run all unittests
-      run: python3 -m unittest discover
+      run: |
+        cd tests/
+        python3 -m unittest discover
