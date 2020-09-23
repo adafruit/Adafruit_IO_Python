@@ -24,4 +24,4 @@ jobs:
         SECRET_IO_USER: ${{ secrets.CI_IO_USERNAME }}
       run: |
         cd tests/
-        python -m unittest discover
+        ADAFRUIT_IO_KEY="$SECRET_IO_KEY" ADAFRUIT_IO_USERNAME="$SECRET_IO_USER" python unittest discover
