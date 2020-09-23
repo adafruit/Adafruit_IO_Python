@@ -3,10 +3,16 @@ name: Build-CI
 on: [pull_request, push]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Prepare repo
-        uses: actions/checkout@master
-      - name: Test
-        uses: onichandame/python-test-action@master
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
