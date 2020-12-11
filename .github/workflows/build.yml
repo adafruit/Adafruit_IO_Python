@@ -26,9 +26,9 @@ jobs:
       run: pip3 install pylint Sphinx sphinx-rtd-theme
 
     - name: Run unittests
-      with: # Set the secret as an input
-            SECRET_IO_KEY: ${{ secrets.CI_IO_KEY }}
-            SECRET_IO_USER: ${{ secrets.CI_IO_USERNAME }}
+      env:
+        SECRET_IO_KEY: ${{ secrets.CI_IO_KEY }}
+        SECRET_IO_USER: ${{ secrets.CI_IO_USERNAME }}
       run: |
         cd tests/
         ADAFRUIT_IO_KEY=$SECRET_IO_KEY ADAFRUIT_IO_USERNAME=$SECRET_IO_USER python -m unittest discover
