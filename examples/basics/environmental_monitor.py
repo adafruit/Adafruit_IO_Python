@@ -87,8 +87,8 @@ sgp30.set_iaq_baseline(0x8973, 0x8aae)
 
 # Sample VEML6070
 def sample_VEML():
-    for j in range(10):
-      uv_raw = uv.read
+    for _ in range(10):
+      uv_raw = uv.uv_raw
     return uv_raw
 
 while True:
