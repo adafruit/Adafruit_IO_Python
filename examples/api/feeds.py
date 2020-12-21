@@ -39,8 +39,6 @@ print("Creating feed in group %s"%group_key)
 response = aio.create_feed(feed, group_key)
 print("New feed: ", response)
 
-print(response.key)
-
 # Delete a feed within a group
 print("Deleting feed within group %s"%group_key)
 aio.delete_feed(response.key)
