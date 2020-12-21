@@ -273,11 +273,15 @@ class Client(object):
         path = "feeds/{0}".format(feed)
         return Feed.from_dict(self._get(path))
 
-    def create_feed(self, feed):
+    def create_feed(self, feed, group_key=None):
         """Create the specified feed.
-        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param string feed: Key of Adafruit IO feed.
+        :param group_key group: Group to place new feed in.
         """
         path = "feeds/"
+        if group_key is not None: # create feed in a group
+            path="/groups/%s/feeds"%group_key
+            return Feed.from_dict(self._post(path, {"feed": feed._asdict()}))
         return Feed.from_dict(self._post(path, {"feed": feed._asdict()}))
 
     def delete_feed(self, feed):

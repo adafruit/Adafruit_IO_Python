@@ -1,6 +1,6 @@
 # Simple example of sending and receiving values from Adafruit IO with the REST
 # API client.
-# Author: Tony Dicola, Justin Cooper
+# Author: Tony Dicola, Justin Cooper, Brent Rubell
 
 # Import Adafruit IO REST client.
 from Adafruit_IO import Client, Feed
@@ -19,18 +19,26 @@ ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
 # List all of your feeds
+print("Obtaining user's feeds...")
 feeds = aio.feeds()
-print(feeds)
+print('Feeds: ', feeds)
 
 # Create a new feed
+print("Creating new feed...")
 feed = Feed(name="PythonFeed")
 response = aio.create_feed(feed)
-print(response)
-
-# List a specific feed
-feed = aio.feeds(response.key)
-print(feed)
-
+print("New feed: ", response)
 
 # Delete a feed
+aio.delete_feed(response.key)
+
+# Create feed in a group
+feed = Feed(name="PythonGroupFeed")
+group_key = "example"
+print("Creating feed in group %s"%group_key)
+response = aio.create_feed(feed, group_key)
+print("New feed: ", response)
+
+# Delete a feed within a group
+print("Deleting feed within group %s"%group_key)
 aio.delete_feed(response.key)

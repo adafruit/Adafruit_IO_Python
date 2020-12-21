@@ -188,6 +188,22 @@ class TestClient(base.IOTestCase):
         result = io.create_feed(feed)
         self.assertEqual(result.name, 'testfeed')
 
+    def test_create_feed_in_group(self):
+        """Tests creating a feed within a group.
+
+        """
+        io = self.get_client()
+        self.ensure_feed_deleted(io, 'testfeed')
+        self.ensure_group_deleted(io, 'testgroup')
+
+        group = io.create_group(Group(name='testgroup'))
+        feed = Feed(name='testfeed')
+        result = io.create_feed(feed, "testgroup")
+        self.assertEqual(result.key, "testgroup.testfeed")
+
+        io.delete_feed(result.key)
+        io.delete_group('testgroup')
+
     def test_feeds_returns_all_feeds(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
