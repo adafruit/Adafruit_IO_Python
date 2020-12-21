@@ -199,7 +199,7 @@ class TestClient(base.IOTestCase):
         group = io.create_group(Group(name='testgroup'))
         feed = Feed(name='testfeed')
         result = io.create_feed(feed, "testgroup")
-        self.assertEqual(result.key, "testfeed.testgroup")
+        self.assertEqual(result.key, "testgroup.testfeed")
 
         io.delete_feed(result.key)
         io.delete_group('testgroup')
