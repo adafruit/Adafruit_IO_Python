@@ -111,10 +111,11 @@ class Client(object):
     def _compose_url(self, path):
         return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
 
-    def _get(self, path):
+    def _get(self, path, params=None):
         response = requests.get(self._compose_url(path),
                                 headers=self._headers({'X-AIO-Key': self.key}),
-                                proxies=self.proxies)
+                                proxies=self.proxies,
+                                params=params)
         self._handle_error(response)
         return response.json()
 
