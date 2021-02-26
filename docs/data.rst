@@ -33,6 +33,19 @@ You can get all of the data for a feed by using the ``data(feed)`` method. The r
     for d in data:
         print('Data value: {0}'.format(d.value))
 
+By default, the maximum number of data points returned is 1000. This limit can be changed by using the max_results parameter.
+
+.. code-block:: python
+
+    # Get less than the default number of data points
+    data = aio.data('Test', max_results=100)
+
+    # Get more than the default number of data points
+    data = aio.data('Test', max_results=2000)
+
+    # Get all of the points
+    data = aio.data('Test', max_results=None)
+
 You can also get a specific value by ID by using the ``feeds(feed, data_id)`` method. This will return a single piece of feed data with the provided data ID if it exists in the feed. The returned object will be an instance of the Data class.
 
 

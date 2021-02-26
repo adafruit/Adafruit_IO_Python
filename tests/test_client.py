@@ -22,8 +22,8 @@ class TestClient(base.IOTestCase):
 
     # If your IP isn't put on the list of non-throttled IPs, uncomment the
     # function below to waste time between tests to prevent throttling.
-    #def tearDown(self):
-    time.sleep(30.0)
+    def tearDown(self):
+        time.sleep(30.0)
 
     # Helper Methods
     def get_client(self):
@@ -48,7 +48,7 @@ class TestClient(base.IOTestCase):
 
     def empty_feed(self, client, feed):
         # Remove all the data from a specified feed (but don't delete the feed).
-        data = client.data(feed)
+        data = client.data(feed, max_results=None)
         for d in data:
             client.delete(feed, d.id)
 
@@ -138,7 +138,7 @@ class TestClient(base.IOTestCase):
         data = Data(value=42)
         result = aio.create_data('testfeed', data)
         self.assertEqual(int(result.value), 42)
-    
+
     def test_location_data(self):
         """receive_location
         """
