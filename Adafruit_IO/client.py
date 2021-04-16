@@ -251,6 +251,9 @@ class Client(object):
         :param int max_results: The maximum number of results to return. To
             return all data, set to None.
         """
+        if max_results is None:
+            res = self._get(f'feeds/{feed}/details')
+            max_results = res['details']['data']['count']
         if data_id:
             path = "feeds/{0}/data/{1}".format(feed, data_id)
             return Data.from_dict(self._get(path))
@@ -258,7 +261,7 @@ class Client(object):
         params = {'limit': max_results} if max_results else None
         data = []
         path = "feeds/{0}/data".format(feed)
-        while True:
+        while len(data) < max_results:
             data.extend(list(map(Data.from_dict, self._get(path,
                                                            params=params))))
             nlink = self.get_next_link()
@@ -267,8 +270,6 @@ class Client(object):
             # Parse the link for the query parameters
             params = parse_qs(urlparse(nlink).query)
             if max_results:
-                if len(data) >= max_results:
-                    break
                 params['limit'] = max_results - len(data)
         return data
 
