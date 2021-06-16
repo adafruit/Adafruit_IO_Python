@@ -36,7 +36,7 @@ import busio
 # import CircuitPython sensor libraries
 import adafruit_sgp30
 import adafruit_veml6070
-import adafruit_bme280
+from adafruit_bme280 import basic as adafruit_bme280
 
 # import Adafruit IO REST client
 from Adafruit_IO import Client, Feed, RequestError
