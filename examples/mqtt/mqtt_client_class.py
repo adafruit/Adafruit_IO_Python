@@ -5,6 +5,8 @@
 import random
 import sys
 import time
+from Sense_hat import SenseHat
+import RPI.GPIO as GPIO
 
 # Import Adafruit IO MQTT client.
 from Adafruit_IO import MQTTClient
@@ -12,13 +14,20 @@ from Adafruit_IO import MQTTClient
 # Set to your Adafruit IO key.
 # Remember, your key is a secret,
 # so make sure not to publish it when you publish this code!
-ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
+ADAFRUIT_IO_KEY = 'sfdnldfnl'
 
 # Set to your Adafruit IO username.
 # (go to https://accounts.adafruit.com to find your username)
-ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+ADAFRUIT_IO_USERNAME = 'manav'
 
+sense=SenseHat()
+sense.clear()
 
+l1=20
+l2=16
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(l1,GPIO.output)
+GPIO.setup(l2,GPIO.output)
 # Define callback functions which will be called when certain events happen.
 def connected(client):
     # Connected function will be called when the client is connected to Adafruit IO.
@@ -27,7 +36,8 @@ def connected(client):
     # calls against it easily.
     print('Connected to Adafruit IO!  Listening for DemoFeed changes...')
     # Subscribe to changes on a feed named DemoFeed.
-    client.subscribe('DemoFeed')
+    client.subscribe("led1")
+    client.subscribe("led2")
 
 def disconnected(client):
     # Disconnected function will be called when the client disconnects.
@@ -39,6 +49,23 @@ def message(client, feed_id, payload):
     # The feed_id parameter identifies the feed, and the payload parameter has
     # the new value.
     print('Feed {0} received new value: {1}'.format(feed_id, payload))
+    print("payload is :",payload)
+    if feed_id == 'led1':
+        if payload == 'ON' :
+            print(led1 is on)
+            GPIO.output(l1,TRUE)
+        if payload == 'OFF' :
+            print(led1 is off)
+            GPIO.output(l1,FALSE)
+            
+    if feed_id == 'led2':
+        if payload == 'ON' :
+            print(led2 is on)
+            GPIO.output(l2,TRUE)
+        if payload == 'OFF' :
+            print(led2 is off)
+            GPIO.output(l2,FALSE)    
+            
 
 
 # Create an MQTT client instance.
@@ -62,9 +89,12 @@ client.loop_background()
 # Now send new values every 10 seconds.
 print('Publishing a new message every 10 seconds (press Ctrl-C to quit)...')
 while True:
-    value = random.randint(0, 100)
-    print('Publishing {0} to DemoFeed.'.format(value))
-    client.publish('DemoFeed', value)
+    press=Sense.get-pressure()
+    humid=Sense.get-humidity()
+    temp=Sense.get-temperature()
+    client.publish('pressure', press)
+    client.publish('humidity', humid)
+    client.publish('temperature', temp)
     time.sleep(10)
 
 # Another option is to pump the message loop yourself by periodically calling
