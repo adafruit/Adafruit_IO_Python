@@ -43,6 +43,7 @@ DATA_FIELDS   = [ 'created_epoch',
 
 FEED_FIELDS   = [ 'name',
                   'key',
+                  'id',
                   'description',
                   'unit_type',
                   'unit_symbol',
@@ -61,6 +62,26 @@ GROUP_FIELDS  = [ 'description',
                   'properties',
                   'name' ]
 
+DASHBOARD_FIELDS   = [ 'name',
+                       'key',
+                       'description',
+                       'show_header',
+                       'color_mode',
+                       'block_borders',
+                       'header_image_url',
+                       'blocks' ]
+
+BLOCK_FIELDS  = [ 'name',
+                  'id',
+                  'visual_type',
+                  'properties',
+                  'block_feeds' ]
+
+LAYOUT_FIELDS  = ['xl',
+                  'lg',
+                  'md',
+                  'sm',
+                  'xs' ]
 
 # These are very simple data model classes that are based on namedtuple.  This is
 # to keep the classes simple and prevent any confusion around updating data
@@ -71,15 +92,24 @@ GROUP_FIELDS  = [ 'description',
 Data   = namedtuple('Data', DATA_FIELDS)
 Feed   = namedtuple('Feed', FEED_FIELDS)
 Group  = namedtuple('Group', GROUP_FIELDS)
-
+Dashboard = namedtuple('Dashboard', DASHBOARD_FIELDS)
+Block  = namedtuple('Block', BLOCK_FIELDS)
+Layout = namedtuple('Layout', LAYOUT_FIELDS)
 
 # Magic incantation to make all parameters to the initializers optional with a
 # default value of None.
 Group.__new__.__defaults__  = tuple(None for x in GROUP_FIELDS)
 Data.__new__.__defaults__   = tuple(None for x in DATA_FIELDS)
+Layout.__new__.__defaults__   = tuple(None for x in LAYOUT_FIELDS)
+
+# explicitly set dashboard values so that 'color_mode' is 'dark'
+Dashboard.__new__.__defaults__ = (None, None, None, False, "dark", True, None, None)
+
+# explicitly set block values so 'properties' is a dictionary
+Block.__new__.__defaults__ = (None, None, None, {}, None)
 
 # explicitly set feed values
-Feed.__new__.__defaults__ = (None, None, None, None, None, 'ON', 'Private', None, None, None)
+Feed.__new__.__defaults__ = (None, None, None, None, None, None, 'ON', 'Private', None, None, None)
 
 # Define methods to convert from dicts to the data types.
 def _from_dict(cls, data):
@@ -103,7 +133,17 @@ def _group_from_dict(cls, data):
     return cls(**params)
 
 
+def _dashboard_from_dict(cls, data):
+    params = {x: data.get(x, None) for x in cls._fields}
+    # Parse the blocks if they're provided and generate block instances.
+    params['blocks'] = tuple(map(Feed.from_dict, data.get('blocks', [])))
+    return cls(**params)
+
+
 # Now add the from_dict class methods defined above to the data types.
 Data.from_dict   = classmethod(_from_dict)
 Feed.from_dict   = classmethod(_feed_from_dict)
 Group.from_dict  = classmethod(_group_from_dict)
+Dashboard.from_dict  = classmethod(_dashboard_from_dict)
+Block.from_dict  = classmethod(_from_dict)
+Layout.from_dict  = classmethod(_from_dict)

@@ -21,5 +21,5 @@
 from .client import Client
 from .mqtt_client import MQTTClient
 from .errors import AdafruitIOError, RequestError, ThrottlingError, MQTTError
-from .model import Data, Feed, Group
+from .model import Data, Feed, Group, Dashboard, Block, Layout
 from ._version import __version__
