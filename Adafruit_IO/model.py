@@ -136,7 +136,7 @@ def _group_from_dict(cls, data):
 def _dashboard_from_dict(cls, data):
     params = {x: data.get(x, None) for x in cls._fields}
     # Parse the blocks if they're provided and generate block instances.
-    params['blocks'] = tuple(map(Feed.from_dict, data.get('blocks', [])))
+    params['blocks'] = tuple(map(Block.from_dict, data.get('blocks', [])))
     return cls(**params)
 
 
