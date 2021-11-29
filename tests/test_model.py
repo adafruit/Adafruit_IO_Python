@@ -18,7 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from Adafruit_IO import Data, Feed, Group
+from Adafruit_IO import Data, Feed, Group, Dashboard, Block, Layout
 
 import base
 
@@ -45,11 +45,12 @@ class TestData(base.IOTestCase):
 
     def test_feeds_have_explicitly_set_values(self):
         """ Let's make sure feeds are explicitly set from within the model:
-        Feed.__new__.__defaults__ = (None, None, None, None, None, 'ON', 'Private', None, None, None)
+        Feed.__new__.__defaults__ = (None, None, None, None, None, None, 'ON', 'Private', None, None, None)
         """
         feed = Feed(name='foo')
         self.assertEqual(feed.name, 'foo')
         self.assertIsNone(feed.key)
+        self.assertIsNone(feed.id)
         self.assertIsNone(feed.description)
         self.assertIsNone(feed.unit_type)
         self.assertIsNone(feed.unit_symbol)
@@ -69,6 +70,40 @@ class TestData(base.IOTestCase):
         self.assertIsNone(group.feeds)
         self.assertIsNone(group.properties)
 
+        """ Let's make sure feeds are explicitly set from within the model:
+        Dashboard.__new__.__defaults__ = (None, None, None, False, "dark", True, None, None)
+
+        """
+    def test_dashboard_have_explicitly_set_values(self):
+        dashboard = Dashboard(name="foo")
+        self.assertEqual(dashboard.name, 'foo')
+        self.assertIsNone(dashboard.key)
+        self.assertIsNone(dashboard.description)
+        self.assertFalse(dashboard.show_header)
+        self.assertEqual(dashboard.color_mode, 'dark')
+        self.assertTrue(dashboard.block_borders)
+        self.assertIsNone(dashboard.header_image_url)
+        self.assertIsNone(dashboard.blocks)
+
+        """ Let's make sure feeds are explicitly set from within the model:
+        Block.__new__.__defaults__ = (None, None, None {}, None)
+        """
+    def test_block_have_explicitly_set_values(self):
+        block = Block(name="foo")
+        self.assertEqual(block.name, 'foo')
+        self.assertIsNone(block.id)
+        self.assertIsNone(block.visual_type)
+        self.assertEqual(type(block.properties), dict)
+        self.assertEqual(len(block.properties), 0)
+        self.assertIsNone(block.block_feeds)
+
+    def test_layout_properties_are_optional(self):
+        layout = Layout()
+        self.assertIsNone(layout.xl)
+        self.assertIsNone(layout.lg)
+        self.assertIsNone(layout.md)
+        self.assertIsNone(layout.sm)
+        self.assertIsNone(layout.xs)
 
     def test_from_dict_ignores_unknown_items(self):
         data = Data.from_dict({'value': 'foo', 'feed_id': 10, 'unknown_param': 42})
