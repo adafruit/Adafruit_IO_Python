@@ -23,7 +23,7 @@ class TestClient(base.IOTestCase):
     # If your IP isn't put on the list of non-throttled IPs, uncomment the
     # function below to waste time between tests to prevent throttling.
     #def tearDown(self):
-    time.sleep(30.0)
+    #    time.sleep(30.0)
 
     # Helper Methods
     def get_client(self):
@@ -154,7 +154,7 @@ class TestClient(base.IOTestCase):
         data = Data(value=42)
         result = aio.create_data('testfeed', data)
         self.assertEqual(int(result.value), 42)
-    
+
     def test_location_data(self):
         """receive_location
         """
@@ -176,11 +176,41 @@ class TestClient(base.IOTestCase):
         """receive_time
         """
         aio = self.get_client()
-        time = aio.receive_time()
+        server_time = aio.receive_time()
         # Check that each value is rx'd properly
         # (should never be None type)
-        for time_data in time:
+        for time_data in server_time:
             self.assertIsNotNone(time_data)
+        # Check that the week day was interpreted properly
+        adjusted_time = time.localtime(time.mktime(server_time))
+        self.assertEqual(server_time.tm_wday, adjusted_time.tm_wday)
+
+    def test_parse_time_struct(self):
+        """Ensure the _parse_time_struct method properly handles all 7
+        week days. Particularly important to make sure Sunday is 6,
+        not -1"""
+        # Zero time is a dictionary as would be provided by server
+        # (wday is one higher than it should be)
+        zero_time = {'year': 1970,
+                     'mon': 1,
+                     'mday': 1,
+                     'hour': 0,
+                     'min': 0,
+                     'sec': 0,
+                     'wday': 4,
+                     'yday': 1,
+                     'isdst': 0}
+
+        # Create a good struct for each day of the week and make sure
+        # the server-style dictionary is parsed correctly
+        for k in range(7):
+            real_struct = time.gmtime(k * 86400)
+            d = zero_time.copy()
+            d['mday'] += k
+            d['wday'] += k
+            d['yday'] += k
+            newd = Client._parse_time_struct(d)
+            self.assertEqual(newd.tm_wday, real_struct.tm_wday)
 
     # Test Feed Functionality
     def test_append_by_feed_name(self):
@@ -286,6 +316,7 @@ class TestClient(base.IOTestCase):
         response = io.groups(group.key)
         self.assertEqual(response.key, 'grouprx')
 
+
     # Test Dashboard Functionality
     def test_dashboard_create_dashboard(self):
         io = self.get_client()
@@ -372,3 +403,7 @@ class TestClient(base.IOTestCase):
         self.assertEqual(response.lg[0]['w'], 16)
         io.delete_block(dash.key, block.id)
         io.delete_dashboard(dash.key)
+
+
+if __name__ == "__main__":
+    unittest.main()

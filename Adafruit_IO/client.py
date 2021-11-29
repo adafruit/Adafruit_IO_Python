@@ -18,6 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import time
 from time import struct_time
 import json
 import platform
@@ -182,9 +183,19 @@ class Client(object):
         https://docs.python.org/3.7/library/time.html#time.struct_time
         """
         path = 'integrations/time/struct.json'
-        time = self._get(path)
-        return struct_time((time['year'], time['mon'], time['mday'], time['hour'],
-                            time['min'], time['sec'], time['wday'], time['yday'], time['isdst']))
+        return self._parse_time_struct(self._get(path))
+
+    @staticmethod
+    def _parse_time_struct(time_dict: dict) -> time.struct_time:
+        """Parse the time data returned by the server and return a  time_struct
+
+        Corrects for the weekday returned by the server in Sunday=0 format
+        (Python expects Monday=0)
+        """
+        wday = (time_dict['wday'] - 1) % 7
+        return struct_time((time_dict['year'], time_dict['mon'], time_dict['mday'],
+                            time_dict['hour'], time_dict['min'], time_dict['sec'],
+                            wday, time_dict['yday'], time_dict['isdst']))
 
     def receive_weather(self, weather_id=None):
         """Adafruit IO Weather Service, Powered by Dark Sky
