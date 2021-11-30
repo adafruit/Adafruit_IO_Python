@@ -18,6 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import time
 from time import struct_time
 import json
 import platform
@@ -30,7 +31,7 @@ from urllib.parse import parse_qs
 import requests
 
 from .errors import RequestError, ThrottlingError
-from .model import Data, Feed, Group
+from .model import Data, Feed, Group, Dashboard, Block, Layout
 
 API_PAGE_LIMIT = 1000
 
@@ -194,9 +195,19 @@ class Client(object):
         https://docs.python.org/3.7/library/time.html#time.struct_time
         """
         path = 'integrations/time/struct.json'
-        time = self._get(path)
-        return struct_time((time['year'], time['mon'], time['mday'], time['hour'],
-                            time['min'], time['sec'], time['wday'], time['yday'], time['isdst']))
+        return self._parse_time_struct(self._get(path))
+
+    @staticmethod
+    def _parse_time_struct(time_dict: dict) -> time.struct_time:
+        """Parse the time data returned by the server and return a  time_struct
+
+        Corrects for the weekday returned by the server in Sunday=0 format
+        (Python expects Monday=0)
+        """
+        wday = (time_dict['wday'] - 1) % 7
+        return struct_time((time_dict['year'], time_dict['mon'], time_dict['mday'],
+                            time_dict['hour'], time_dict['min'], time_dict['sec'],
+                            wday, time_dict['yday'], time_dict['isdst']))
 
     def receive_weather(self, weather_id=None):
         """Adafruit IO Weather Service, Powered by Dark Sky
@@ -326,11 +337,13 @@ class Client(object):
         :param string feed: Key of Adafruit IO feed.
         :param group_key group: Group to place new feed in.
         """
+        f = feed._asdict()
+        del f['id']  # Don't pass id on create call
         path = "feeds/"
         if group_key is not None: # create feed in a group
             path="/groups/%s/feeds"%group_key
-            return Feed.from_dict(self._post(path, {"feed": feed._asdict()}))
-        return Feed.from_dict(self._post(path, {"feed": feed._asdict()}))
+            return Feed.from_dict(self._post(path, {"feed": f}))
+        return Feed.from_dict(self._post(path, {"feed": f}))
 
     def delete_feed(self, feed):
         """Delete the specified feed.
@@ -363,3 +376,73 @@ class Client(object):
         """
         path = "groups/{0}".format(group)
         self._delete(path)
+
+    # Dashboard functionality.
+    def dashboards(self, dashboard=None):
+        """Retrieve a list of all dashboards, or the specified dashboard.
+        :param string dashboard: Key of Adafruit IO Dashboard. Defaults to None.
+        """
+        if dashboard is None:
+            path = "dashboards/"
+            return list(map(Dashboard.from_dict, self._get(path)))
+        path = "dashboards/{0}".format(dashboard)
+        return Dashboard.from_dict(self._get(path))
+
+    def create_dashboard(self, dashboard):
+        """Create the specified dashboard.
+        :param Dashboard dashboard: Dashboard object to create
+        """
+        path = "dashboards/"
+        return Dashboard.from_dict(self._post(path, dashboard._asdict()))
+
+    def delete_dashboard(self, dashboard):
+        """Delete the specified dashboard.
+        :param string dashboard: Key of Adafruit IO Dashboard.
+        """
+        path = "dashboards/{0}".format(dashboard)
+        self._delete(path)
+
+    # Block functionality.
+    def blocks(self, dashboard, block=None):
+        """Retrieve a list of all blocks from a dashboard, or the specified block.
+        :param string dashboard: Key of Adafruit IO Dashboard.
+        :param string block: id of Adafruit IO Block. Defaults to None.
+        """
+        if block is None:
+            path = "dashboards/{0}/blocks".format(dashboard)
+            return list(map(Block.from_dict, self._get(path)))
+        path = "dashboards/{0}/blocks/{1}".format(dashboard, block)
+        return Block.from_dict(self._get(path))
+
+    def create_block(self, dashboard, block):
+        """Create the specified block under the specified dashboard.
+        :param string dashboard: Key of Adafruit IO Dashboard.
+        :param Block block: Block object to create under dashboard
+        """
+        path = "dashboards/{0}/blocks".format(dashboard)
+        return Block.from_dict(self._post(path, block._asdict()))
+
+    def delete_block(self, dashboard, block):
+        """Delete the specified block.
+        :param string dashboard: Key of Adafruit IO Dashboard.
+        :param string block: id of Adafruit IO Block.
+        """
+        path = "dashboards/{0}/blocks/{1}".format(dashboard, block)
+        self._delete(path)
+
+    # Layout functionality.
+    def layouts(self, dashboard):
+        """Retrieve the layouts array from a dashboard
+        :param string dashboard: key of Adafruit IO Dashboard.
+        """
+        path = "dashboards/{0}".format(dashboard)
+        dashboard = self._get(path)
+        return Layout.from_dict(dashboard['layouts'])
+
+    def update_layout(self, dashboard, layout):
+        """Update the layout of the specified dashboard.
+        :param string dashboard: Key of Adafruit IO Dashboard.
+        :param Layout layout: Layout object to update under dashboard
+        """
+        path = "dashboards/{0}/update_layouts".format(dashboard)
+        return Layout.from_dict(self._post(path, {'layouts': layout._asdict()}))

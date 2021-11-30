@@ -3,7 +3,7 @@
 import time
 import unittest
 
-from Adafruit_IO import Client, Data, Feed, Group, RequestError
+from Adafruit_IO import Client, Data, Feed, Group, Dashboard, Block, Layout, RequestError
 
 import base
 
@@ -22,8 +22,8 @@ class TestClient(base.IOTestCase):
 
     # If your IP isn't put on the list of non-throttled IPs, uncomment the
     # function below to waste time between tests to prevent throttling.
-    def tearDown(self):
-        time.sleep(30.0)
+    #def tearDown(self):
+    #    time.sleep(30.0)
 
     # Helper Methods
     def get_client(self):
@@ -44,6 +44,22 @@ class TestClient(base.IOTestCase):
             client.delete_group(group)
         except RequestError:
             # Swallow the error if the group doesn't exist.
+            pass
+
+    def ensure_dashboard_deleted(self, client, dashboard):
+        # Delete the specified dashboard if it exists.
+        try:
+            client.delete_dashboard(dashboard)
+        except RequestError:
+            # Swallow the error if the dashboard doesn't exist.
+            pass
+
+    def ensure_block_deleted(self, client, dashboard, block):
+        # Delete the specified block if it exists.
+        try:
+            client.delete_block(dashboard, block)
+        except RequestError:
+            # Swallow the error if the block doesn't exist.
             pass
 
     def empty_feed(self, client, feed):
@@ -160,11 +176,41 @@ class TestClient(base.IOTestCase):
         """receive_time
         """
         aio = self.get_client()
-        time = aio.receive_time()
+        server_time = aio.receive_time()
         # Check that each value is rx'd properly
         # (should never be None type)
-        for time_data in time:
+        for time_data in server_time:
             self.assertIsNotNone(time_data)
+        # Check that the week day was interpreted properly
+        adjusted_time = time.localtime(time.mktime(server_time))
+        self.assertEqual(server_time.tm_wday, adjusted_time.tm_wday)
+
+    def test_parse_time_struct(self):
+        """Ensure the _parse_time_struct method properly handles all 7
+        week days. Particularly important to make sure Sunday is 6,
+        not -1"""
+        # Zero time is a dictionary as would be provided by server
+        # (wday is one higher than it should be)
+        zero_time = {'year': 1970,
+                     'mon': 1,
+                     'mday': 1,
+                     'hour': 0,
+                     'min': 0,
+                     'sec': 0,
+                     'wday': 4,
+                     'yday': 1,
+                     'isdst': 0}
+
+        # Create a good struct for each day of the week and make sure
+        # the server-style dictionary is parsed correctly
+        for k in range(7):
+            real_struct = time.gmtime(k * 86400)
+            d = zero_time.copy()
+            d['mday'] += k
+            d['wday'] += k
+            d['yday'] += k
+            newd = Client._parse_time_struct(d)
+            self.assertEqual(newd.tm_wday, real_struct.tm_wday)
 
     # Test Feed Functionality
     def test_append_by_feed_name(self):
@@ -269,3 +315,95 @@ class TestClient(base.IOTestCase):
         group = io.create_group(Group(name='grouprx'))
         response = io.groups(group.key)
         self.assertEqual(response.key, 'grouprx')
+
+
+    # Test Dashboard Functionality
+    def test_dashboard_create_dashboard(self):
+        io = self.get_client()
+        self.ensure_dashboard_deleted(io, 'dashtest')
+        response = io.create_dashboard(Dashboard(name='dashtest'))
+        self.assertEqual(response.name, 'dashtest')
+
+    def test_dashboard_returns_all_dashboards(self):
+        io = self.get_client()
+        self.ensure_dashboard_deleted(io, 'dashtest')
+        dashboard = io.create_dashboard(Dashboard(name='dashtest'))
+        response = io.dashboards()
+        self.assertGreaterEqual(len(response), 1)
+
+    def test_dashboard_returns_requested_feed(self):
+        io = self.get_client()
+        self.ensure_dashboard_deleted(io, 'dashtest')
+        dashboard = io.create_dashboard(Dashboard(name='dashtest'))
+        response = io.dashboards('dashtest')
+        self.assertEqual(response.name, 'dashtest')
+
+    # Test Block Functionality
+    def test_block_create_block(self):
+        io = self.get_client()
+        self.ensure_block_deleted(io, 'dashtest', 'blocktest')
+        self.ensure_dashboard_deleted(io, 'dashtest')
+        dash = io.create_dashboard(Dashboard(name='dashtest'))
+        block = io.create_block(dash.key, Block(name='blocktest',
+                                                visual_type = 'line_chart'))
+        self.assertEqual(block.name, 'blocktest')
+        io.delete_block(dash.key, block.id)
+        io.delete_dashboard(dash.key)
+
+    def test_dashboard_returns_all_blocks(self):
+        io = self.get_client()
+        self.ensure_block_deleted(io, 'dashtest', 'blocktest')
+        self.ensure_dashboard_deleted(io, 'dashtest')
+        dash = io.create_dashboard(Dashboard(name='dashtest'))
+        block = io.create_block(dash.key, Block(name='blocktest',
+                                                visual_type = 'line_chart'))
+        response = io.blocks(dash.key)
+        self.assertEqual(len(response), 1)
+        io.delete_block(dash.key, block.id)
+        io.delete_dashboard(dash.key)
+
+    def test_dashboard_returns_requested_block(self):
+        io = self.get_client()
+        self.ensure_block_deleted(io, 'dashtest', 'blocktest')
+        self.ensure_dashboard_deleted(io, 'dashtest')
+        dash = io.create_dashboard(Dashboard(name='dashtest'))
+        block = io.create_block(dash.key, Block(name='blocktest',
+                                                visual_type = 'line_chart'))
+        response = io.blocks(dash.key, block.id)
+        self.assertEqual(response.name, 'blocktest')
+        io.delete_block(dash.key, block.id)
+        io.delete_dashboard(dash.key)
+
+    # Test Layout Functionality
+    def test_layout_returns_all_layouts(self):
+        io = self.get_client()
+        self.ensure_block_deleted(io, 'dashtest', 'blocktest')
+        self.ensure_dashboard_deleted(io, 'dashtest')
+        dash = io.create_dashboard(Dashboard(name='dashtest'))
+        block = io.create_block(dash.key, Block(name='blocktest',
+                                                visual_type = 'line_chart'))
+        response = io.layouts(dash.key)
+        self.assertEqual(len(response), 5) # 5 layouts: xs, sm, md, lg, xl
+        self.assertEqual(len(response.lg), 1)
+        io.delete_block(dash.key, block.id)
+        io.delete_dashboard(dash.key)
+
+    def test_layout_update_layout(self):
+        io = self.get_client()
+        self.ensure_block_deleted(io, 'dashtest', 'blocktest')
+        self.ensure_dashboard_deleted(io, 'dashtest')
+        dash = io.create_dashboard(Dashboard(name='dashtest'))
+        block = io.create_block(dash.key, Block(name='blocktest',
+                                                visual_type = 'line_chart'))
+        layout = Layout(lg = [
+                   {'x': 0, 'y': 0, 'w': 16, 'h': 4, 'i': str(block.id)}])
+        io.update_layout(dash.key, layout)
+        response = io.layouts(dash.key)
+        self.assertEqual(len(response.lg), 1)
+        self.assertEqual(response.lg[0]['w'], 16)
+        io.delete_block(dash.key, block.id)
+        io.delete_dashboard(dash.key)
+
+
+if __name__ == "__main__":
+    unittest.main()
