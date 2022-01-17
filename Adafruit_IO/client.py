@@ -33,7 +33,7 @@ import requests
 from .errors import RequestError, ThrottlingError
 from .model import Data, Feed, Group, Dashboard, Block, Layout
 
-API_PAGE_LIMIT = 1000
+DEFAULT_PAGE_LIMIT = 100
 
 # set outgoing version, pulled from setup.py
 version = pkg_resources.require("Adafruit_IO")[0].version
@@ -254,7 +254,7 @@ class Client(object):
         path = "feeds/{0}/data/previous".format(feed)
         return Data.from_dict(self._get(path))
 
-    def data(self, feed, data_id=None, max_results=API_PAGE_LIMIT):
+    def data(self, feed, data_id=None, max_results=DEFAULT_PAGE_LIMIT):
         """Retrieve data from a feed. If data_id is not specified then all the data
         for the feed will be returned in an array.
         :param string feed: Name/Key/ID of Adafruit IO feed.
