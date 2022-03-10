@@ -23,12 +23,17 @@ from time import struct_time
 import json
 import platform
 import pkg_resources
+import re
+from urllib.parse import urlparse
+from urllib.parse import parse_qs
 # import logging
 
 import requests
 
 from .errors import RequestError, ThrottlingError
 from .model import Data, Feed, Group, Dashboard, Block, Layout
+
+DEFAULT_PAGE_LIMIT = 100
 
 # set outgoing version, pulled from setup.py
 version = pkg_resources.require("Adafruit_IO")[0].version
@@ -60,6 +65,9 @@ class Client(object):
         # Save URL without trailing slash as it will be added later when
         # constructing the path.
         self.base_url = base_url.rstrip('/')
+
+        # Store the last response of a get or post
+        self._last_response = None
 
     @staticmethod
     def to_red(data):
@@ -112,10 +120,12 @@ class Client(object):
     def _compose_url(self, path):
         return '{0}/api/{1}/{2}/{3}'.format(self.base_url, 'v2', self.username, path)
 
-    def _get(self, path):
+    def _get(self, path, params=None):
         response = requests.get(self._compose_url(path),
                                 headers=self._headers({'X-AIO-Key': self.key}),
-                                proxies=self.proxies)
+                                proxies=self.proxies,
+                                params=params)
+        self._last_response = response
         self._handle_error(response)
         return response.json()
 
@@ -125,6 +135,7 @@ class Client(object):
                                                         'Content-Type': 'application/json'}),
                                  proxies=self.proxies,
                                  data=json.dumps(data))
+        self._last_response = response
         self._handle_error(response)
         return response.json()
 
@@ -133,6 +144,7 @@ class Client(object):
                                    headers=self._headers({'X-AIO-Key': self.key,
                                                           'Content-Type': 'application/json'}),
                                    proxies=self.proxies)
+        self._last_response = response
         self._handle_error(response)
 
     # Data functionality.
@@ -242,17 +254,53 @@ class Client(object):
         path = "feeds/{0}/data/previous".format(feed)
         return Data.from_dict(self._get(path))
 
-    def data(self, feed, data_id=None):
+    def data(self, feed, data_id=None, max_results=DEFAULT_PAGE_LIMIT):
         """Retrieve data from a feed. If data_id is not specified then all the data
         for the feed will be returned in an array.
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param string data_id: ID of the piece of data to delete.
+        :param int max_results: The maximum number of results to return. To
+            return all data, set to None.
         """
-        if data_id is None:
-            path = "feeds/{0}/data".format(feed)
-            return list(map(Data.from_dict, self._get(path)))
-        path = "feeds/{0}/data/{1}".format(feed, data_id)
-        return Data.from_dict(self._get(path))
+        if max_results is None:
+            res = self._get(f'feeds/{feed}/details')
+            max_results = res['details']['data']['count']
+        if data_id:
+            path = "feeds/{0}/data/{1}".format(feed, data_id)
+            return Data.from_dict(self._get(path))
+
+        params = {'limit': max_results} if max_results else None
+        data = []
+        path = "feeds/{0}/data".format(feed)
+        while len(data) < max_results:
+            data.extend(list(map(Data.from_dict, self._get(path,
+                                                           params=params))))
+            nlink = self.get_next_link()
+            if not nlink:
+                break
+            # Parse the link for the query parameters
+            params = parse_qs(urlparse(nlink).query)
+            if max_results:
+                params['limit'] = max_results - len(data)
+        return data
+
+    def get_next_link(self):
+        """Parse the `next` page URL in the pagination Link header.
+
+        This is necessary because of a bug in the API's implementation of the
+        link header. If that bug is fixed, the link would be accesible by
+        response.links['next']['url'] and this method would be broken.
+
+        :return: The url for the next page of data
+        :rtype: str
+        """
+        if not self._last_response:
+            return
+        link_header = self._last_response.headers['link']
+        res = re.search('rel="next", <(.+?)>', link_header)
+        if not res:
+            return
+        return res.groups()[0]
 
     def create_data(self, feed, data):
         """Create a new row of data in the specified feed.

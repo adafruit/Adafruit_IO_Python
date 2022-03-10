@@ -64,7 +64,7 @@ class TestClient(base.IOTestCase):
 
     def empty_feed(self, client, feed):
         # Remove all the data from a specified feed (but don't delete the feed).
-        data = client.data(feed)
+        data = client.data(feed, max_results=None)
         for d in data:
             client.delete(feed, d.id)
 
