@@ -9,7 +9,7 @@ Adafruit IO Python
    :target: https://adafru.it/discord
    :alt: Chat
 
-.. image:: https://github.com/adafruit/Adafruit_IO_Python/workflows/Build%20CI/badge.svg
+.. image:: https://github.com/adafruit/Adafruit_IO_Python/workflows/Build-CI/badge.svg
     :target: https://github.com/adafruit/Adafruit_IO_Python/actions
     :alt: Build Status
 
