@@ -19,14 +19,14 @@ authors = [
 ]
 urls = {Homepage = "https://github.com/adafruit/Adafruit_IO_Python"}
 keywords = [
-    "adafruit",
-    "blinka",
+    "adafruitio",
+    "io",
+    "python",
     "circuitpython",
-    "micropython",
-    "lis3mdl",
-    "magnetometer",
-    "LSM6DS33",
-    "IMU",
+    "raspberrypi",
+    "hardware",
+    "MQTT",
+    "REST",
 ]
 license = {text = "MIT"}
 classifiers = [
