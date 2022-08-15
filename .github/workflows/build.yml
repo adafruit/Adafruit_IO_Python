@@ -31,7 +31,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
     - name: Install library
-      run: python3 setup.py install
+      run: pip install .
 
     - name: Install sphinx
       run: pip3 install pylint Sphinx sphinx-rtd-theme

@@ -51,7 +51,7 @@ Clone or download the contents of this repository. Then navigate to the folder i
 
 .. code-block:: shell
 
-   python setup.py install
+   pip install .
 
 
 

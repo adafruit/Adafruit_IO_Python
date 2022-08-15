@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2022 Alec Delaney for Adafruit Industries
+#
+# SPDX-License-Identifier: MIT
+
+[build-system]
+requires = [
+    "setuptools",
+    "wheel",
+    "setuptools-scm",
+]
+
+[project]
+name = "adafruit-io"
+description = "Python client library for Adafruit IO (http://io.adafruit.com/)."
+version = "0.0.0"
+readme = "README.rst"
+authors = [
+    {name = "Adafruit Industries", email = "adafruit@adafruit.com"}
+]
+urls = {Homepage = "https://github.com/adafruit/Adafruit_IO_Python"}
+keywords = [
+    "adafruit",
+    "blinka",
+    "circuitpython",
+    "micropython",
+    "lis3mdl",
+    "magnetometer",
+    "LSM6DS33",
+    "IMU",
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: MacOS",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Topic :: Home Automation",
+    "Topic :: Software Development",
+]
+dependencies = [
+    "requests",
+    "paho-mqtt"
+]
+
+[tool.setuptools]
+packages = ["Adafruit_IO"]
