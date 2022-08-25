@@ -18,6 +18,9 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: '3.x'
+    - name: Update setuptools
+      run: |
+        python -m pip install --upgrade setuptools
     - name: Install dependencies
       if: contains(steps.need-pypi.outputs.pyproject-toml, 'pyproject.toml')
       run: |
