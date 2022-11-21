@@ -11,7 +11,7 @@ Create a feed by constructing a Feed instance with at least a name specified, an
 
     # Import library and create instance of REST client.
     from Adafruit_IO import Client, Feed
-    aio = Client('YOUR ADAFRUIT IO KEY')
+    aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
     # Create Feed object with name 'Foo'.
     feed = Feed(name='Foo')
@@ -30,7 +30,7 @@ You can get a list of your feeds by using the ``feeds()`` method which will retu
 
     # Import library and create instance of REST client.
     from Adafruit_IO import Client
-    aio = Client('YOUR ADAFRUIT IO KEY')
+    aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
     # Get list of feeds.
     feeds = aio.feeds()
@@ -45,7 +45,7 @@ Alternatively you can retrieve the metadata for a single feed by calling ``feeds
 
     # Import library and create instance of REST client.
     from Adafruit_IO import Client
-    aio = Client('YOUR ADAFRUIT IO KEY')
+    aio = Client('YOUR ADAFRUIT IO USERNAME', 'YOUR ADAFRUIT IO KEY')
 
     # Get feed 'Foo'
     feed = aio.feeds('Foo')
