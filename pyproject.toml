@@ -43,10 +43,10 @@ classifiers = [
     "Topic :: Home Automation",
     "Topic :: Software Development",
 ]
-dependencies = [
-    "requests",
-    "paho-mqtt"
-]
+dynamic = ["dependencies"]
 
 [tool.setuptools]
 packages = ["Adafruit_IO"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
