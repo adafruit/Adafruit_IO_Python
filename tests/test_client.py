@@ -183,7 +183,8 @@ class TestClient(base.IOTestCase):
         for time_data in server_time:
             self.assertIsNotNone(time_data)
         # Check that the week day was interpreted properly
-        os.environ['TZ'] = "US/Eastern"
+        if "GITHUB_ACTIONS" in os.environ:
+            os.environ['TZ'] = "US/Eastern"
         adjusted_time = time.localtime(time.mktime(server_time))
         self.assertEqual(server_time.tm_wday, adjusted_time.tm_wday)
 
