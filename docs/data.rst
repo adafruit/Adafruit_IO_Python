@@ -92,7 +92,9 @@ Data can be created after you create a feed, by using the ``send_batch_data(feed
 
     # Create a data items in the 'Test' feed.
     data_list = [Data(value=10), Data(value=11)]
-    aio.create_data('Test', data)
+    # send batch data
+    aio.send_batch_data(temperature.key, data_list)
+
 
 
 Receive Data
