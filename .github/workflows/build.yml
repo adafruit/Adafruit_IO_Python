@@ -18,20 +18,24 @@ jobs:
     environment:
       name: IO
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
-    - name: Set up Python 3.6
-      uses: actions/setup-python@v1
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v4
       with:
-        python-version: 3.6
+        python-version: 3.x
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
+    - name: Update setuptools
+      run: |
+        python -m pip install --upgrade setuptools
+
     - name: Install library
-      run: python3 setup.py install
+      run: pip install .
 
     - name: Install sphinx
       run: pip3 install pylint Sphinx sphinx-rtd-theme

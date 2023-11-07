@@ -1,5 +1,5 @@
-publish: clean
-	python setup.py sdist upload
+publish: clean build
+	twine upload dist/*
 
 clean:
 	#rm -rf Adafruit_BBIO.* build dist
@@ -9,7 +9,7 @@ tests:
 	py.test
 
 build:
-	python setup.py build --force
+	python -m build
 
 install: build
-	python setup.py install --force
+	pip install .
