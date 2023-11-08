@@ -41,6 +41,8 @@ jobs:
         SECRET_IO_KEY: ${{ secrets.CI_IO_KEY }}
         SECRET_IO_USER: ${{ secrets.CI_IO_USERNAME }}
       run: |
+        echo "Secret key length: ${#SECRET_IO_KEY}"
+        echo "Secret username length: ${#SECRET_IO_USER}"
         cd tests/
         ADAFRUIT_IO_KEY=$SECRET_IO_KEY ADAFRUIT_IO_USERNAME=$SECRET_IO_USER python -m unittest discover
         cd ..
