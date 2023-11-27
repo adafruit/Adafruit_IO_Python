@@ -12,8 +12,8 @@ import json
 from Adafruit_IO import Client, Feed, RequestError
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_USERNAME = 'brubell'
-ADAFRUIT_IO_KEY = '6ec4b31bd2c54a09be911e0c1909b7ab'
+ADAFRUIT_IO_USERNAME = 'YOUR_IO_USERNAME'
+ADAFRUIT_IO_KEY = 'YOUR_IO_KEY'
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
