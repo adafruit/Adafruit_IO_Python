@@ -45,6 +45,7 @@ FEED_FIELDS   = [ 'name',
                   'key',
                   'id',
                   'description',
+                  'enabled',
                   'unit_type',
                   'unit_symbol',
                   'history',
@@ -109,7 +110,7 @@ Dashboard.__new__.__defaults__ = (None, None, None, False, "dark", True, None, N
 Block.__new__.__defaults__ = (None, None, None, {}, None)
 
 # explicitly set feed values
-Feed.__new__.__defaults__ = (None, None, None, None, None, None, 'ON', 'Private', None, None, None)
+Feed.__new__.__defaults__ = (None, None, None, None, True, None, None, 'ON', 'Private', None, None, None)
 
 # Define methods to convert from dicts to the data types.
 def _from_dict(cls, data):
