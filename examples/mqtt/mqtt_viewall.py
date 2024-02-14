@@ -50,12 +50,12 @@ def on_connect(client, userdata, flags, rc):
 def on_disconnect(client, userdata, rc):
     print('Disconnected!')
 
-def on_message(client, userdata, msg, retain):
+def on_message(client, userdata, msg):
     print('Received on {0}: {1}'.format(msg.topic, msg.payload.decode('utf-8')))
 
 
 # Create MQTT client and connect to Adafruit IO.
-client = mqtt.Client()
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
 client.username_pw_set(USERNAME, KEY)
 client.on_connect = on_connect
 client.on_disconnect = on_disconnect
