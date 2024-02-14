@@ -20,8 +20,11 @@
 # SOFTWARE.
 
 import json, requests
+from paho.mqtt.client import error_string
 
-# MQTT RC Error Types
+# MQTT RC Error Types *** OBSOLETE *** 
+# See error_string() in client.py and enums.py from paho instead
+# https://github.com/eclipse/paho.mqtt.python/blob/4eeb431f5ae72b42474cec42641fca1daa91c4b0/src/paho/mqtt/client.py#L291-L404
 MQTT_ERRORS   = [ 'Connection successful',
                   'Incorrect protocol version',
                   'Invalid Client ID',
@@ -63,6 +66,6 @@ class MQTTError(Exception):
     """Handles connection attempt failed errors.
     """
     def __init__(self, response):
-        error = MQTT_ERRORS[response]
+        error = error_string(response)
         super(MQTTError, self).__init__(error)
     pass
