@@ -54,7 +54,7 @@ def on_message(client, userdata, msg):
     print('Received on {0}: {1}'.format(msg.topic, msg.payload.decode('utf-8')))
 
 
-# Create MQTT client and connect to Adafruit IO.
+# Create Paho v1 MQTT client and connect to Adafruit IO.
 client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
 client.username_pw_set(USERNAME, KEY)
 client.on_connect = on_connect
