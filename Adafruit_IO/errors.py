@@ -20,14 +20,7 @@
 # SOFTWARE.
 
 import json, requests
-
-# MQTT RC Error Types
-MQTT_ERRORS   = [ 'Connection successful',
-                  'Incorrect protocol version',
-                  'Invalid Client ID',
-                  'Server unavailable ',
-                  'Bad username or password',
-                  'Not authorized' ]
+from paho.mqtt.client import error_string
 
 class AdafruitIOError(Exception):
     """Base class for all Adafruit IO request failures."""
@@ -63,6 +56,6 @@ class MQTTError(Exception):
     """Handles connection attempt failed errors.
     """
     def __init__(self, response):
-        error = MQTT_ERRORS[response]
+        error = error_string(response)
         super(MQTTError, self).__init__(error)
     pass

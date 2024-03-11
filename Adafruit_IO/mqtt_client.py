@@ -59,8 +59,8 @@ class MQTTClient(object):
         self.on_disconnect = None
         self.on_message    = None
         self.on_subscribe  = None
-        # Initialize MQTT client.
-        self._client = mqtt.Client()
+        # Initialize v1 MQTT client.
+        self._client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1)
         if secure:
             self._client.tls_set_context()
             self._secure = True

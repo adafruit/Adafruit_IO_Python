@@ -70,5 +70,5 @@ print('Publishing a new message every 10 seconds (press Ctrl-C to quit)...')
 while True:
     value = random.randint(0, 100)
     print('Publishing {0} to {1}.'.format(value, IO_FEED))
-    client.publish(IO_FEED, value, IO_FEED_USERNAME)
+    client.publish(IO_FEED, value, feed_user=IO_FEED_USERNAME)
     time.sleep(10)
