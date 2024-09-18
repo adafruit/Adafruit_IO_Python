@@ -30,6 +30,16 @@ jobs:
     - name: Install sphinx
       run: pip3 install pylint Sphinx sphinx-rtd-theme
 
+    - name: Log last six characters of username
+      run: |
+        echo "Last six characters of username: ${MY_SECRET: -6}"
+      env:
+        MY_SECRET: ${{ secrets.CI_IO_USERNAME }}
+
+    - name: print username and key
+      run: |
+        echo "username: ${{ secrets.CI_IO_USERNAME }}"
+
     - name: Run unittests
       env:
         SECRET_IO_KEY: ${{ secrets.CI_IO_KEY }}
