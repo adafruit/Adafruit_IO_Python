@@ -20,7 +20,7 @@ Adafruit IO Python
 
 A Python library and examples for use with `io.adafruit.com <https://io.adafruit.com>`_. 
 
-Compatible with Python Versions 3.4+
+Compatible with Python Versions 3.6+
 
 Installation
 ================
