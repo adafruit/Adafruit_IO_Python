@@ -176,7 +176,7 @@ class TestClient(base.IOTestCase):
         """receive_time
         """
         aio = self.get_client()
-        server_time = aio.receive_time()
+        server_time = aio.receive_time(timezone='UTC')
         # Check that each value is rx'd properly
         # (should never be None type)
         for time_data in server_time:

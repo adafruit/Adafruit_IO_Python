@@ -72,6 +72,7 @@ class Client(object):
     @staticmethod
     def to_red(data):
         """Hex color feed to red channel.
+        
         :param int data: Color value, in hexadecimal.
         """
         return ((int(data[1], 16))*16) + int(data[2], 16)
@@ -79,6 +80,7 @@ class Client(object):
     @staticmethod
     def to_green(data):
         """Hex color feed to green channel.
+
         :param int data: Color value, in hexadecimal.
         """
         return (int(data[3], 16) * 16) + int(data[4], 16)
@@ -86,6 +88,7 @@ class Client(object):
     @staticmethod
     def to_blue(data):
         """Hex color feed to blue channel.
+
         :param int data: Color value, in hexadecimal.
         """
         return (int(data[5], 16) * 16) + int(data[6], 16)
@@ -153,6 +156,7 @@ class Client(object):
         specified value to the feed identified by either name, key, or ID.
         Returns a Data instance with details about the newly appended row of data.
         Note that send_data now operates the same as append.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param string value: Value to send.
         :param dict metadata: Optional metadata associated with the value.
@@ -173,6 +177,7 @@ class Client(object):
         ID, feed key, or feed name.  Data must be an instance of the Data class
         with at least a value property set on it.  Returns a Data instance with
         details about the newly appended row of data.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param Data data_list: Multiple data values.
         """
@@ -185,21 +190,28 @@ class Client(object):
         specified value to the feed identified by either name, key, or ID.
         Returns a Data instance with details about the newly appended row of data.
         Note that unlike send the feed should exist before calling append.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param string value: Value to append to feed.
         """
         return self.create_data(feed, Data(value=value))
 
-    def receive_time(self):
-        """Returns a struct_time from the Adafruit IO Server based on the device's IP address.
+    def receive_time(self, timezone=None):
+        """Returns a struct_time from the Adafruit IO Server based on requested
+        timezone, or automatically based on the device's IP address.
         https://docs.python.org/3.7/library/time.html#time.struct_time
+
+        :param string timezone: Optional timezone to return the time in.
+        See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
         """
         path = 'integrations/time/struct.json'
+        if timezone:
+            path += f'?tz={timezone}'
         return self._parse_time_struct(self._get(path))
 
     @staticmethod
     def _parse_time_struct(time_dict: dict) -> time.struct_time:
-        """Parse the time data returned by the server and return a  time_struct
+        """Parse the time data returned by the server and return a time_struct
 
         Corrects for the weekday returned by the server in Sunday=0 format
         (Python expects Monday=0)
@@ -211,6 +223,7 @@ class Client(object):
 
     def receive_weather(self, weather_id=None):
         """Adafruit IO Weather Service, Powered by Dark Sky
+
         :param int id: optional ID for retrieving a specified weather record.
         """
         if weather_id:
@@ -222,6 +235,7 @@ class Client(object):
     def receive_random(self, randomizer_id=None):
         """Access to Adafruit IO's Random Data
         service.
+
         :param int randomizer_id: optional ID for retrieving a specified randomizer.
         """
         if randomizer_id:
@@ -233,6 +247,7 @@ class Client(object):
     def receive(self, feed):
         """Retrieve the most recent value for the specified feed. Returns a Data
         instance whose value property holds the retrieved value.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/{0}/data/last".format(feed)
@@ -241,6 +256,7 @@ class Client(object):
     def receive_next(self, feed):
         """Retrieve the next unread value from the specified feed. Returns a Data
         instance whose value property holds the retrieved value.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/{0}/data/next".format(feed)
@@ -249,6 +265,7 @@ class Client(object):
     def receive_previous(self, feed):
         """Retrieve the previous unread value from the specified feed. Returns a
         Data instance whose value property holds the retrieved value.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/{0}/data/previous".format(feed)
@@ -257,6 +274,7 @@ class Client(object):
     def data(self, feed, data_id=None, max_results=DEFAULT_PAGE_LIMIT):
         """Retrieve data from a feed. If data_id is not specified then all the data
         for the feed will be returned in an array.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param string data_id: ID of the piece of data to delete.
         :param int max_results: The maximum number of results to return. To
@@ -306,6 +324,7 @@ class Client(object):
         """Create a new row of data in the specified feed.
         Returns a Data instance with details about the newly
         appended row of data.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param Data data: Instance of the Data class. Must have a value property set.
         """
@@ -314,6 +333,7 @@ class Client(object):
 
     def delete(self, feed, data_id):
         """Delete data from a feed.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         :param string data_id: ID of the piece of data to delete.
         """
@@ -324,6 +344,7 @@ class Client(object):
     def feeds(self, feed=None):
         """Retrieve a list of all feeds, or the specified feed.  If feed is not
         specified a list of all feeds will be returned.
+
         :param string feed: Name/Key/ID of Adafruit IO feed, defaults to None.
         """
         if feed is None:
@@ -334,6 +355,7 @@ class Client(object):
 
     def create_feed(self, feed, group_key=None):
         """Create the specified feed.
+
         :param string feed: Key of Adafruit IO feed.
         :param group_key group: Group to place new feed in.
         """
@@ -347,6 +369,7 @@ class Client(object):
 
     def delete_feed(self, feed):
         """Delete the specified feed.
+
         :param string feed: Name/Key/ID of Adafruit IO feed.
         """
         path = "feeds/{0}".format(feed)
@@ -355,6 +378,7 @@ class Client(object):
     # Group functionality.
     def groups(self, group=None):
         """Retrieve a list of all groups, or the specified group.
+
         :param string group: Name/Key/ID of Adafruit IO Group. Defaults to None.
         """
         if group is None:
@@ -365,6 +389,7 @@ class Client(object):
 
     def create_group(self, group):
         """Create the specified group.
+
         :param string group: Name/Key/ID of Adafruit IO Group.
         """
         path = "groups/"
@@ -372,6 +397,7 @@ class Client(object):
 
     def delete_group(self, group):
         """Delete the specified group.
+
         :param string group: Name/Key/ID of Adafruit IO Group.
         """
         path = "groups/{0}".format(group)
@@ -380,6 +406,7 @@ class Client(object):
     # Dashboard functionality.
     def dashboards(self, dashboard=None):
         """Retrieve a list of all dashboards, or the specified dashboard.
+
         :param string dashboard: Key of Adafruit IO Dashboard. Defaults to None.
         """
         if dashboard is None:
@@ -390,6 +417,7 @@ class Client(object):
 
     def create_dashboard(self, dashboard):
         """Create the specified dashboard.
+
         :param Dashboard dashboard: Dashboard object to create
         """
         path = "dashboards/"
@@ -397,6 +425,7 @@ class Client(object):
 
     def delete_dashboard(self, dashboard):
         """Delete the specified dashboard.
+
         :param string dashboard: Key of Adafruit IO Dashboard.
         """
         path = "dashboards/{0}".format(dashboard)
@@ -405,6 +434,7 @@ class Client(object):
     # Block functionality.
     def blocks(self, dashboard, block=None):
         """Retrieve a list of all blocks from a dashboard, or the specified block.
+
         :param string dashboard: Key of Adafruit IO Dashboard.
         :param string block: id of Adafruit IO Block. Defaults to None.
         """
@@ -416,6 +446,7 @@ class Client(object):
 
     def create_block(self, dashboard, block):
         """Create the specified block under the specified dashboard.
+
         :param string dashboard: Key of Adafruit IO Dashboard.
         :param Block block: Block object to create under dashboard
         """
@@ -424,6 +455,7 @@ class Client(object):
 
     def delete_block(self, dashboard, block):
         """Delete the specified block.
+
         :param string dashboard: Key of Adafruit IO Dashboard.
         :param string block: id of Adafruit IO Block.
         """
@@ -433,6 +465,7 @@ class Client(object):
     # Layout functionality.
     def layouts(self, dashboard):
         """Retrieve the layouts array from a dashboard
+
         :param string dashboard: key of Adafruit IO Dashboard.
         """
         path = "dashboards/{0}".format(dashboard)
@@ -441,6 +474,7 @@ class Client(object):
 
     def update_layout(self, dashboard, layout):
         """Update the layout of the specified dashboard.
+
         :param string dashboard: Key of Adafruit IO Dashboard.
         :param Layout layout: Layout object to update under dashboard
         """
