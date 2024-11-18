@@ -6,14 +6,14 @@
 from Adafruit_IO import Client, Feed
 import json
 
+# Set to your Adafruit IO username.
+# (go to https://accounts.adafruit.com to find your username)
+ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+
 # Set to your Adafruit IO key.
 # Remember, your key is a secret,
 # so make sure not to publish it when you publish this code!
 ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
-
-# Set to your Adafruit IO username.
-# (go to https://accounts.adafruit.com to find your username)
-ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -32,9 +32,13 @@ print("New feed: ", response)
 # Delete a feed
 aio.delete_feed(response.key)
 
+group2 = aio.groups('example')
+
 # Create feed in a group
 feed = Feed(name="PythonGroupFeed")
 group_key = "example"
+groups = aio.groups()
+group = groups[group_key] if group_key in groups else aio.create_group(group_key)
 print("Creating feed in group %s"%group_key)
 response = aio.create_feed(feed, group_key)
 print("New feed: ", response)
