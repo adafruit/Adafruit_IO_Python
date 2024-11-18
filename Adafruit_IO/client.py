@@ -390,10 +390,19 @@ class Client(object):
     def create_group(self, group):
         """Create the specified group.
 
-        :param string group: Name/Key/ID of Adafruit IO Group.
+        :param Group/string group: Group object to create, or name/key of of Adafruit IO Group.
         """
         path = "groups/"
-        return Group.from_dict(self._post(path, group._asdict()))
+        return Group.from_dict(
+            self._post(
+                path=path,
+                data=(
+                    group._asdict()
+                    if isinstance(group, Group)
+                    else {"name": group} if isinstance(group, str) else group
+                ),
+            )
+        )
 
     def delete_group(self, group):
         """Delete the specified group.
