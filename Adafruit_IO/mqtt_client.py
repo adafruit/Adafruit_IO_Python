@@ -116,8 +116,12 @@ class MQTTClient(object):
                 topic = parsed_topic[0]
                 payload = msg.payload.decode('utf-8')    
             elif parsed_topic[1] == 'groups':
-                topic = parsed_topic[3]
-                payload = msg.payload.decode('utf-8')
+                if len(parsed_topic) > 3:
+                    topic = parsed_topic[3]
+                    payload = msg.payload.decode('utf-8')
+                else:  # Group feed
+                    topic = parsed_topic[2]
+                    payload = msg.payload.decode('utf-8')
             elif parsed_topic[2] == 'weather':
                 topic = parsed_topic[4]
                 payload = '' if msg.payload is None else msg.payload.decode('utf-8')    
