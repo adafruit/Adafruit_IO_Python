@@ -28,14 +28,23 @@ import base
 class TestErrors(base.IOTestCase):
 
     def test_request_error_from_bad_key(self):
+        # the test username is possibly blocked / deleted, so gives a different error
         io = Client("test_user", "this is a bad key from a test")
-        with self.assertRaises(RequestError):
+        with self.assertRaises(RequestError) as error_context:
             io.send("TestStream", 42)
+        self.assertRegex(error_context.exception.args[0], ".*(that username|invalid API key provided).*")
 
     @unittest.skip("Throttling test must be run in isolation to prevent other tests from failing.")
     def test_throttling_error_after_6_requests_in_short_period(self):
-        io = Client(self.get_test_key())
+        io = Client(self.get_test_username(), self.get_test_key())
+        try:
+            feed_key = [f.key for f in io.feeds() if f.name == "TestStream"][0]
+            io.delete_feed(feed_key)
+        except ValueError:
+            pass
+        new_feed = io.create_feed("TestStream")
         with self.assertRaises(ThrottlingError):
-            for i in range(6):
-                io.send("TestStream", 42)
+            for i in range(60):
+                io.send(new_feed.key, 42)
                 time.sleep(0.1)  # Small delay to keep from hammering network.
+        io.delete_feed(new_feed.key)

@@ -155,6 +155,26 @@ class TestClient(base.IOTestCase):
         result = aio.create_data('testfeed', data)
         self.assertEqual(int(result.value), 42)
 
+
+    def test_delete_data(self):
+        """create_data
+        """
+        aio = self.get_client()
+        self.ensure_feed_deleted(aio, 'testfeed')
+        test_feed = aio.create_feed(Feed(name="TestFeed"))
+        aio.send_data('testfeed', 1)  # Make sure TestFeed exists.
+        data = Data(value=42)
+        result = aio.create_data('testfeed', data)
+        self.assertEqual(int(result.value), 42)
+        data = Data(value=43)
+        second_result = aio.create_data(test_feed.id, data)
+        self.assertEqual(int(second_result.value), 43)
+        aio.delete('testfeed', result.id)
+        aio.delete(test_feed.id, second_result.id)
+        latest_data = aio.receive('testfeed')
+        self.assertEqual(int(latest_data.value), 1)
+
+
     def test_location_data(self):
         """receive_location
         """
@@ -227,11 +247,17 @@ class TestClient(base.IOTestCase):
         result = io.append(feed.key, 42)
         self.assertEqual(int(result.value), 42)
 
-    def test_create_feed(self):
+    def test_create_feed_as_obj(self):
         io = self.get_client()
         self.ensure_feed_deleted(io, 'testfeed')
         feed = Feed(name='testfeed')
         result = io.create_feed(feed)
+        self.assertEqual(result.name, 'testfeed')
+
+    def test_create_feed_as_str(self):
+        io = self.get_client()
+        self.ensure_feed_deleted(io, 'testfeed')
+        result = io.create_feed('testfeed')
         self.assertEqual(result.name, 'testfeed')
 
     def test_create_feed_in_group(self):
@@ -291,6 +317,15 @@ class TestClient(base.IOTestCase):
     def test_groups_retrieves_requested_group(self):
         io = self.get_client()
         self.ensure_group_deleted(io, 'grouptest')
+        expected_response = io.create_group(Group(name='grouptest'))
+        response = io.groups('grouptest')
+        self.assertEqual(response.name, expected_response.name)
+        self.assertEqual(response.key, expected_response.key)
+        self.assertEqual(response.id, expected_response.id)
+
+    def test_create_groups_retrieves_requested_group(self):
+        io = self.get_client()
+        self.ensure_group_deleted(io, 'grouptest')
         response = io.create_group(Group(name='grouptest'))
         self.assertEqual(response.name, 'grouptest')
         self.assertEqual(response.key, 'grouptest')
@@ -301,6 +336,13 @@ class TestClient(base.IOTestCase):
         group = io.create_group(Group(name='groupdeletetest'))
         io.delete_group('groupdeletetest')
         self.assertRaises(RequestError, io.groups, 'groupdeletetest')
+
+    def test_create_group_by_name(self):
+        io = self.get_client()
+        self.ensure_group_deleted(io, 'grouprx')
+        group = io.create_group('grouprx')
+        response = io.groups(group.name)
+        self.assertEqual(response.name, 'grouprx')
 
     def test_receive_group_by_name(self):
         io = self.get_client()

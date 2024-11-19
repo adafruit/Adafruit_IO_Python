@@ -157,7 +157,7 @@ class Client(object):
         Returns a Data instance with details about the newly appended row of data.
         Note that send_data now operates the same as append.
 
-        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param string feed: Key/ID of Adafruit IO feed.
         :param string value: Value to send.
         :param dict metadata: Optional metadata associated with the value.
         :param int precision: Optional amount of precision points to send.
@@ -325,7 +325,7 @@ class Client(object):
         Returns a Data instance with details about the newly
         appended row of data.
 
-        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param string feed: Key/ID of Adafruit IO feed.
         :param Data data: Instance of the Data class. Must have a value property set.
         """
         path = "feeds/{0}/data".format(feed)
@@ -345,7 +345,7 @@ class Client(object):
         """Retrieve a list of all feeds, or the specified feed.  If feed is not
         specified a list of all feeds will be returned.
 
-        :param string feed: Name/Key/ID of Adafruit IO feed, defaults to None.
+        :param string feed: Key of Adafruit IO feed, defaults to None.
         """
         if feed is None:
             path = "feeds"
@@ -356,10 +356,11 @@ class Client(object):
     def create_feed(self, feed, group_key=None):
         """Create the specified feed.
 
-        :param string feed: Key of Adafruit IO feed.
+        :param string feed: Name/Key of Adafruit IO feed.
         :param group_key group: Group to place new feed in.
         """
-        f = feed._asdict()
+        f = feed if not isinstance(feed, str) else Feed(name=feed)
+        f = f._asdict()
         del f['id']  # Don't pass id on create call
         path = "feeds/"
         if group_key is not None: # create feed in a group
@@ -370,7 +371,7 @@ class Client(object):
     def delete_feed(self, feed):
         """Delete the specified feed.
 
-        :param string feed: Name/Key/ID of Adafruit IO feed.
+        :param string feed: Key of Adafruit IO feed.
         """
         path = "feeds/{0}".format(feed)
         self._delete(path)
