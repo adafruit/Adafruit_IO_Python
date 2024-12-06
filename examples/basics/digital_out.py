@@ -40,7 +40,10 @@ led.direction = digitalio.Direction.OUTPUT
 
 
 while True:
-    data = aio.receive(digital.key)
+    try:
+        data = aio.receive(digital.key)
+    except RequestError as re:
+        pass  # feed with no data will return 404
     if int(data.value) == 1:
         print('received <- ON\n')
     elif int(data.value) == 0:
