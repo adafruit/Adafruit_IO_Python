@@ -106,8 +106,10 @@ class TestClient(base.IOTestCase):
         test_feed1 = io.create_feed(Feed(name="testfeed1"), test_group.key)
         test_feed2 = io.create_feed(Feed(name="testfeed2"), test_group.key)
         data_list = [
-            GroupFeedData(value=42, key=test_feed1.key.replace(test_group.key + ".", "")),
-            GroupFeedData(value=42, key=test_feed2.key.replace(test_group.key + ".", ""))
+            GroupFeedData(value=42, key=test_feed1.key.replace(
+                test_group.key + ".", "")),
+            GroupFeedData(value=42, key=test_feed2.key.replace(
+                test_group.key + ".", ""))
         ]
         io.send_group_multiple_data(test_group.key, data_list)
         data = io.receive(test_feed1.key)
@@ -130,8 +132,10 @@ class TestClient(base.IOTestCase):
         test_feed2 = io.create_feed(Feed(name="testfeed2"), test_group.key)
         data_dict = {
             "feeds": [
-                {"key": test_feed1.key.replace(test_group.key + ".", ""), "value": 43},
-                {"key": test_feed2.key.replace(test_group.key + ".", ""), "value": 43}
+                {"key": test_feed1.key.replace(
+                    test_group.key + ".", ""), "value": 43},
+                {"key": test_feed2.key.replace(
+                    test_group.key + ".", ""), "value": 43}
             ],
             "lat": 40.726190,
             "lon": -74.005334,
@@ -145,7 +149,6 @@ class TestClient(base.IOTestCase):
         self.ensure_feed_deleted(io, 'testfeed1')
         self.ensure_feed_deleted(io, 'testfeed2')
         self.ensure_group_deleted(io, 'testgroup')
-
 
     def test_receive_next(self):
         """receive_next

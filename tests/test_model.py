@@ -128,7 +128,8 @@ class TestGroupFeedData(base.IOTestCase):
         self.assertEqual(data.key, 'test_key')
 
     def test_groupfeeddata_from_dict_ignores_unknown_items(self):
-        data = GroupFeedData.from_dict({'value': 'foo', 'key': 'test_key', 'unknown_param': 42})
+        data = GroupFeedData.from_dict(
+            {'value': 'foo', 'key': 'test_key', 'unknown_param': 42})
         self.assertEqual(data.value, 'foo')
         self.assertEqual(data.key, 'test_key')
         self.assertFalse(hasattr(data, 'unknown_param'))
