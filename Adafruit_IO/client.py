@@ -22,7 +22,13 @@ import time
 from time import struct_time
 import json
 import platform
-import pkg_resources
+try:
+    from importlib.metadata import version as pkg_version  # Python 3.8+
+except ImportError:
+    try:
+        from importlib_metadata import version as pkg_version  # Backport for <3.8
+    except ImportError:
+        pkg_version = None
 import re
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
@@ -30,13 +36,26 @@ from urllib.parse import parse_qs
 
 import requests
 
+
 from .errors import RequestError, ThrottlingError
 from .model import Data, Feed, Group, Dashboard, Block, Layout
 
 DEFAULT_PAGE_LIMIT = 100
 
-# set outgoing version, pulled from setup.py
-version = pkg_resources.require("Adafruit_IO")[0].version
+# set outgoing version, pulled from setup.py or package metadata
+_package_name = "Adafruit_IO"
+_version = None
+if pkg_version:
+    try:
+        _version = pkg_version(_package_name)
+    except Exception:
+        pass
+if not _version:
+    try:
+        _version = pkg_resources.require(_package_name)[0].version
+    except Exception:
+        _version = "unknown"
+version = _version
 default_headers = {
     'User-Agent': 'AdafruitIO-Python/{0} ({1}, {2} {3})'.format(version,
                                                                 platform.platform(),
