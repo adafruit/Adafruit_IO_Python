@@ -41,6 +41,10 @@ DATA_FIELDS   = [ 'created_epoch',
                   'lon',
                   'ele']
 
+# List of fields/properties for GroupFeedData object
+GROUPFEEDDATA_FIELDS = [ 'value',
+                         'key']
+
 FEED_FIELDS   = [ 'name',
                   'key',
                   'id',
@@ -95,12 +99,14 @@ Group  = namedtuple('Group', GROUP_FIELDS)
 Dashboard = namedtuple('Dashboard', DASHBOARD_FIELDS)
 Block  = namedtuple('Block', BLOCK_FIELDS)
 Layout = namedtuple('Layout', LAYOUT_FIELDS)
+GroupFeedData = namedtuple('GroupFeedData', GROUPFEEDDATA_FIELDS)
 
 # Magic incantation to make all parameters to the initializers optional with a
 # default value of None.
 Group.__new__.__defaults__  = tuple(None for x in GROUP_FIELDS)
 Data.__new__.__defaults__   = tuple(None for x in DATA_FIELDS)
 Layout.__new__.__defaults__   = tuple(None for x in LAYOUT_FIELDS)
+GroupFeedData.__new__.__defaults__ = tuple(None for x in GROUPFEEDDATA_FIELDS)
 
 # explicitly set dashboard values so that 'color_mode' is 'dark'
 Dashboard.__new__.__defaults__ = (None, None, None, False, "dark", True, None, None)
@@ -147,3 +153,4 @@ Group.from_dict  = classmethod(_group_from_dict)
 Dashboard.from_dict  = classmethod(_dashboard_from_dict)
 Block.from_dict  = classmethod(_from_dict)
 Layout.from_dict  = classmethod(_from_dict)
+GroupFeedData.from_dict = classmethod(_from_dict)
