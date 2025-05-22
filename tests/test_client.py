@@ -95,6 +95,26 @@ class TestClient(base.IOTestCase):
         data = io.receive(test_feed.key)
         self.assertEqual(int(data.value), 42)
 
+    def test_send_group_multiple_data(self):
+        """send_group_multiple_data
+        """
+        io = self.get_client()
+        self.ensure_group_deleted(io, 'testgroup')
+        self.ensure_feed_deleted(io, 'testfeed1')
+        self.ensure_feed_deleted(io, 'testfeed2')
+        test_group = io.create_group(Group(name="testgroup"))
+        test_feed1 = io.create_feed(Feed(name="testfeed1"), test_group.key)
+        test_feed2 = io.create_feed(Feed(name="testfeed2"), test_group.key)
+        data_list = [GroupFeedData(value=42, key=test_feed1.key), GroupFeedData(value=42, key=test_feed2.key)]
+        io.send_group_multiple_data(test_group.key, data_list)
+        data = io.receive(test_feed1.key)
+        self.assertEqual(int(data.value), 42)
+        data = io.receive(test_feed2.key)
+        self.assertEqual(int(data.value), 42)
+        self.ensure_feed_deleted(io, 'testfeed1')
+        self.ensure_feed_deleted(io, 'testfeed2')
+        self.ensure_group_deleted(io, 'testgroup')
+
     def test_receive_next(self):
         """receive_next
         """
