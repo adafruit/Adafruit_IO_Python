@@ -204,6 +204,26 @@ class Client(object):
         data_dict = type(data_list)((data._asdict() for data in data_list))
         self._post(path, {"data": data_dict})
 
+    def send_group_multiple_data(self, group, data_list):
+        """Create a new row of data in the specified group.  Group can be a group
+        ID, group key, or group name.  Data must be a list of GroupFeedData objects, or
+        a Dict with a feeds property, containing a list of GroupFeedData objects with 
+        at least a value property and key set on it. Optionally, metadata (created_at,
+        lat/lon/ele) can be set at the root object level.
+        Returns a Data instance with details about the newly appended rows of data.
+
+        :param string group: Name/Key/ID of Adafruit IO group.
+        :param List[GroupFeedData]|Dict data_list: Multiple data values with keys.
+        """
+        path = "groups/{0}/data".format(group)
+        if isinstance(data_list, list):
+            data_dict = {"feeds": [data._asdict() for data in data_list]}
+        elif isinstance(data_list, dict):
+            data_dict = data_list
+        else:
+            raise TypeError("data_list must be a dict or list")
+        self._post(path, data_dict)
+
     def append(self, feed, value):
         """Helper function to simplify adding a value to a feed.  Will append the
         specified value to the feed identified by either name, key, or ID.
