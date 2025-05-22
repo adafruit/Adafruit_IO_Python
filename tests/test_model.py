@@ -131,4 +131,4 @@ class TestGroupFeedData(base.IOTestCase):
         data = GroupFeedData.from_dict({'value': 'foo', 'key': 'test_key', 'unknown_param': 42})
         self.assertEqual(data.value, 'foo')
         self.assertEqual(data.key, 'test_key')
-        self.assertFalse(data.has_key('unknown_param'))
+        self.assertFalse(hasattr(data, 'unknown_param'))
