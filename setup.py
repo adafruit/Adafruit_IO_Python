@@ -5,9 +5,13 @@ https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 """
 
-from ez_setup import use_setuptools
-use_setuptools()
-from setuptools import setup, find_packages
+try:
+    from setuptools import setup, find_packages
+except ImportError:
+    # Fallback for older environments without setuptools installed.
+    from ez_setup import use_setuptools
+    use_setuptools()
+    from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
 from os import path
