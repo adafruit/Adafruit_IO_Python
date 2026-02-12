@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 import logging
+import re
 
 import paho.mqtt.client as mqtt
 import sys
@@ -34,6 +35,25 @@ forecast_types = ["current", "forecast_minutes_5",
                   "forecast_hours_2", "forecast_hours_6",
                   "forecast_hours_24", "forecast_days_1",
                   "forecast_days_2", "forecast_days_5",]
+
+
+def validate_feed_key(feed_key):
+    """Validates a provided feed key against Adafruit IO's system rules.
+    https://learn.adafruit.com/naming-things-in-adafruit-io/the-two-feed-identifiers
+    
+    :param str feed_key: The feed key to validate.
+    :raises ValueError: If the feed key is too long.
+    :raises TypeError: If the feed key contains invalid characters.
+    """
+    if len(feed_key) > 128:  # validate feed key length
+        raise ValueError("Feed key must be less than 128 characters.")
+    if not bool(
+        re.match(r"^[a-zA-Z0-9-]+((\/|\.)[a-zA-Z0-9-]+)?$", feed_key)
+    ):  # validate key naming scheme
+        raise TypeError(
+            "Feed key must contain English letters, numbers, dash, and a period or a forward slash."
+        )
+
 
 class MQTTClient(object):
     """Interface for publishing and subscribing to feed changes on Adafruit IO
@@ -198,21 +218,22 @@ class MQTTClient(object):
         """
         self._client.loop(timeout=timeout_sec)
 
-    def subscribe(self, feed_id, feed_user=None, qos=0):
+    def subscribe(self, feed_key, feed_user=None, qos=0):
         """Subscribe to changes on the specified feed.  When the feed is updated
-        the on_message function will be called with the feed_id and new value.
+        the on_message function will be called with the feed_key and new value.
 
-        :param str feed_id: The key of the feed to subscribe to.
+        :param str feed_key: The key of the feed to subscribe to.
         :param str feed_user: Optional, identifies feed owner. Used for feed sharing.
         :param int qos: The QoS to use when subscribing. Defaults to 0.
 
         """
+        validate_feed_key(feed_key)
         if qos > 1:
             raise MQTTError("Adafruit IO only supports a QoS level of 0 or 1.")
         if feed_user is not None:
-            (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(feed_user, feed_id, qos=qos))
+            (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(feed_user, feed_key, qos=qos))
         else:
-            (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_id), qos=qos)
+            (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_key), qos=qos)
         return res, mid
 
     def subscribe_group(self, group_id, qos=0):
@@ -264,43 +285,46 @@ class MQTTClient(object):
             raise TypeError('Invalid Time Feed Specified.')
             return
     
-    def unsubscribe(self, feed_id=None, group_id=None):
+    def unsubscribe(self, feed_key=None, group_id=None):
       """Unsubscribes from a specified MQTT topic.
       Note: this does not prevent publishing to a topic, it will unsubscribe
       from receiving messages via on_message.
       """
-      if feed_id is not None:
-        self._client.unsubscribe('{0}/feeds/{1}'.format(self._username, feed_id))
+      if feed_key is not None:
+        validate_feed_key(feed_key)
+        self._client.unsubscribe('{0}/feeds/{1}'.format(self._username, feed_key))
       elif group_id is not None:
         self._client.unsubscribe('{0}/groups/{1}'.format(self._username, group_id))
       else:
         raise TypeError('Invalid topic type specified.')
         return
 
-    def receive(self, feed_id):
+    def receive(self, feed_key):
       """Receive the last published value from a specified feed.
 
-      :param string feed_id: The ID of the feed to update.
+      :param string feed_key: The key of the feed to update.
       :parm string value: The new value to publish to the feed
       """
-      (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}/get'.format(self._username, feed_id),
+      validate_feed_key(feed_key)
+      (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}/get'.format(self._username, feed_key),
           payload='')
 
-    def publish(self, feed_id, value=None, group_id=None, feed_user=None):
+    def publish(self, feed_key, value=None, group_id=None, feed_user=None):
         """Publish a value to a specified feed.
 
         Params:
-        - feed_id: The id of the feed to update.
+        - feed_key: The key of the feed to update.
         - value: The new value to publish to the feed.
         - (optional) group_id: The id of the group to update. 
         - (optional) feed_user: The feed owner's username. Used for Sharing Feeds.
         """
+        validate_feed_key(feed_key)
         if feed_user is not None: # shared feed
-          (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(feed_user, feed_id),
+          (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(feed_user, feed_key),
               payload=value)
         elif group_id is not None: # group-specified feed
-          self._client.publish('{0}/feeds/{1}.{2}'.format(self._username, group_id, feed_id),
+          self._client.publish('{0}/feeds/{1}.{2}'.format(self._username, group_id, feed_key),
               payload=value)
         else: # regular feed
-          (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(self._username, feed_id),
+          (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}'.format(self._username, feed_key),
               payload=value)
