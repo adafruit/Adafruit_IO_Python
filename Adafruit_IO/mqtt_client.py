@@ -231,7 +231,7 @@ class MQTTClient(object):
         if qos > 1:
             raise MQTTError("Adafruit IO only supports a QoS level of 0 or 1.")
         if feed_user is not None:
-            (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(feed_user, feed_key, qos=qos))
+            (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(feed_user, feed_key), qos=qos)
         else:
             (res, mid) = self._client.subscribe('{0}/feeds/{1}'.format(self._username, feed_key), qos=qos)
         return res, mid
@@ -303,7 +303,7 @@ class MQTTClient(object):
       """Receive the last published value from a specified feed.
 
       :param string feed_key: The key of the feed to update.
-      :parm string value: The new value to publish to the feed
+      :param string value: The new value to publish to the feed
       """
       validate_feed_key(feed_key)
       (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}/get'.format(self._username, feed_key),

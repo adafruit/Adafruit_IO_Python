@@ -149,7 +149,7 @@ class TestFeedKeyValidation(unittest.TestCase):
                 self.fail(f"Valid feed key '{key}' raised exception: {e}")
 
     def test_empty_feed_key(self):
-        """Test that empty string raises TypeError."""
+        """Test that empty string raises TypeError due to invalid pattern."""
         with self.assertRaises(TypeError) as context:
             validate_feed_key('')
         self.assertIn('Feed key must contain', str(context.exception))
