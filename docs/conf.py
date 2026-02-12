@@ -84,12 +84,10 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     try:
         import sphinx_rtd_theme
         html_theme = 'sphinx_rtd_theme'
-        html_theme_path = [sphinx_rtd_theme.get_html_theme_path(), '.']
     except:
         html_theme = 'default'
-        html_theme_path = ['.']
 else:
-    html_theme_path = ['.']
+    html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
