@@ -18,7 +18,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
-from Adafruit_IO import Data, Feed, Group, Dashboard, Block, Layout
+from Adafruit_IO import Data, Feed, Group, Dashboard, Block, Layout, GroupFeedData
 
 import base
 
@@ -59,7 +59,7 @@ class TestData(base.IOTestCase):
         self.assertIsNone(feed.license)
         self.assertIsNone(feed.status_notify)
         self.assertIsNone(feed.status_timeout)
-    
+
     def test_group_properties_are_optional(self):
         group = Group(name="foo")
         self.assertEqual(group.name, 'foo')
@@ -116,3 +116,20 @@ class TestData(base.IOTestCase):
         self.assertIsNone(data.expiration)
         self.assertIsNone(data.position)
         self.assertIsNone(data.id)
+
+
+class TestGroupFeedData(base.IOTestCase):
+
+    def test_groupfeeddata_properties_are_optional(self):
+        """GroupFeedData fields have optional properties
+        """
+        data = GroupFeedData(value='foo', key='test_key')
+        self.assertEqual(data.value, 'foo')
+        self.assertEqual(data.key, 'test_key')
+
+    def test_groupfeeddata_from_dict_ignores_unknown_items(self):
+        data = GroupFeedData.from_dict(
+            {'value': 'foo', 'key': 'test_key', 'unknown_param': 42})
+        self.assertEqual(data.value, 'foo')
+        self.assertEqual(data.key, 'test_key')
+        self.assertFalse(hasattr(data, 'unknown_param'))

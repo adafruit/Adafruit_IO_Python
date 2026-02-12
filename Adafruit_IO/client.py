@@ -22,7 +22,13 @@ import time
 from time import struct_time
 import json
 import platform
-import pkg_resources
+try:
+    from importlib.metadata import version as pkg_version  # Python 3.8+
+except ImportError:
+    try:
+        from importlib_metadata import version as pkg_version  # Backport for <3.8
+    except ImportError:
+        pkg_version = None
 import re
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
@@ -30,13 +36,26 @@ from urllib.parse import parse_qs
 
 import requests
 
+
 from .errors import RequestError, ThrottlingError
 from .model import Data, Feed, Group, Dashboard, Block, Layout
 
 DEFAULT_PAGE_LIMIT = 100
 
-# set outgoing version, pulled from setup.py
-version = pkg_resources.require("Adafruit_IO")[0].version
+# set outgoing version, pulled from setup.py or package metadata
+_package_name = "Adafruit_IO"
+_version = None
+if pkg_version:
+    try:
+        _version = pkg_version(_package_name)
+    except Exception:
+        pass
+if not _version:
+    try:
+        _version = pkg_resources.require(_package_name)[0].version
+    except Exception:
+        _version = "unknown"
+version = _version
 default_headers = {
     'User-Agent': 'AdafruitIO-Python/{0} ({1}, {2} {3})'.format(version,
                                                                 platform.platform(),
@@ -184,6 +203,26 @@ class Client(object):
         path = "feeds/{0}/data/batch".format(feed)
         data_dict = type(data_list)((data._asdict() for data in data_list))
         self._post(path, {"data": data_dict})
+
+    def send_group_multiple_data(self, group, data_list):
+        """Create a new row of data in the specified group.  Group can be a group
+        ID, group key, or group name.  Data must be a list of GroupFeedData objects, or
+        a Dict with a feeds property, containing a list of GroupFeedData objects with 
+        at least a value property and key set on it. Optionally, metadata (created_at,
+        lat/lon/ele) can be set at the root object level.
+        Returns a Data instance with details about the newly appended rows of data.
+
+        :param string group: Name/Key/ID of Adafruit IO group.
+        :param List[GroupFeedData]|Dict data_list: Multiple data values with keys.
+        """
+        path = "groups/{0}/data".format(group)
+        if isinstance(data_list, list):
+            data_dict = {"feeds": [data._asdict() for data in data_list]}
+        elif isinstance(data_list, dict):
+            data_dict = data_list
+        else:
+            raise TypeError("data_list must be a dict or list")
+        self._post(path, data_dict)
 
     def append(self, feed, value):
         """Helper function to simplify adding a value to a feed.  Will append the
