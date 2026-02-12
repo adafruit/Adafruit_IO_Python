@@ -6,14 +6,20 @@ with Adafruit IO API
 
 Author(s): Brent Rubell for Adafruit Industries
 """
-# Import JSON for forecast parsing
+# Import standard python modules
 import json
+import os
 # Import Adafruit IO REST client.
-from Adafruit_IO import Client, Feed, RequestError
+from Adafruit_IO import Client
+
+# Set to your Adafruit IO username.
+# (go to https://accounts.adafruit.com to find your username)
+ADAFRUIT_IO_USERNAME = os.getenv('ADAFRUIT_IO_USERNAME', 'YOUR_IO_USERNAME')
 
 # Set to your Adafruit IO key.
-ADAFRUIT_IO_USERNAME = 'YOUR_IO_USERNAME'
-ADAFRUIT_IO_KEY = 'YOUR_IO_PASSWORD'
+# Remember, your key is a secret,
+# so make sure **not** to publish it when you publish this code!
+ADAFRUIT_IO_KEY = os.getenv('ADAFRUIT_IO_KEY', 'YOUR_IO_PASSWORD')
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
