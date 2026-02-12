@@ -302,8 +302,7 @@ class MQTTClient(object):
     def receive(self, feed_key):
       """Receive the last published value from a specified feed.
 
-      :param string feed_key: The key of the feed to update.
-      :param string value: The new value to publish to the feed
+      :param string feed_key: The key of the feed to retrieve the value from.
       """
       validate_feed_key(feed_key)
       (res, self._pub_mid) = self._client.publish('{0}/feeds/{1}/get'.format(self._username, feed_key),
