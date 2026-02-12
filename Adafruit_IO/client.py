@@ -22,7 +22,11 @@ import time
 from time import struct_time
 import json
 import platform
-import pkg_resources
+try:
+    from importlib.metadata import version as package_version
+except ImportError:  # pragma: no cover - fallback for older Python
+    package_version = None
+    import pkg_resources
 import re
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
@@ -35,8 +39,11 @@ from .model import Data, Feed, Group, Dashboard, Block, Layout
 
 DEFAULT_PAGE_LIMIT = 100
 
-# set outgoing version, pulled from setup.py
-version = pkg_resources.require("Adafruit_IO")[0].version
+# set outgoing version, pulled from package metadata
+if package_version is not None:
+    version = package_version("Adafruit_IO")
+else:
+    version = pkg_resources.require("Adafruit_IO")[0].version
 default_headers = {
     'User-Agent': 'AdafruitIO-Python/{0} ({1}, {2} {3})'.format(version,
                                                                 platform.platform(),
