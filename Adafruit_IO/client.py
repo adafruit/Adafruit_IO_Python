@@ -23,10 +23,13 @@ from time import struct_time
 import json
 import platform
 try:
-    from importlib.metadata import version as package_version
-except ImportError:  # pragma: no cover - fallback for older Python
-    package_version = None
-    import pkg_resources
+    from importlib.metadata import version as package_version  # Python 3.8+
+except ImportError:
+    try:
+        from importlib_metadata import version as package_version  # Backport for <3.8
+    except ImportError:  # pragma: no cover - fallback for older Python
+        package_version = None
+        import pkg_resources
 import re
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
