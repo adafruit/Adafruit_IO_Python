@@ -15,6 +15,7 @@ Dependencies:
 """
 
 # import standard python modules.
+import os
 import time
 
 # import adafruit-blinka modules
@@ -32,14 +33,14 @@ USE_DEGREES_F = False
 # Time between sensor reads, in seconds
 READ_TIMEOUT = 60
 
-# Set to your Adafruit IO key.
-# Remember, your key is a secret,
-# so make sure not to publish it when you publish this code!
-ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
-
 # Set to your Adafruit IO username.
 # (go to https://accounts.adafruit.com to find your username).
-ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+ADAFRUIT_IO_USERNAME = os.getenv('ADAFRUIT_IO_USERNAME', 'YOUR_AIO_USERNAME')
+
+# Set to your Adafruit IO key.
+# Remember, your key is a secret,
+# so make sure **not** to publish it when you publish this code!
+ADAFRUIT_IO_KEY = os.getenv('ADAFRUIT_IO_KEY', 'YOUR_AIO_KEY')
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -71,7 +72,7 @@ while True:
         print('Temp={0:0.1f}*F'.format(temperature))
     else:
         print('Temp={0:0.1f}*C'.format(temperature))
-    print('Humidity={1:0.1f}%'.format(humidity))
+    print('Humidity={0:0.1f}%'.format(humidity))
     # Format sensor data as string for sending to Adafruit IO
     temperature = '%.2f'%(temperature)
     humidity = '%.2f'%(humidity)

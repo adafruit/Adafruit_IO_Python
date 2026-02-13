@@ -6,12 +6,12 @@ a Raspberry Pi camera to an
 Adafruit IO feed.
 """
 # import standard python modules
-import time
 import base64
 import os
+import time
 
 # import Adafruit IO REST client
-from Adafruit_IO import Client, Feed, RequestError
+from Adafruit_IO import Client
 
 # import raspberry pi camera module
 import picamera
@@ -19,14 +19,14 @@ import picamera
 # camera capture interval, in seconds
 CAMERA_INTERVAL = 3
 
-# Set to your Adafruit IO key.
-# Remember, your key is a secret,
-# so make sure not to publish it when you publish this code!
-ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
-
 # Set to your Adafruit IO username.
 # (go to https://accounts.adafruit.com to find your username)
-ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+ADAFRUIT_IO_USERNAME = os.getenv('ADAFRUIT_IO_USERNAME', 'YOUR_AIO_USERNAME')
+
+# Set to your Adafruit IO key.
+# Remember, your key is a secret,
+# so make sure **not** to publish it when you publish this code!
+ADAFRUIT_IO_KEY = os.getenv('ADAFRUIT_IO_KEY', 'YOUR_AIO_KEY')
 
 # Create an instance of the REST client
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -56,7 +56,8 @@ while True:
     try:
       aio.send(picam_feed.key, image_string)
       print('Picture sent to Adafruit IO')
-    except:
+    except Exception as e:
       print('Sending to Adafruit IO Failed...')
+      print('Error:', e)
 
   time.sleep(CAMERA_INTERVAL)

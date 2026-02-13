@@ -22,6 +22,7 @@ import time
 import unittest
 
 from Adafruit_IO import MQTTClient
+from Adafruit_IO.mqtt_client import validate_feed_key
 
 import base
 
@@ -123,3 +124,123 @@ class TestMQTTClient(base.IOTestCase):
             time.sleep(0)
         # Verify one update message with payload is received.
         self.assertListEqual(messages, [('testfeed', '42')])
+
+
+class TestFeedKeyValidation(unittest.TestCase):
+    """Tests for feed key validation."""
+
+    def test_valid_feed_keys(self):
+        """Test that valid feed keys pass validation."""
+        valid_keys = [
+            'testfeed',
+            'test-feed',
+            'test123',
+            'TESTFEED',
+            'Test-Feed-123',
+            'group.feed',
+            'group/feed',
+            'my-group.my-feed',
+            'my-group/my-feed',
+        ]
+        for key in valid_keys:
+            try:
+                validate_feed_key(key)
+            except (ValueError, TypeError) as e:
+                self.fail(f"Valid feed key '{key}' raised exception: {e}")
+
+    def test_empty_feed_key(self):
+        """Test that empty string raises TypeError due to invalid pattern."""
+        with self.assertRaises(TypeError) as context:
+            validate_feed_key('')
+        self.assertIn('Feed key must contain', str(context.exception))
+
+    def test_feed_key_too_long(self):
+        """Test that feed keys longer than 128 characters raise ValueError."""
+        long_key = 'a' * 129
+        with self.assertRaises(ValueError) as context:
+            validate_feed_key(long_key)
+        self.assertIn('less than 128 characters', str(context.exception))
+
+    def test_feed_key_invalid_characters(self):
+        """Test that feed keys with invalid characters raise TypeError."""
+        invalid_keys = [
+            'test feed',  # space
+            'test_feed',  # underscore
+            'test@feed',  # special character
+            'test!feed',  # special character
+            'test#feed',  # special character
+            'test$feed',  # special character
+        ]
+        for key in invalid_keys:
+            with self.assertRaises(TypeError) as context:
+                validate_feed_key(key)
+            self.assertIn('Feed key must contain', str(context.exception))
+
+    def test_feed_key_invalid_patterns(self):
+        """Test that feed keys with invalid patterns raise TypeError."""
+        invalid_keys = [
+            '.testfeed',  # starts with period
+            '/testfeed',  # starts with slash
+            'test.',      # ends with period
+            'test/',      # ends with slash
+            'test..feed', # double period
+            'test//feed', # double slash
+            'test./feed', # period followed by slash
+            'test/.feed', # slash followed by period
+        ]
+        for key in invalid_keys:
+            with self.assertRaises(TypeError) as context:
+                validate_feed_key(key)
+            self.assertIn('Feed key must contain', str(context.exception))
+
+
+class TestMQTTClientFeedKeyValidation(unittest.TestCase):
+    """Tests for feed key validation in MQTT client methods."""
+
+    def test_subscribe_with_empty_feed_key(self):
+        """Test that subscribe() raises TypeError with empty feed key."""
+        client = MQTTClient('testuser', 'testkey')
+        with self.assertRaises(TypeError):
+            client.subscribe('')
+
+    def test_subscribe_with_invalid_feed_key(self):
+        """Test that subscribe() raises TypeError with invalid feed key."""
+        client = MQTTClient('testuser', 'testkey')
+        with self.assertRaises(TypeError):
+            client.subscribe('invalid feed')
+
+    def test_publish_with_empty_feed_key(self):
+        """Test that publish() raises TypeError with empty feed key."""
+        client = MQTTClient('testuser', 'testkey')
+        with self.assertRaises(TypeError):
+            client.publish('', 42)
+
+    def test_publish_with_invalid_feed_key(self):
+        """Test that publish() raises TypeError with invalid feed key."""
+        client = MQTTClient('testuser', 'testkey')
+        with self.assertRaises(TypeError):
+            client.publish('invalid_feed', 42)
+
+    def test_unsubscribe_with_empty_feed_key(self):
+        """Test that unsubscribe() raises TypeError with empty feed key."""
+        client = MQTTClient('testuser', 'testkey')
+        with self.assertRaises(TypeError):
+            client.unsubscribe(feed_key='')
+
+    def test_unsubscribe_with_invalid_feed_key(self):
+        """Test that unsubscribe() raises TypeError with invalid feed key."""
+        client = MQTTClient('testuser', 'testkey')
+        with self.assertRaises(TypeError):
+            client.unsubscribe(feed_key='test feed')
+
+    def test_receive_with_empty_feed_key(self):
+        """Test that receive() raises TypeError with empty feed key."""
+        client = MQTTClient('testuser', 'testkey')
+        with self.assertRaises(TypeError):
+            client.receive('')
+
+    def test_receive_with_invalid_feed_key(self):
+        """Test that receive() raises TypeError with invalid feed key."""
+        client = MQTTClient('testuser', 'testkey')
+        with self.assertRaises(TypeError):
+            client.receive('test@feed')
