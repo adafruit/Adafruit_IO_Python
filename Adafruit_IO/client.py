@@ -245,7 +245,13 @@ class Client(object):
     def create_weather(self, weather_record):
         """Create a new weather record.
 
-        :param dict weather_record: Weather record to create.
+        :param dict weather_record: Weather record to create. e.g.
+        ```
+        weather_record = {
+            'location': "40.726190,-74.005360",
+            'name': 'New York City, NY'  # must be unique (per user)
+        }
+        ```
         """
         path = "integrations/weather"
         return self._post(path, weather_record)
@@ -276,20 +282,24 @@ class Client(object):
     def create_air_quality(self, air_quality_record):
         """Create a new air quality record.
 
-        :param dict air_quality_record: Air quality record to create.
-        LOCATION = "50.2423591, -5.4001148"
-        NAME = "Godrevy Lighthouse, Cornwall"
-        PROVIDER = "open_meteo"
+        :param dict air_quality_record: Air quality record to create. e.g.
+        ```
+        air_quality_record = {
+            "location": "50.2423591, -5.4001148",
+            "name": "Godrevy Lighthouse, Cornwall", # must be unique (per user)
+            "provider": "open_meteo" # 'airnow' [US] or 'open_meteo' [Global]
+        }
+        ```
         """
         path = "integrations/air_quality"
         return self._post(path, air_quality_record)
 
-    def delete_air_quality(self, device_id):
+    def delete_air_quality(self, air_quality_id):
         """Delete an air quality record.
 
-        :param int device_id: ID of the air quality record to delete.
+        :param int air_quality_id: ID of the air quality record to delete.
         """
-        path = "integrations/air_quality/{0}".format(device_id)
+        path = "integrations/air_quality/{0}".format(air_quality_id)
         self._delete(path)
 
     def receive_random(self, randomizer_id=None):

@@ -263,8 +263,19 @@ class MQTTClient(object):
 
     def subscribe_weather(self, weather_id, forecast_type):
       """Subscribe to Adafruit IO Weather
+      
       :param int weather_id: weather record you want data for
-      :param string type: type of forecast data requested
+      :param string type: type of forecast data requested. Valid types are:
+      - current
+      - forecast_minutes_5
+      - forecast_minutes_30
+      - forecast_hours_1
+      - forecast_hours_2
+      - forecast_hours_6
+      - forecast_hours_24
+      - forecast_days_1
+      - forecast_days_2
+      - forecast_days_5
       """
       if forecast_type in forecast_types:
         self._client.subscribe('{0}/integration/weather/{1}/{2}'.format(self._username, weather_id, forecast_type))
@@ -339,11 +350,15 @@ class MQTTClient(object):
             raise TypeError('Invalid Time Feed Specified.')
             return
 
-    def unsubscribe_air_quality(self, device_id):
+    def unsubscribe_air_quality(self, airq_location_id, forecast='current'):
         """Unsubscribe from Adafruit IO Air Quality Service
-        :param int device_id: air quality record to unsubscribe from
+        :param int airq_location_id: air quality record to unsubscribe from
+        :param string forecast: Can be "current", "forecast_today", or "forecast_tomorrow".
         """
-        self._client.unsubscribe('{0}/integration/air_quality/{1}'.format(self._username, device_id))
+        if forecast in forecast_types:
+            self._client.unsubscribe('{0}/integration/air_quality/{1}/{2}'.format(self._username, airq_location_id, forecast))
+        else:
+            raise TypeError("Invalid Forecast Type Specified.")
 
     def receive(self, feed_key):
       """Receive the last published value from a specified feed.

@@ -32,7 +32,7 @@ if AQ_ID is None:
         try:
             aq_record = {
                 "location": "40.726190,-74.005360",
-                "name": "New York City, NY",
+                "name": "New York City, NY",  # must be unique in your account
                 "provider": "open_meteo"  # 'airnow' [US] or 'open_meteo' [Global]
             }
             created_record = aio.create_air_quality(aq_record)
