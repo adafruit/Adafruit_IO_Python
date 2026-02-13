@@ -242,6 +242,56 @@ class Client(object):
             weather_path = "integrations/weather"
         return self._get(weather_path)
 
+    def create_weather(self, weather_record):
+        """Create a new weather record.
+
+        :param dict weather_record: Weather record to create.
+        """
+        path = "integrations/weather"
+        return self._post(path, weather_record)
+
+    def delete_weather(self, weather_id):
+        """Delete a weather record.
+
+        :param int weather_id: ID of the weather record to delete.
+        """
+        path = "integrations/weather/{0}".format(weather_id)
+        self._delete(path)
+
+    def receive_air_quality(self, airq_location_id=None, forecast=None):
+        """Adafruit IO Air Quality Service
+
+        :param int airq_location_id: optional ID for retrieving a specified air quality record.
+        :param string forecast: Can be "current", "forecast_today", or "forecast_tomorrow".
+        """
+        if airq_location_id:
+            if forecast:
+                path = "integrations/air_quality/{0}/{1}".format(airq_location_id, forecast)
+            else:
+                path = "integrations/air_quality/{0}".format(airq_location_id)
+        else:
+            path = "integrations/air_quality"
+        return self._get(path)
+
+    def create_air_quality(self, air_quality_record):
+        """Create a new air quality record.
+
+        :param dict air_quality_record: Air quality record to create.
+        LOCATION = "50.2423591, -5.4001148"
+        NAME = "Godrevy Lighthouse, Cornwall"
+        PROVIDER = "open_meteo"
+        """
+        path = "integrations/air_quality"
+        return self._post(path, air_quality_record)
+
+    def delete_air_quality(self, device_id):
+        """Delete an air quality record.
+
+        :param int device_id: ID of the air quality record to delete.
+        """
+        path = "integrations/air_quality/{0}".format(device_id)
+        self._delete(path)
+
     def receive_random(self, randomizer_id=None):
         """Access to Adafruit IO's Random Data
         service.

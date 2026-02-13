@@ -141,6 +141,9 @@ class MQTTClient(object):
             elif parsed_topic[2] == 'weather':
                 topic = parsed_topic[4]
                 payload = '' if msg.payload is None else msg.payload.decode('utf-8')    
+            elif parsed_topic[2] == 'air_quality':
+                topic = parsed_topic[3]
+                payload = '' if msg.payload is None else msg.payload.decode('utf-8')
             else:
                 topic = parsed_topic[2]
                 payload = '' if msg.payload is None else msg.payload.decode('utf-8')
@@ -269,6 +272,16 @@ class MQTTClient(object):
         raise TypeError("Invalid Forecast Type Specified.")
         return
 
+    def subscribe_air_quality(self, airq_location_id, forecast='current'):
+        """Subscribe to Adafruit IO Air Quality Service
+        :param int airq_location_id: air quality record you want data for
+        :param string forecast: Can be "current", "forecast_today", or "forecast_tomorrow".
+        """       
+        if forecast in forecast_types:
+            self._client.subscribe('{0}/integration/air_quality/{1}/{2}'.format(self._username, airq_location_id, forecast))
+        else:
+            raise TypeError("Invalid Forecast Type Specified.")
+
     def subscribe_time(self, time):
         """Subscribe to changes on the Adafruit IO time feeds. When the feed is
         updated, the on_message function will be called and publish a new value:
@@ -298,6 +311,39 @@ class MQTTClient(object):
       else:
         raise TypeError('Invalid topic type specified.')
         return
+
+    def unsubscribe_randomizer(self, randomizer_id):
+      """Unsubscribe from a specified random data stream.
+      :param int randomizer_id: ID of the random word record to unsubscribe from.
+      """
+      self._client.unsubscribe('{0}/integration/words/{1}'.format(self._username, randomizer_id))
+
+    def unsubscribe_weather(self, weather_id, forecast_type):
+      """Unsubscribe from Adafruit IO Weather
+      :param int weather_id: weather record to unsubscribe from
+      :param string type: type of forecast data
+      """
+      if forecast_type in forecast_types:
+        self._client.unsubscribe('{0}/integration/weather/{1}/{2}'.format(self._username, weather_id, forecast_type))
+      else:
+        raise TypeError("Invalid Forecast Type Specified.")
+
+    def unsubscribe_time(self, time):
+        """Unsubscribe from Adafruit IO time feeds.
+        """
+        if time == 'millis' or time == 'seconds':
+            self._client.unsubscribe('time/{0}'.format(time))
+        elif time == 'iso':
+            self._client.unsubscribe('time/ISO-8601')
+        else:
+            raise TypeError('Invalid Time Feed Specified.')
+            return
+
+    def unsubscribe_air_quality(self, device_id):
+        """Unsubscribe from Adafruit IO Air Quality Service
+        :param int device_id: air quality record to unsubscribe from
+        """
+        self._client.unsubscribe('{0}/integration/air_quality/{1}'.format(self._username, device_id))
 
     def receive(self, feed_key):
       """Receive the last published value from a specified feed.
