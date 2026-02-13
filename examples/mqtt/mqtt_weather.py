@@ -9,20 +9,21 @@ Author: Brent Rubell for Adafruit Industries
 """
 
 # Import standard python modules.
-import sys
 import json
+import os
+import sys
 
 # Import Adafruit IO MQTT client.
 from Adafruit_IO import MQTTClient
 
-# Set to your Adafruit IO key.
-# Remember, your key is a secret,
-# so make sure not to publish it when you publish this code!
-ADAFRUIT_IO_KEY = 'KEY'
-
 # Set to your Adafruit IO username.
 # (go to https://accounts.adafruit.com to find your username)
-ADAFRUIT_IO_USERNAME = 'USER'
+ADAFRUIT_IO_USERNAME = os.getenv('ADAFRUIT_IO_USERNAME', 'USER')
+
+# Set to your Adafruit IO key.
+# Remember, your key is a secret,
+# so make sure **not** to publish it when you publish this code!
+ADAFRUIT_IO_KEY = os.getenv('ADAFRUIT_IO_KEY', 'KEY')
 
 # Set to ID of the forecast to subscribe to for updates
 forecast_id = 2153

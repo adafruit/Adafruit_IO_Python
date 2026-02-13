@@ -61,6 +61,27 @@ Usage
 
 Documentation for this project is `available on the ReadTheDocs <https://adafruit-io-python-client.readthedocs.io/en/latest/>`_.
 
+Service Integrations
+====================
+
+The client includes REST and MQTT helpers for Adafruit IO integrations:
+
+- Time
+- Random Data
+- Weather (requires IO+ subscription)
+- Air Quality (requires IO+ subscription)
+
+Integration API details are documented in ``docs/integrations.rst``.
+
+Service integration examples are included in:
+
+- ``examples/api/weather.py``
+- ``examples/api/weather_create_delete.py``
+- ``examples/api/air_quality.py``
+- ``examples/api/air_quality_create_delete.py``
+- ``examples/mqtt/mqtt_weather.py``
+- ``examples/mqtt/mqtt_air_quality.py``
+
 
 Contributing
 ============

@@ -22,7 +22,14 @@ import time
 from time import struct_time
 import json
 import platform
-import pkg_resources
+try:
+    from importlib.metadata import version as package_version  # Python 3.8+
+except ImportError:
+    try:
+        from importlib_metadata import version as package_version  # Backport for <3.8
+    except ImportError:  # pragma: no cover - fallback for older Python
+        package_version = None
+        import pkg_resources
 import re
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
@@ -35,8 +42,11 @@ from .model import Data, Feed, Group, Dashboard, Block, Layout
 
 DEFAULT_PAGE_LIMIT = 100
 
-# set outgoing version, pulled from setup.py
-version = pkg_resources.require("Adafruit_IO")[0].version
+# set outgoing version, pulled from package metadata
+if package_version is not None:
+    version = package_version("Adafruit_IO")
+else:
+    version = pkg_resources.require("Adafruit_IO")[0].version
 default_headers = {
     'User-Agent': 'AdafruitIO-Python/{0} ({1}, {2} {3})'.format(version,
                                                                 platform.platform(),
@@ -231,6 +241,66 @@ class Client(object):
         else:
             weather_path = "integrations/weather"
         return self._get(weather_path)
+
+    def create_weather(self, weather_record):
+        """Create a new weather record.
+
+        :param dict weather_record: Weather record to create. e.g.
+        ```
+        weather_record = {
+            'location': "40.726190,-74.005360",
+            'name': 'New York City, NY'  # must be unique (per user)
+        }
+        ```
+        """
+        path = "integrations/weather"
+        return self._post(path, weather_record)
+
+    def delete_weather(self, weather_id):
+        """Delete a weather record.
+
+        :param int weather_id: ID of the weather record to delete.
+        """
+        path = "integrations/weather/{0}".format(weather_id)
+        self._delete(path)
+
+    def receive_air_quality(self, airq_location_id=None, forecast=None):
+        """Adafruit IO Air Quality Service
+
+        :param int airq_location_id: optional ID for retrieving a specified air quality record.
+        :param string forecast: Can be "current", "forecast_today", or "forecast_tomorrow".
+        """
+        if airq_location_id:
+            if forecast:
+                path = "integrations/air_quality/{0}/{1}".format(airq_location_id, forecast)
+            else:
+                path = "integrations/air_quality/{0}".format(airq_location_id)
+        else:
+            path = "integrations/air_quality"
+        return self._get(path)
+
+    def create_air_quality(self, air_quality_record):
+        """Create a new air quality record.
+
+        :param dict air_quality_record: Air quality record to create. e.g.
+        ```
+        air_quality_record = {
+            "location": "50.2423591, -5.4001148",
+            "name": "Godrevy Lighthouse, Cornwall", # must be unique (per user)
+            "provider": "open_meteo" # 'airnow' [US] or 'open_meteo' [Global]
+        }
+        ```
+        """
+        path = "integrations/air_quality"
+        return self._post(path, air_quality_record)
+
+    def delete_air_quality(self, air_quality_id):
+        """Delete an air quality record.
+
+        :param int air_quality_id: ID of the air quality record to delete.
+        """
+        path = "integrations/air_quality/{0}".format(air_quality_id)
+        self._delete(path)
 
     def receive_random(self, randomizer_id=None):
         """Access to Adafruit IO's Random Data
