@@ -46,7 +46,7 @@ def validate_feed_key(feed_key):
     :raises TypeError: If the feed key contains invalid characters or is empty.
     """
     if len(feed_key) > 128:  # validate feed key length
-        raise ValueError("Feed key must be less than 128 characters.")
+        raise ValueError("Feed key must be 128 characters or less.")
     if not bool(
         re.match(r"^[a-zA-Z0-9-]+((\/|\.)[a-zA-Z0-9-]+)?$", feed_key)
     ):  # validate key naming scheme
