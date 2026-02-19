@@ -5,18 +5,19 @@ Creates a dashboard with 3 blocks and feed it data
 
 Author(s): Doug Zobel
 """
+import os
 from time import sleep
 from random import randrange
 from Adafruit_IO import Client, Feed, Block, Dashboard, Layout
 
-# Set to your Adafruit IO key.
-# Remember, your key is a secret,
-# so make sure not to publish it when you publish this code!
-ADAFRUIT_IO_USERNAME = ''
-
 # Set to your Adafruit IO username.
 # (go to https://accounts.adafruit.com to find your username)
-ADAFRUIT_IO_KEY = ''
+ADAFRUIT_IO_USERNAME = os.getenv('ADAFRUIT_IO_USERNAME', '')
+
+# Set to your Adafruit IO key.
+# Remember, your key is a secret,
+# so make sure **not** to publish it when you publish this code!
+ADAFRUIT_IO_KEY = os.getenv('ADAFRUIT_IO_KEY', '')
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
@@ -27,7 +28,7 @@ feed = aio.create_feed(Feed(name="Dashboard Data"), "default")
 # Fetch group info (group.id needed when adding feeds to blocks)
 group = aio.groups("default")
 
-# Create a new dasbhoard named 'Example Dashboard'
+# Create a new dashboard named 'Example Dashboard'
 dashboard = aio.create_dashboard(Dashboard(name="Example Dashboard"))
 
 # Create a line_chart
@@ -36,6 +37,7 @@ linechart = Block(name="Linechart Data",
                   properties = {
                       "gridLines": True,
                       "historyHours": "2"},
+                  # block_feeds expects a numeric feed_id, not the feed key
                   block_feeds = [{
                       "group_id": group.id,
                       "feed_id":  feed.id

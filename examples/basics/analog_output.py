@@ -22,6 +22,7 @@ Dependencies:
 """
 
 # import system libraries
+import os
 import time
 
 # import Adafruit Blinka
@@ -34,14 +35,14 @@ from adafruit_pca9685 import PCA9685
 # import Adafruit IO REST client
 from Adafruit_IO import Client, Feed, RequestError
 
-# Set to your Adafruit IO key.
-# Remember, your key is a secret,
-# so make sure not to publish it when you publish this code!
-ADAFRUIT_IO_KEY = 'YOUR_IO_KEY'
-
 # Set to your Adafruit IO username.
 # (go to https://accounts.adafruit.com to find your username)
-ADAFRUIT_IO_USERNAME = 'YOUR_IO_USERNAME'
+ADAFRUIT_IO_USERNAME = os.getenv('ADAFRUIT_IO_USERNAME', 'YOUR_IO_USERNAME')
+
+# Set to your Adafruit IO key.
+# Remember, your key is a secret,
+# so make sure **not** to publish it when you publish this code!
+ADAFRUIT_IO_KEY = os.getenv('ADAFRUIT_IO_KEY', 'YOUR_IO_KEY')
 
 # Create the I2C bus interface.
 i2c_bus = I2C(SCL, SDA)

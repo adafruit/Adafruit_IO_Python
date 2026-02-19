@@ -25,6 +25,7 @@ Table of Contents
     feed-sharing
     data
     groups
+    integrations
 
 
 

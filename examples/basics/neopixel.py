@@ -20,6 +20,7 @@ Dependencies:
     - Adafruit_CircuitPython_NeoPixel
         (https://github.com/adafruit/Adafruit_CircuitPython_NeoPixel)
 """
+import os
 import time
 import board
 import neopixel
@@ -39,14 +40,14 @@ pixels = neopixel.NeoPixel(
     pixel_pin, num_pixels, brightness=0.2, auto_write=False, pixel_order=ORDER
 )
 
-# Set to your Adafruit IO key.
-# Remember, your key is a secret,
-# so make sure not to publish it when you publish this code!
-ADAFRUIT_IO_KEY = 'YOUR_AIO_KEY'
-
 # Set to your Adafruit IO username.
 # (go to https://accounts.adafruit.com to find your username)
-ADAFRUIT_IO_USERNAME = 'YOUR_AIO_USERNAME'
+ADAFRUIT_IO_USERNAME = os.getenv('ADAFRUIT_IO_USERNAME', 'YOUR_AIO_USERNAME')
+
+# Set to your Adafruit IO key.
+# Remember, your key is a secret,
+# so make sure **not** to publish it when you publish this code!
+ADAFRUIT_IO_KEY = os.getenv('ADAFRUIT_IO_KEY', 'YOUR_AIO_KEY')
 
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
