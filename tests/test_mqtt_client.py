@@ -159,7 +159,7 @@ class TestFeedKeyValidation(unittest.TestCase):
         long_key = 'a' * 129
         with self.assertRaises(ValueError) as context:
             validate_feed_key(long_key)
-        self.assertIn('less than 128 characters', str(context.exception))
+        self.assertIn('128 characters or less', str(context.exception))
 
     def test_feed_key_invalid_characters(self):
         """Test that feed keys with invalid characters raise TypeError."""
