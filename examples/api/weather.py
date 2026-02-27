@@ -1,7 +1,7 @@
 """
 'weather.py'
 ================================================
-Dark Sky Hyperlocal for IO Plus
+Apple WeatherKit example for IO Plus
 with Adafruit IO API
 
 Author(s): Brent Rubell for Adafruit Industries
@@ -26,8 +26,9 @@ ADAFRUIT_IO_KEY = os.getenv("ADAFRUIT_IO_KEY", "YOUR_IO_PASSWORD")
 # Create an instance of the REST client.
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
-# Grab the weather JSON
-weather = aio.receive_weather(1234)
+# Grab the weather JSON - Update location id to your location,
+# see more details at https://io.adafruit.com/services/weather
+weather = aio.receive_weather(1234) # <-- UPDATE LOCATION ID
 weather = json.dumps(weather)
 forecast = json.loads(weather)
 

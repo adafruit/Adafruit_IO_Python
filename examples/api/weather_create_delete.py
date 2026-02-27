@@ -1,7 +1,7 @@
 """
 'weather_create_delete.py'
 ================================================
-Create and Delete Weather Records
+Create and Delete Weather Records (IO Plus)
 with Adafruit IO API
 
 Author(s): Brent Rubell for Adafruit Industries
