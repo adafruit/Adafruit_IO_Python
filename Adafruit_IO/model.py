@@ -19,12 +19,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 from collections import namedtuple
-# Handle python 2 and 3 (where map functions like itertools.imap)
-try:
-    from itertools import imap as map
-except ImportError:
-    # Ignore import error on python 3 since map already behaves as expected.
-    pass
 
 
 # List of fields/properties that are present on a data object from IO.
